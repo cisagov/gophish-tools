@@ -1,0 +1,4 @@
+#!/usr/bin/env python3
+
+import pca_assessment.assessment.reschedule as reschedule
+reschedule.main()
