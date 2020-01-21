@@ -17,7 +17,6 @@ Options:
 """
 # Standard Python Libraries
 import csv
-from datetime import datetime
 import logging
 import json
 from prompt_toolkit import prompt
@@ -69,8 +68,8 @@ def display_list_groups(assessment):
     
     # Prints groups or No Groups message
     if assessment.groups:
-        for temp_group in assessment.groups:
-            print("\t{}\t{}".format(temp_group.id, temp_group.name))
+        for index, temp_group in enumerate(assessment.groups):
+            print("\t{}\t{}".format(index + 1, temp_group.name))
     else:
         print("\t--NO GROUPS--")
     
@@ -143,7 +142,7 @@ def review_campaign(campaign):
         print("\n")
         
         for field, value in campaign_dict.items():
-            if field in ['launch_date', 'complete_date', 'url', 'name']:
+            if field in ['launch_date', 'complete_date', 'url', 'name', 'group_name']:
                 print("{}: {}".format(field.replace("_", " ").title(), value))
             elif field is "smtp":
                 print("SMTP: ")
@@ -199,13 +198,13 @@ def select_group(assessment):
         group_name = assessment.groups[0].name
     else:  # Allows user to choose from multiple groups;
         display_list_groups(assessment)
-        group_name = assessment.groups[get_number("    Select Group ID for this Campaign?") - 1].name
+        group_name = assessment.groups[get_number("    Select Group for this Campaign?") - 1].name
     
     return group_name
 
 
 # Imports e-mail from file
-def import_email(assessment, campaign_number=""):
+def import_email(assessment, campaign_number):
     temp_template = Template(name=f"{assessment.id}-T{str(campaign_number)}")
     temp_smtp = SMTP(name=f"{assessment.id}-SP-{campaign_number}")
     
@@ -243,7 +242,7 @@ def import_email(assessment, campaign_number=""):
     temp_template.subject = import_temp["subject"]
     temp_template.html = import_temp["html"]
     temp_template.text = import_temp["text"]
-    temp_template.name = assessment.id + "-T" + str(campaign_number) + "-" + import_temp["id"]
+    temp_template.name = f"{assessment.id}-T{str(campaign_number)}-{import_temp['id']}"
     
     return temp_smtp, temp_template
 
@@ -514,8 +513,7 @@ def main():
         )
         return 1
     
-    if not args['--restart']:
-        assessment = build_assessment()
+    assessment = build_assessment()
     
     with open(f"{assessment.id}.json", "w") as fp:
         json.dump(assessment.as_dict(), fp, indent=4)

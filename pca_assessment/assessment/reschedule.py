@@ -16,22 +16,15 @@ Options:
                             "warning", "error", and "critical". [default: info]
 """
 # Standard Python Libraries
-import csv
-from datetime import datetime
 import logging
 import json
-from prompt_toolkit import prompt
-from prompt_toolkit.shortcuts import radiolist_dialog, message_dialog
-from prompt_toolkit.completion import WordCompleter
 import pdb
 
 # Third-Party Libraries
 from docopt import docopt
-import pytz
 
 # Inter-project
 from pca_assessment.models import *
-from pca_assessment.util.validate import *
 from pca_assessment.util.input import *
 from pca_assessment.util.set_date import set_date
 
