@@ -29,10 +29,10 @@ from docopt import docopt
 import pytz
 
 # Inter-project
-from pca_assessment.models import *
-from pca_assessment.util.validate import *
-from pca_assessment.util.input import *
-from pca_assessment.util.set_date import set_date
+from pca.models import *
+from pca.util.validate import *
+from pca.util.input import *
+from pca.util.set_date import set_date
 
 args = docopt(__doc__, version='v0.0')
 

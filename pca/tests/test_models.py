@@ -1,7 +1,7 @@
 import pytest
 
 # Inter-project
-from pca_assessment.tests.conftest import *
+from pca.tests.conftest import *
 
 class TestParse:
     def test_email_parse(self, target_object, target_json):

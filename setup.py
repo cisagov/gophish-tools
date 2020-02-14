@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pca-assessment',
-    version='0.0.1',
+    version='0.0.2',
     author='Bryce Beuerlein',
     author_email='bryce.beuerlein@hq.dhs.gov',
     packages=find_packages(),
@@ -18,6 +18,6 @@ setup(
         "prompt-toolkit == 2.0.9",
         "pytz >= 2019.1",
         "pytest",
-        "ipython"
+        "ipython",
     ]
 )

@@ -6,7 +6,7 @@ from prompt_toolkit.completion import WordCompleter
 from datetime import datetime
 
 # Inter-Project
-from pca_assessment.util.validate import *
+from pca.util.validate import *
 
 import logging
 

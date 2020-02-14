@@ -1,7 +1,7 @@
 # content of conftest.py
 import pytest
 import json
-from pca_assessment.models.models import *
+from pca.models.models import *
 
 AUTO_FORWARD = '''
                 <html>

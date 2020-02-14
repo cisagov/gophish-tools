@@ -1,8 +1,8 @@
 import pytest
 
 # Inter-project
-from pca_assessment.util.validate import *
-from pca_assessment.util.validate import FormatError
+from pca.util.validate import *
+from pca.util.validate import FormatError
 
 @pytest.mark.parametrize('email', ["name.last@domain.test", "name.last+phish@domain.test"])
 def test_validate_email_valid(email):

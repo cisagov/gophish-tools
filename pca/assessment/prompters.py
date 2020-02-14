@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-from pca_assessment.util.validate import *
-from pca_assessment.util.input import *
+from pca.util.validate import *
+from pca.util.input import *
 from prompt_toolkit import prompt
 
 
