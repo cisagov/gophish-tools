@@ -55,7 +55,7 @@ class Assessment(Model):
         'reschedule': False,
         'start_campaign': 1,
         'groups': [],
-        'page': None,
+        'pages': [],
         'campaigns': [],
     }
     
@@ -207,6 +207,7 @@ class Campaign(Model):
         'template': None,
         'smtp': None,
         'group_name': None,
+        'page_name': None
     }
     
     def __init__(self, **kwargs):
