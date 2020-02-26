@@ -16,6 +16,7 @@ Options:
                             "warning", "error", and "critical". [default: info]
 """
 # Standard Python Libraries
+import copy
 import csv
 import logging
 import json
@@ -76,6 +77,20 @@ def display_list_groups(assessment):
     print("\n")
 
 
+def display_list_pages(assessment):
+    print("\tID\tName")
+    print("\t-- \t-----")
+    
+    # Prints pages or No pages message
+    if assessment.pages:
+        for index, temp_page in enumerate(assessment.pages):
+            print("\t{}\t{}".format(index + 1, temp_page.name))
+    else:
+        print("\t--NO PAGES--")
+    
+    print("\n")
+
+
 def build_assessment():
     """Walks user through building a new assessment document
     :return an assessment object"""
@@ -89,14 +104,24 @@ def build_assessment():
     assessment.target_domains = get_input('    Targeted domain(s) separated by spaces:').lower().split(" ")
     
     # Uses functions to build out aspects of assessment.
-    assessment.page = build_page(assessment.id)
+    assessment.pages = build_pages(assessment.id)
     assessment.groups = build_groups(assessment.id, assessment.target_domains)
+    
+    template_smtp = SMTP()
+    template_smtp.name = assessment.id + "-SP"
+   
+    # Sets up smtp host info to be pre-populated.
+    template_smtp.host = prompt('Enter SMTP Host: ', default=template_smtp.host,
+                            validator=BlankInputValidator())
+    
+    template_smtp.username = input("SMTP User: ")
+    template_smtp.password = input("SMTP Password: ")
     
     assessment.campaigns = list()
     logging.info("Building Campaigns")
     num_campaigns = get_number("    How many Campaigns?")
     for campaign_number in range(0, num_campaigns):
-        campaign_data = build_campaigns(assessment, campaign_number + 1)
+        campaign_data = build_campaigns(assessment, campaign_number + 1, template_smtp)
         assessment.campaigns.append(campaign_data)
         
         set_date("start_date", assessment, campaign_data.launch_date)
@@ -105,7 +130,7 @@ def build_assessment():
     return assessment
 
 
-def build_campaigns(assessment, campaign_number):
+def build_campaigns(assessment, campaign_number, template_smtp):
     # Set up component holders
     logging.info(f"Building Campaign {assessment.id}-C{campaign_number}")
     campaign = Campaign(name=f"{assessment.id}-C{campaign_number}")
@@ -120,10 +145,13 @@ def build_campaigns(assessment, campaign_number):
         else:
             logging.error("Complete Date is not after Launch Date.")
     
-    campaign.smtp, campaign.template = import_email(assessment, campaign_number)
+    campaign.smtp, campaign.template = import_email(assessment, campaign_number, template_smtp)
     
     # Select Group:
     campaign.group_name = select_group(assessment)
+    
+    # Select page:
+    campaign.page_name = select_page(assessment)
 
     campaign.url = prompt('    Campaign URL: ', default=assessment.domain,
                           validator=BlankInputValidator())
@@ -142,7 +170,7 @@ def review_campaign(campaign):
         print("\n")
         
         for field, value in campaign_dict.items():
-            if field in ['launch_date', 'complete_date', 'url', 'name', 'group_name']:
+            if field in ['launch_date', 'complete_date', 'url', 'name', 'group_name', 'page_name']:
                 print("{}: {}".format(field.replace("_", " ").title(), value))
             elif field is "smtp":
                 print("SMTP: ")
@@ -203,10 +231,24 @@ def select_group(assessment):
     return group_name
 
 
+def select_page(assessment):
+    # Select Group:
+    if len(assessment.pages) == 1:  # If only one auto sets.
+        logging.info("Page auto set to {}".format(assessment.pages[0].name))
+        page_name = assessment.pages[0].name
+    else:  # Allows user to choose from multiple groups;
+        print("\n")
+        display_list_pages(assessment)
+        page_name = assessment.pages[get_number("    Select the Page for this Campaign?") - 1].name
+    
+    return page_name
+
+
 # Imports e-mail from file
-def import_email(assessment, campaign_number):
+def import_email(assessment, campaign_number,template_smtp):
     temp_template = Template(name=f"{assessment.id}-T{str(campaign_number)}")
-    temp_smtp = SMTP(name=f"{assessment.id}-SP-{campaign_number}")
+    temp_smtp = copy.deepcopy(template_smtp)
+    temp_smtp.name = f"{assessment.id}-SP-{campaign_number}"
     
     # Receives the file name and checks if it exists.
     while True:
@@ -412,58 +454,67 @@ def target_add_label(labels, email, target):
     return target
 
 
-def build_page(id_):
-    """Walks user through building a new page document
+def build_pages(id_):
+    """Walks user through building multiple new page documents
     :return a page object"""
     
-    logging.info("Building Page")
+    pages = list()
+    logging.info("Getting Page Metadata")
     
-    temp_page = Page()
-    auto_forward = yes_no_prompt("    Will this page auto forward")
     
-    if auto_forward == "yes":
+    # Looks through to get the number of pages as a number with error checking
+    num_pages = get_number("    How many pages do you need?")
+
+    for page_num in range(int(num_pages)):
+        logging.info(f"Building Page {page_num + 1}")
+        temp_page = Page()
+        auto_forward = yes_no_prompt("    Will this page auto forward")
         
-        setattr(temp_page, 'name', f"{id_}-AutoForward")
-        temp_page.capture_credentials = True
-        temp_page.capture_passwords = False
-        temp_page.html = AUTO_FORWARD
-        temp_page.redirect_url = get_input('    URL to Redirect to:')
-    
-    else:
-        temp_page.name = f"{id_}-Landing"
-        
-        forward = yes_no_prompt("    Will this page forward after action")
-        if forward == "yes":
+        if auto_forward == "yes":
+            
+            setattr(temp_page, 'name', f"{id_}-{page_num+1}-AutoForward")
             temp_page.capture_credentials = True
+            temp_page.capture_passwords = False
+            temp_page.html = AUTO_FORWARD
             temp_page.redirect_url = get_input('    URL to Redirect to:')
+        
         else:
-            temp_page.capture_credentials = False
+            temp_page.name = f"{id_}-{page_num+1}-Landing"
+            
+            forward = yes_no_prompt("    Will this page forward after action")
+            if forward == "yes":
+                temp_page.capture_credentials = True
+                temp_page.redirect_url = get_input('    URL to Redirect to:')
+            else:
+                temp_page.capture_credentials = False
+            
+            temp_page.capture_passwords = False
+            
+            # Receives the file name and checks if it exists.
+            while True:
+                try:
+                    landing_file_name = get_input("Landing Page File name:")
+                    # Drops .html if included so it can always be added as fail safe.
+                    landing_file_name = landing_file_name.split(".", 1)[0]
+                    
+                    with open(landing_file_name + '.html') as landingFile:
+                        temp_page.html = landingFile.read()
+                    
+                    break
+                except EnvironmentError:
+                    logging.critical(f"ERROR- Landing Page File not found: {landing_file_name}.html")
+                    print("Please try again...")
         
-        temp_page.capture_passwords = False
+        # Debug page information
+        logging.debug(f"Page Name: {temp_page.name}")
+        logging.debug(f"Redirect ULR: {temp_page.redirect_url}")
+        logging.debug(f"Capture Credentials: {temp_page.capture_credentials}")
+        logging.debug(f"Capture Passwords: {temp_page.capture_passwords}")
         
-        # Receives the file name and checks if it exists.
-        while True:
-            try:
-                landing_file_name = get_input("Landing Page File name:")
-                # Drops .html if included so it can always be added as fail safe.
-                landing_file_name = landing_file_name.split(".", 1)[0]
-                
-                with open(landing_file_name + '.html') as landingFile:
-                    temp_page.html = landingFile.read()
-                
-                break
-            except EnvironmentError:
-                logging.critical(f"ERROR- Landing Page File not found: {landing_file_name}.html")
-                print("Please try again...")
+        temp_page = review_page(temp_page)
+        pages.append(temp_page)
     
-    # Debug page information
-    logging.debug(f"Page Name: {temp_page.name}")
-    logging.debug(f"Redirect ULR: {temp_page.redirect_url}")
-    logging.debug(f"Capture Credentials: {temp_page.capture_credentials}")
-    logging.debug(f"Capture Passwords: {temp_page.capture_passwords}")
-    
-    temp_page = review_page(temp_page)
-    return temp_page
+    return pages
 
 
 def review_page(page):
