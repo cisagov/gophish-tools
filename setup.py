@@ -9,7 +9,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     scripts=['bin/pca-builder',
-             'bin/pca-reschedule'
+             'bin/pca-reschedule',
              'bin/gophish-import'],
     license='LICENSE.txt',
     description='PCA Assessment JSON Build Script',

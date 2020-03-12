@@ -36,8 +36,6 @@ from pca.connect import connect_api
 args = docopt(__doc__, version='v0.0')
 
 # Suppress Insecure Request waring.
-
-
 requests.packages.urllib3.disable_warnings()
 
 def convert_time(time, start_zone, end_zone="UTC", in_format='%m/%d/%Y %H:%M', out_format='%Y-%m-%dT%H:%M'):
@@ -85,6 +83,9 @@ def load_landings(api, assessment):
                             logging.debug(f"Deleting Page with ID {old_page.id}")
                             api.pages.delete(old_page.id)
                             logging.info("Re-Loading new page.")
+                else:
+                    logging.error(f"{e}\n")
+                    raise
                  
         # Returns Landing Page ID
         logging.info(f"Landing Page {new_page.name} loaded.\n")
@@ -268,9 +269,9 @@ def main():
         # Stop logging and clean up
         logging.shutdown()
         return 1
-    
+        
     try:
-        #Load Landing page
+        # Load Landing page
         assessment["pages"] = load_landings(api, assessment)
         
         #Load Groups into GoPhish, returns group numbers correlated to Group number
@@ -283,7 +284,8 @@ def main():
         logging.shutdown()
         return 0
     
-    except:
+    except Exception as e:
+        logging.debug(f"{type(e)}: {e}")
         logging.critical("Closing with an error. Assessment not successfully loaded.\n")
         # Stop logging and clean up
         logging.shutdown()
