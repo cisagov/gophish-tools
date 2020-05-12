@@ -1,8 +1,8 @@
 import pytest
 
 # Inter-project
-from pca.util.validate import *
-from pca.util.validate import FormatError
+from util.validate import *
+from util.validate import FormatError
 
 
 @pytest.mark.parametrize(

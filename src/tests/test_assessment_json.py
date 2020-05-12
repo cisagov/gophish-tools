@@ -1,4 +1,4 @@
-import pca.assessment.builder as assessment_builder
+import assessment.builder as assessment_builder
 
 
 # TODO Make test_emails csv

@@ -20,8 +20,17 @@ EMAIL_TEMPLATE = {
     "text": "Text Body of the email",
 }
 
-# Validates that the email is formatted correctly.
+
 def validate_email(email):
+    """Validate email format.
+
+    Args:
+        email (string): Email address om string format.
+
+    Returns:
+        Boolean: Indicating valid email address format.
+
+    """
     if not bool(
         re.match(
             r"^[a-zA-Z0-9]+[a-zA-Z0-9-.+_]+@(\[?)[a-zA-Z0-9-.]+..([a-zA-Z]{2,3}|[0-9]{2,6})(]?)$",
