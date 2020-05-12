@@ -1,4 +1,0 @@
-#!/usr/bin/env python3
-
-import pca.assessment.builder as builder
-builder.main()

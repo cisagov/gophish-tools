@@ -31,7 +31,7 @@ from gophish.models import *
 import pytz
 
 # Inter-project
-from pca.connect import connect_api
+from connect import connect_api
 
 args = docopt(__doc__, version="v0.0")
 
