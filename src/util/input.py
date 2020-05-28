@@ -1,7 +1,6 @@
 __all__ = ["yes_no_prompt", "get_input", "get_number", "get_time_input"]
 
 from prompt_toolkit import prompt
-from prompt_toolkit.shortcuts import radiolist_dialog
 from prompt_toolkit.completion import WordCompleter
 from datetime import datetime
 

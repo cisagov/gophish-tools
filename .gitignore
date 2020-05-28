@@ -4,7 +4,6 @@ pca-assessment.sublime-project
 pca-assessment.sublime-workspace
 
 # Support files
-.dockerignore
 
 *.csv
 demo/
@@ -18,6 +17,4 @@ __pycache__
 .pytest_cache
 .python-version
 *.egg-info
-
-*.csv
-*.json
+!Desired_Output.json

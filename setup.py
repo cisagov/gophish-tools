@@ -94,7 +94,7 @@ setup(
         "requests>=2.20.0",
         "six==1.10.0",
         # Script Requirements
-        "gophish >= 0.2.5",
+        "tools >= 0.2.5",
     ],
     extras_require={
         "test": [
@@ -116,8 +116,8 @@ setup(
     # Conveniently allows one to run the CLI tool as `example`
     entry_points={
         "console_scripts": [
-            "pca-assessment = assessment.builder:main",
-            "pca-reschedule = assessment.reschedule:main",
+            "pca-assessment-builder= assessment.builder:main",
+            "pca-assessment-reschedule = assessment.reschedule:main",
             "gophish-import = assessment.gophish_import:main",
         ]
     },

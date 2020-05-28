@@ -30,7 +30,7 @@ from docopt import docopt
 import pytz
 
 # Inter-project
-from models import *
+from models.models import *
 from util.validate import *
 from util.input import *
 from util.set_date import set_date
