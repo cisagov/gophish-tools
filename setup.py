@@ -94,7 +94,7 @@ setup(
         "requests>=2.20.0",
         "six==1.10.0",
         # Script Requirements
-        "tools >= 0.2.5",
+        "gophish >= 0.2.5",
     ],
     extras_require={
         "test": [
@@ -118,7 +118,7 @@ setup(
         "console_scripts": [
             "pca-assessment-builder= assessment.builder:main",
             "pca-assessment-reschedule = assessment.reschedule:main",
-            "gophish-import = assessment.gophish_import:main",
+            "gophish-import = tools.gophish_import:main",
         ]
     },
 )
