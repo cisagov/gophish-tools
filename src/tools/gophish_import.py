@@ -2,9 +2,9 @@
 """GoPhish import loads a JSON File containing a full assessment into GoPhish.
 
 Usage:
-  gophish-import [--log-level=LEVEL] [--Debug] [--reschedule] ASSESSMENT_ID SERVER API_KEY
-  gophish-import (-h | --help)
-  gophish-import --version
+  tools-import [--log-level=LEVEL] [--Debug] [--reschedule] ASSESSMENT_ID SERVER API_KEY
+  tools-import (-h | --help)
+  tools-import --version
 
 Options:
   ASSESSMENT_ID  --> Assessment ID
@@ -27,17 +27,17 @@ import pdb
 # Third-Party Libraries
 from docopt import docopt
 import requests
+from gophish import Gophish
 from gophish.models import *
 import pytz
 
 # Inter-project
-from connect import connect_api
+from tools.connect import connect_api
 
 args = docopt(__doc__, version="v0.0")
 
 # Suppress Insecure Request waring.
 requests.packages.urllib3.disable_warnings()
-
 
 def convert_time(
     time,
