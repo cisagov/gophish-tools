@@ -86,6 +86,7 @@ setup(
         "docopt >= 0.6.2",
         "prompt-toolkit == 2.0.9",
         "pytz >= 2019.1",
+        "httpagentparser",
         # GoPhish Requirements
         "appdirs>=1.4.0",
         "packaging==16.8",
@@ -119,6 +120,9 @@ setup(
             "pca-assessment-builder= assessment.builder:main",
             "pca-assessment-reschedule = assessment.reschedule:main",
             "gophish-import = tools.gophish_import:main",
+            "gophish-complete = tools.gophish_complete:main",
+            "gophish-export = tools.gophish_export:main",
+            "gophish-cleaner = tools.gophish_cleaner:main",
         ]
     },
 )
