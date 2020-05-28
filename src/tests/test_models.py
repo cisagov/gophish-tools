@@ -1,5 +1,3 @@
-import pytest
-
 # Inter-project
 from tests.conftest import *
 
