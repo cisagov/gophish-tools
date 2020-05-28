@@ -2,9 +2,9 @@
 """PCA Assessment Builder to create JSON File
 
 Usage:
-  src-builder [--log-level=LEVEL] [--Debug] ASSESSMENT_ID
-  src-builder (-h | --help)
-  src-builder --version
+  pca-assessment-builder [--log-level=LEVEL] [--Debug] ASSESSMENT_ID
+  pca-assessment-builder (-h | --help)
+  pca-assessment-builder --version
 
 Options:
   ASSESSMENT_ID     --> Assessment ID

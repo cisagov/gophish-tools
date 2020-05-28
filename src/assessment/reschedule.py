@@ -2,9 +2,9 @@
 """PCA Assessment Reschedule to adjust scheduling in the PCA JSON File
 
 Usage:
-  src-reschedule [--log-level=LEVEL] [--Debug] ASSESSMENT_ID
-  src-reschedule (-h | --help)
-  src-reschedule --version
+  pca-assessment-reschedule [--log-level=LEVEL] [--Debug] ASSESSMENT_ID
+  pca-assessment-reschedule (-h | --help)
+  pca-assessment-reschedule --version
 
 Options:
   ASSESSMENT_ID     --> Assessment ID
