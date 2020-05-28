@@ -2,15 +2,15 @@
 """PCA Assessment Reschedule to adjust scheduling in the PCA JSON File
 
 Usage:
-  pca-reschedule [--log-level=LEVEL] [--Debug] ASSESSMENT_ID
-  pca-reschedule (-h | --help)
-  pca-reschedule --version
+  src-reschedule [--log-level=LEVEL] [--Debug] ASSESSMENT_ID
+  src-reschedule (-h | --help)
+  src-reschedule --version
 
 Options:
   ASSESSMENT_ID     --> Assessment ID
   -h --help      Show this screen.
   --version      Show version.
-  -D --Debug     Enters users into pdb. 
+  -D --Debug     Enters users into pdb.
   -l --log-level=LEVEL      If specified, then the log level will be set to
                             the specified value.  Valid values are "debug", "info",
                             "warning", "error", and "critical". [default: info]
@@ -24,9 +24,9 @@ import pdb
 from docopt import docopt
 
 # Inter-project
-from pca.models import *
-from pca.util.input import *
-from pca.util.set_date import set_date
+from models import *
+from util.input import *
+from util.set_date import set_date
 
 args = docopt(__doc__, version="v0.0")
 

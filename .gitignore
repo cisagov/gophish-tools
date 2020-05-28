@@ -1,0 +1,20 @@
+
+src/tests/data
+pca-assessment.sublime-project
+pca-assessment.sublime-workspace
+
+# Support files
+
+*.csv
+demo/
+*.json
+
+.idea
+.mypy_cache
+__pycache__
+.coverage
+.mypy_cache
+.pytest_cache
+.python-version
+*.egg-info
+!Desired_Output.json

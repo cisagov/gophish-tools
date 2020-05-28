@@ -1,12 +1,11 @@
 __all__ = ["yes_no_prompt", "get_input", "get_number", "get_time_input"]
 
 from prompt_toolkit import prompt
-from prompt_toolkit.shortcuts import radiolist_dialog
 from prompt_toolkit.completion import WordCompleter
 from datetime import datetime
 
 # Inter-Project
-from pca.util.validate import *
+from util.validate import *
 
 import logging
 
@@ -32,7 +31,7 @@ def get_number(msg):
         try:
             num = int(get_input(msg))
             break
-        except:
+        except ValueError:
             logging.error("None integer entered.")
             logging.warning("Please put only an integer")
 
@@ -51,7 +50,7 @@ def get_time_input(type_, time_zone, default=""):
             )
             input_time = datetime.strptime(input_time, "%m/%d/%Y %H:%M")
             break
-        except ValueError as e:
+        except ValueError:
             logging.error("Invalid time input: {}".format(input_time))
 
     return input_time.strftime("%m/%d/%Y %H:%M")

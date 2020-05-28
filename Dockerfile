@@ -16,11 +16,9 @@ VOLUME ${PCA_HOME}
 WORKDIR ${PCA_CON_SRC}
 
 COPY . ${PCA_CON_SRC}
-RUN pip install --no-cache-dir .[DEV]
+RUN pip install --no-cache-dir .
 RUN chmod +x ${PCA_CON_SRC}/var/getenv
 RUN ln -snf ${PCA_CON_SRC}/var/getenv /usr/local/bin
-RUN chmod +x ${PCA_CON_SRC}/bin/*
-RUN ln -snf ${PCA_CON_SRC}/bin/* /usr/local/bin
 
 USER pca
 WORKDIR ${PCA_HOME}

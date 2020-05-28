@@ -2,15 +2,15 @@
 """PCA Assessment Builder to create JSON File
 
 Usage:
-  pca-builder [--log-level=LEVEL] [--Debug] ASSESSMENT_ID
-  pca-builder (-h | --help)
-  pca-builder --version
+  src-builder [--log-level=LEVEL] [--Debug] ASSESSMENT_ID
+  src-builder (-h | --help)
+  src-builder --version
 
 Options:
   ASSESSMENT_ID     --> Assessment ID
   -h --help      Show this screen.
   --version      Show version.
-  -D --Debug     Enters users into pdb. 
+  -D --Debug     Enters users into pdb.
   -l --log-level=LEVEL      If specified, then the log level will be set to
                             the specified value.  Valid values are "debug", "info",
                             "warning", "error", and "critical". [default: info]
@@ -30,10 +30,10 @@ from docopt import docopt
 import pytz
 
 # Inter-project
-from pca.models import *
-from pca.util.validate import *
-from pca.util.input import *
-from pca.util.set_date import set_date
+from models.models import *
+from util.validate import *
+from util.input import *
+from util.set_date import set_date
 
 args = docopt(__doc__, version="v0.0")
 
@@ -189,7 +189,7 @@ def review_campaign(campaign):
                 "page_name",
             ]:
                 print("{}: {}".format(field.replace("_", " ").title(), value))
-            elif field is "smtp":
+            elif field == "smtp":
                 print("SMTP: ")
                 for smtp_key, smtp_value in campaign_dict["smtp"].items():
                     print(
@@ -197,7 +197,7 @@ def review_campaign(campaign):
                             smtp_key.replace("_", " ").title(), smtp_value
                         )
                     )
-            elif field is "template":
+            elif field == "template":
                 print("Template: ")
                 for template_key, template_value in campaign_dict["template"].items():
                     print("\t{}: {}".format(template_key, template_value))
@@ -506,7 +506,7 @@ def build_emails(domains, labels):
         except EnvironmentError:
             logging.critical("Email File not found: {}.csv".format(email_file_name))
             print("\t Please try again...")
-        except Exception as e:
+        except Exception:
             # Logs and indicates the user should correct before clicking ok which will re-run the import.
             logging.critical(f"No targets loaded")
             message_dialog(

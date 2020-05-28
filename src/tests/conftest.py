@@ -1,7 +1,7 @@
 # content of conftest.py
 import pytest
 import json
-from pca.models.models import *
+from models.models import *
 
 AUTO_FORWARD = """
                 <html>
@@ -35,7 +35,7 @@ def assessment_json(group_json, page_json, campaign_json):
 @pytest.fixture
 def group_json(target_json):
     """Returns a Group JSON"""
-    group_string = json.dumps({"name": "RVXXX1-G1", "targets": target_json,})
+    group_string = json.dumps({"name": "RVXXX1-G1", "targets": target_json})
     return json.loads(group_string)
 
 

@@ -1,0 +1,64 @@
+{
+    "id": "RVXXX1",
+    "timezone": "US/Eastern",
+    "domain": "bad.domain",
+    "target_domain": "domain.test",
+    "start_date": "01/01/2025 13:00",
+    "end_date": "01/06/2025 19:00",
+    "groups":[{
+        "name": "RVXXX1-G1",
+        "targets": [
+            {
+                "first_name": "John",
+                "last_name": "Doe",
+                "email": "john.doe@domain.test",
+                "position": "IT"
+            },
+            {
+                "first_name": "Jane",
+                "last_name": "Smith",
+                "email": "jane.smith@domain.test",
+                "position": "HR"
+            }
+        ]
+	}
+    ],
+    "pages": [{
+        "name": "RVXXX1-1-AutoForward",
+        "capture_credentials": true,
+        "capture_passwords": false,
+        "html": "<html>Test</html>",
+        "redirect_url": "http://domain.tld/page"
+        },
+        {
+        "name": "RVXXX1-2-AutoForward",
+        "capture_credentials": true,
+        "capture_passwords": false,
+        "html": "<html>Test</html>",
+        "redirect_url": "http://other_domain.tld/page"
+        }
+    ],
+    "campaigns": [
+        {
+            "name": "RVXXX1-C1",
+            "launch_date": "01/01/2025 13:00",
+            "completed_date": "01/01/2025 14:00",
+            "url": "http://bad.domain/camp1",
+            "group_name": "RVXX1-G1",
+            "page_name": "RVXXX1-1-AutoForward",
+            "template": {
+                "name": "RVXXX1-T1-ID",
+                "subject": "Campaign 1",
+                "html": "<html>Body Test</html>",
+                "text": "Body Test"
+            },
+            "smtp":{
+                "name": "RVXXX1-SP",
+                "from_address": "Camp1 Phish<camp1.phish@bad.domain>",
+                "host": "postfix:1025",
+                "interface_type": "SMTP",
+                "ignore_cert": true
+            }
+        }
+    ]
+}

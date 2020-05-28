@@ -24,5 +24,5 @@ def connect_api(api_key, server):
     except ConnectionError:
         raise Exception(f"Networking Error, unable to reach GoPhish.")
 
-    except Exception as e:
+    except Exception:
         raise Exception(f"Cannot connect to GoPhish.")

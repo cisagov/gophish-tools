@@ -1,7 +1,5 @@
-import pytest
-
 # Inter-project
-from pca.tests.conftest import *
+from tests.conftest import *
 
 
 class TestParse:
