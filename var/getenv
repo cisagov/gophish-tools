@@ -19,5 +19,10 @@ do
   echo alias $f=\"docker run -it --rm --volume \\\`pwd\\\`:/home/pca \\\"\\\${PCA_CON_IMAGE:-pca-assessment}\\\" $f\"
 done
 
+for f in gophish-*
+do
+  echo alias $f=\"docker run -it --rm --volume \\\`pwd\\\`:/home/pca \\\"\\\${PCA_CON_IMAGE:-pca-assessment}\\\" $f\"
+done
+
 # create an alias to start bash in the container
 echo alias pca-assessment-bash=\"docker run -it --rm --volume \\\`pwd\\\`:/home/pca \\\"\\\${PCA_CON_IMAGE:-pca-assessment}\\\" /bin/bash\"
