@@ -43,7 +43,7 @@ campaigns: List of Campaigns, one example included
         {
             name: String indicating SMTP Profile in format "{RV Number}-SP-{Campaign Number}",
             from_address: String email address with display name as format "{Display Name}<{Sending Email Address}>",
-            host: String that will default to "postfix:1025"
+            host: String that will default to "postfix:587"
             interface_type: String that will default to "SMTP"
             "ignore_cert": Boolean that will default to  True
         }

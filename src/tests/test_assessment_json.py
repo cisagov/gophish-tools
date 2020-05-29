@@ -32,7 +32,7 @@ class TestPlainAssessment:
     ]
 
     prompt_values = [
-        ["SMTP Host", "postfix:1025"],
+        ["SMTP Host", "postfix:587"],
         ["Campaign 1 Url- 152", "bad.domain/camp1"],
     ]
 
