@@ -211,7 +211,7 @@ def review_campaign(campaign):
                     completer=completer,
                     validator=BlankInputValidator(),
                 ).lower()
-                if update_key.lower() not in ["smtp", "template"]:
+                if update_key not in ["smtp", "template"]:
                     try:
                         update_value = prompt(
                             "{}: ".format(update_key),
@@ -262,10 +262,15 @@ def select_group(assessment):
         logging.info("Group auto set to {}".format(assessment.groups[0].name))
         group_name = assessment.groups[0].name
     else:  # Allows user to choose from multiple groups;
-        display_list_groups(assessment)
-        group_name = assessment.groups[
-            get_number("    Select Group for this Campaign?") - 1
-        ].name
+        while True:
+            try:
+                display_list_groups(assessment)
+                group_name = assessment.groups[
+                    get_number("    Select Group for this Campaign?") - 1
+                ].name
+                break
+            except IndexError:
+                logging.error("ERROR: Invalid selection, try again.")
 
     return group_name
 
@@ -276,11 +281,16 @@ def select_page(assessment):
         logging.info("Page auto set to {}".format(assessment.pages[0].name))
         page_name = assessment.pages[0].name
     else:  # Allows user to choose from multiple groups;
-        print("\n")
-        display_list_pages(assessment)
-        page_name = assessment.pages[
-            get_number("    Select the Page for this Campaign?") - 1
-        ].name
+        while True:
+            try:
+                print("\n")
+                display_list_pages(assessment)
+                page_name = assessment.pages[
+                    get_number("    Select the Page for this Campaign?") - 1
+                ].name
+                break
+            except IndexError:
+                logging.error("ERROR: Invalid selection, try again.")
 
     return page_name
 
