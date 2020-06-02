@@ -122,7 +122,8 @@ setup(
             "gophish-import = tools.gophish_import:main",
             "gophish-test = tools.gophish_test:main",
             "gophish-cleaner = tools.gophish_cleaner:main",
-            "pca-assessment-builder= assessment.builder:main",
+            "pca-wizard= assessment.builder:main",
+            "pca-wizard-templates= templates.generate_template:main",
             "pca-assessment-reschedule = assessment.reschedule:main",
         ]
     },
