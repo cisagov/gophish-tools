@@ -2,9 +2,9 @@
 """GoPhish import loads a JSON File containing a full assessment into GoPhish.
 
 Usage:
-  tools-import [--log-level=LEVEL] [--Debug] [--reschedule] ASSESSMENT_ID SERVER API_KEY
-  tools-import (-h | --help)
-  tools-import --version
+  gophish-import [--log-level=LEVEL] [--reschedule] ASSESSMENT_ID SERVER API_KEY
+  gophish-import (-h | --help)
+  gophish-import --version
 
 Options:
   ASSESSMENT_ID  --> Assessment ID
@@ -22,14 +22,11 @@ Options:
 # Standard Python Libraries
 import json
 import logging
-import pdb
 
 # Third-Party Libraries
 from docopt import docopt
 import requests
-from gophish import Gophish
 from gophish.models import *
-import pytz
 
 # Inter-project
 from tools.connect import connect_api
@@ -38,20 +35,6 @@ args = docopt(__doc__, version="v0.0")
 
 # Suppress Insecure Request waring.
 requests.packages.urllib3.disable_warnings()
-
-def convert_time(
-    time,
-    start_zone,
-    end_zone="UTC",
-    in_format="%m/%d/%Y %H:%M",
-    out_format="%Y-%m-%dT%H:%M",
-):
-    start_zone = pytz.timezone(start_zone)
-    working_time = datetime.strptime(time, in_format)
-    datetime_with_tz = start_zone.localize(working_time)
-    final_time = datetime_with_tz.astimezone(pytz.timezone(end_zone))
-
-    return final_time.strftime(out_format)
 
 
 def load_landings(api, assessment):
@@ -250,14 +233,8 @@ def build_campaigns(api, assessment):
                     template=new_template,
                     smtp=new_smtp,
                     url=campaign["url"],
-                    launch_date=convert_time(
-                        campaign["launch_date"], assessment["timezone"]
-                    )
-                    + ":00Z",
-                    completed_date=convert_time(
-                        campaign["complete_date"], assessment["timezone"]
-                    )
-                    + ":00Z",
+                    launch_date=campaign["launch_date"],
+                    completed_date=campaign["complete_date"],
                 )
             )
         except Exception as e:
@@ -268,9 +245,6 @@ def build_campaigns(api, assessment):
 
 
 def main():
-    """Drops user into pdb to set breakpoints."""
-    if args["--Debug"]:
-        pdb.set_trace()
 
     """Set up logging and call the example function."""
     # Set up logging

@@ -112,7 +112,7 @@ def smtp_json():
         """{
         "name": "RVXXX1-SP",
         "from_address": "Camp1 Phish<camp1.phish@bad.domain>",
-        "host": "postfix:1025",
+        "host": "postfix:587",
         "interface_type": "SMTP",
         "ignore_cert": true
     }"""
@@ -153,7 +153,7 @@ def smtp_object():
     return SMTP(
         name="RVXXX1-SP",
         from_address="Camp1 Phish<camp1.phish@bad.domain>",
-        host="postfix:1025",
+        host="postfix:587",
         interface_type="SMTP",
         ignore_cert=True,
     )

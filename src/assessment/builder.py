@@ -2,15 +2,14 @@
 """PCA Assessment Builder to create JSON File
 
 Usage:
-  src-builder [--log-level=LEVEL] [--Debug] ASSESSMENT_ID
-  src-builder (-h | --help)
-  src-builder --version
+  pca-assessment-builder [--log-level=LEVEL] ASSESSMENT_ID
+  pca-assessment-builder (-h | --help)
+  pca-assessment-builder --version
 
 Options:
   ASSESSMENT_ID     --> Assessment ID
   -h --help      Show this screen.
   --version      Show version.
-  -D --Debug     Enters users into pdb.
   -l --log-level=LEVEL      If specified, then the log level will be set to
                             the specified value.  Valid values are "debug", "info",
                             "warning", "error", and "critical". [default: info]
@@ -23,7 +22,6 @@ import json
 from prompt_toolkit import prompt
 from prompt_toolkit.shortcuts import radiolist_dialog, message_dialog
 from prompt_toolkit.completion import WordCompleter
-import pdb
 
 # Third-Party Libraries
 from docopt import docopt
@@ -102,9 +100,7 @@ def build_assessment():
     assessment = Assessment(id=args["ASSESSMENT_ID"], timezone=set_time_zone())
 
     # Uses prompt to set Assessment and target domains while not allowing blank input
-    assessment.domain = get_input(
-        "    Assessment Domain (http://subdomain.domain.tld):"
-    )
+    assessment.domain = get_input("    Assessment Domain (subdomain.domain.tld):")
     assessment.target_domains = (
         get_input("    Targeted domain(s) separated by spaces:").lower().split(" ")
     )
@@ -163,7 +159,9 @@ def build_campaigns(assessment, campaign_number, template_smtp):
     campaign.page_name = select_page(assessment)
 
     campaign.url = prompt(
-        "    Campaign URL: ", default=assessment.domain, validator=BlankInputValidator()
+        "    Campaign URL: ",
+        default="http://" + assessment.domain,
+        validator=BlankInputValidator(),
     )
 
     campaign = review_campaign(campaign)
@@ -179,6 +177,7 @@ def review_campaign(campaign):
     while True:
         print("\n")
 
+        # Outputs relevent fields except Email Template.
         for field, value in campaign_dict.items():
             if field in [
                 "launch_date",
@@ -197,13 +196,11 @@ def review_campaign(campaign):
                             smtp_key.replace("_", " ").title(), smtp_value
                         )
                     )
-            elif field == "template":
-                print("Template: ")
-                for template_key, template_value in campaign_dict["template"].items():
-                    print("\t{}: {}".format(template_key, template_value))
 
         if yes_no_prompt("\nChanges Required") == "yes":
-            completer = WordCompleter(campaign_dict.keys(), ignore_case=True)
+            completer = WordCompleter(
+                campaign_dict.keys().remove("template"), ignore_case=True
+            )
             # Loops to get valid Field name form user.
             while True:
                 update_key = prompt(
@@ -211,7 +208,7 @@ def review_campaign(campaign):
                     completer=completer,
                     validator=BlankInputValidator(),
                 ).lower()
-                if update_key.lower() not in ["smtp", "template"]:
+                if update_key != "smtp":
                     try:
                         update_value = prompt(
                             "{}: ".format(update_key),
@@ -262,10 +259,15 @@ def select_group(assessment):
         logging.info("Group auto set to {}".format(assessment.groups[0].name))
         group_name = assessment.groups[0].name
     else:  # Allows user to choose from multiple groups;
-        display_list_groups(assessment)
-        group_name = assessment.groups[
-            get_number("    Select Group for this Campaign?") - 1
-        ].name
+        while True:
+            try:
+                display_list_groups(assessment)
+                group_name = assessment.groups[
+                    get_number("    Select Group for this Campaign?") - 1
+                ].name
+                break
+            except IndexError:
+                logging.error("ERROR: Invalid selection, try again.")
 
     return group_name
 
@@ -276,11 +278,16 @@ def select_page(assessment):
         logging.info("Page auto set to {}".format(assessment.pages[0].name))
         page_name = assessment.pages[0].name
     else:  # Allows user to choose from multiple groups;
-        print("\n")
-        display_list_pages(assessment)
-        page_name = assessment.pages[
-            get_number("    Select the Page for this Campaign?") - 1
-        ].name
+        while True:
+            try:
+                print("\n")
+                display_list_pages(assessment)
+                page_name = assessment.pages[
+                    get_number("    Select the Page for this Campaign?") - 1
+                ].name
+                break
+            except IndexError:
+                logging.error("ERROR: Invalid selection, try again.")
 
     return page_name
 
@@ -592,14 +599,15 @@ def build_pages(id_):
 
 
 def review_page(page):
-    # TODO Improve how to edit larger fields.
     # Loops until not changes are required.
     while True:
         print("\n")
+        page_keys = list()
         for key, value in page.as_dict().items():
-            print("{}: {}".format(key, value))
+            if key != "html":
+                print("{}: {}".format(key, value))
+                page_keys.append(key)
         if yes_no_prompt("Changes Required") == "yes":
-            page_keys = list(page.as_dict().keys())
             completer = WordCompleter(page_keys, ignore_case=True)
 
             # Loops to get valid Field name form user.
@@ -627,10 +635,6 @@ def review_page(page):
 
 
 def main():
-    """Drops user into pdb to set breakpoints."""
-    if args["--Debug"]:
-        pdb.set_trace()
-
     """Set up logging and call the example function."""
     # Set up logging
     log_level = args["--log-level"]

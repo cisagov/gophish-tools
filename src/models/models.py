@@ -176,7 +176,7 @@ class SMTP(Model):
         "name": None,
         "from_address": None,
         "password": None,
-        "host": "postfix:1025",
+        "host": "postfix:587",
         "interface_type": "SMTP",
         "ignore_cert": True,
     }
