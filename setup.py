@@ -117,12 +117,13 @@ setup(
     # Conveniently allows one to run the CLI tool as `example`
     entry_points={
         "console_scripts": [
-            "pca-assessment-builder= assessment.builder:main",
-            "pca-assessment-reschedule = assessment.reschedule:main",
-            "gophish-import = tools.gophish_import:main",
             "gophish-complete = tools.gophish_complete:main",
             "gophish-export = tools.gophish_export:main",
+            "gophish-import = tools.gophish_import:main",
+            "gophish-test = tools.gophish_test:main",
             "gophish-cleaner = tools.gophish_cleaner:main",
+            "pca-assessment-builder= assessment.builder:main",
+            "pca-assessment-reschedule = assessment.reschedule:main",
         ]
     },
 )

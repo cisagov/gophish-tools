@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-'''GoPhish Cleaner for a Phishing Campaign Assessment (PCA)
+"""GoPhish Cleaner for a Phishing Campaign Assessment (PCA)
 
 Usage:
-  gophish-cleaner [--assessment | --campaigns | --smtp | --pages | --groups | --templates] [--log-level=LEVEL] ASSESSMENT_ID SERVER API_KEY
+  gophish-cleaner (--assessment | --campaigns | --smtp | --pages | --groups | --templates) [--log-level=LEVEL] ASSESSMENT_ID SERVER API_KEY
   gophish-cleaner (-h | --help)
   gophish-cleaner --version
 
@@ -22,7 +22,7 @@ Options:
   -l --log-level=LEVEL      If specified, then the log level will be set to
                             the specified value.  Valid values are "debug", "info",
                             "warning", "error", and "critical". [default: info]
-'''
+"""
 
 # import IPython; IPython.embed() #<<< BREAKPOINT >>>
 # sys.exit(0)
@@ -34,7 +34,7 @@ import logging
 
 from tools.connect import connect_api
 
-args = docopt(__doc__, version='v0.1')
+args = docopt(__doc__, version="v0.1")
 
 # Support Insecure Request waring.
 requests.packages.urllib3.disable_warnings()
@@ -43,11 +43,19 @@ requests.packages.urllib3.disable_warnings()
 def confirm_id(element, assessment_id):
     while True:
         if element != "assessment":
-            logging.warning("NOTE: THIS WILL REMOVE ALL {} DATA ASSOCIATED WITH ASSESSMENT {}".format(element.upper(), assessment_id))
+            logging.warning(
+                "NOTE: THIS WILL REMOVE ALL {} DATA ASSOCIATED WITH ASSESSMENT {}".format(
+                    element.upper(), assessment_id
+                )
+            )
             confirm = input("Is this really want you want to do?(y/n) ")
 
         else:
-            logging.warning("NOTE: THIS WILL REMOVE ALL DATA ASSOCIATED WITH ASSESSMENT {}".format(assessment_id))
+            logging.warning(
+                "NOTE: THIS WILL REMOVE ALL DATA ASSOCIATED WITH ASSESSMENT {}".format(
+                    assessment_id
+                )
+            )
             confirm = input("Is this really want you want to do?(y/n) ")
 
         if confirm.lower() == "y":
@@ -58,7 +66,13 @@ def confirm_id(element, assessment_id):
 
 
 def remove_assessment(api, assessment_id):
-    if not remove_campaigns(api, assessment_id) or not remove_smtp(api, assessment_id) or not remove_group(api, assessment_id) or not remove_template(api, assessment_id) or not remove_page(api, assessment_id):
+    if (
+        not remove_campaigns(api, assessment_id)
+        or not remove_smtp(api, assessment_id)
+        or not remove_group(api, assessment_id)
+        or not remove_template(api, assessment_id)
+        or not remove_page(api, assessment_id)
+    ):
         success = False
 
     else:
@@ -129,15 +143,16 @@ def main():
     except ValueError:
         logging.critical(
             '"{}"is not a valid logging level.  Possible values are debug, info, warning, and error.'.format(
-                log_level)
+                log_level
+            )
         )
         return 1
 
     else:
         # Connect to API
         try:
-            api = connect_api(args['API_KEY'], args['SERVER'])
-            logging.debug("Connected to: {}".format(args['SERVER']))
+            api = connect_api(args["API_KEY"], args["SERVER"])
+            logging.debug("Connected to: {}".format(args["SERVER"]))
         except Exception as e:
             logging.critical(print(e.args[0]))
             sys.exit(1)
@@ -163,12 +178,11 @@ def main():
         success = remove_assessment(api, assessment_id)
 
     else:
-        logging.critical("PLEASE CHECK ARGUMENTS")
         success = False
 
     if not success:
         sys.exit(-1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
