@@ -28,7 +28,6 @@ import pdb
 from docopt import docopt
 import requests
 from gophish.models import *
-import pytz
 
 # Inter-project
 from tools.connect import connect_api
@@ -37,21 +36,6 @@ args = docopt(__doc__, version="v0.0")
 
 # Suppress Insecure Request waring.
 requests.packages.urllib3.disable_warnings()
-
-
-def convert_time(
-    time,
-    start_zone,
-    end_zone="UTC",
-    in_format="%m/%d/%Y %H:%M",
-    out_format="%Y-%m-%dT%H:%M",
-):
-    start_zone = pytz.timezone(start_zone)
-    working_time = datetime.strptime(time, in_format)
-    datetime_with_tz = start_zone.localize(working_time)
-    final_time = datetime_with_tz.astimezone(pytz.timezone(end_zone))
-
-    return final_time.strftime(out_format)
 
 
 def load_landings(api, assessment):
@@ -250,14 +234,8 @@ def build_campaigns(api, assessment):
                     template=new_template,
                     smtp=new_smtp,
                     url=campaign["url"],
-                    launch_date=convert_time(
-                        campaign["launch_date"], assessment["timezone"]
-                    )
-                    + ":00Z",
-                    completed_date=convert_time(
-                        campaign["complete_date"], assessment["timezone"]
-                    )
-                    + ":00Z",
+                    launch_date=campaign["launch_date"],
+                    completed_date=campaign["complete_date"],
                 )
             )
         except Exception as e:

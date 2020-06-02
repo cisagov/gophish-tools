@@ -1,13 +1,17 @@
 __all__ = ["yes_no_prompt", "get_input", "get_number", "get_time_input"]
 
+
+# Standard Python Libraries
+from datetime import datetime
+import logging
+
+# Third-Party Libraries
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import WordCompleter
-from datetime import datetime
+import pytz
 
 # Inter-Project
 from util.validate import *
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +44,22 @@ def get_number(msg):
 
 # Gets time from user and confirms formatting
 def get_time_input(type_, time_zone, default=""):
+    """Gets time input with time_zone and converts
+
+    Utility for getting time input for a specific date type (start/end)
+    in a specific timzone. Once received, input is validated and converted
+    to ISO format.
+
+    Arguments:
+        type_ {str} -- Indiateds the date, start or complete genearly.
+        time_zone {str} --  pytz timezone in a string
+
+    Keyword Arguments:
+        default {str} -- Default value to pre-populate user input (default: {""})
+
+    Returns:
+        str -- String ISO representation of provided time in UTC.
+    """
     while True:
         try:
             input_time = get_input(
@@ -53,4 +73,5 @@ def get_time_input(type_, time_zone, default=""):
         except ValueError:
             logging.error("Invalid time input: {}".format(input_time))
 
-    return input_time.strftime("%m/%d/%Y %H:%M")
+    # Convert time to ISO format to be returned.
+    return pytz.timezone(time_zone).localize(input_time).isoformat()
