@@ -2,7 +2,7 @@
 """PCA Assessment Reschedule to adjust scheduling in the PCA JSON File
 
 Usage:
-  pca-assessment-reschedule [--log-level=LEVEL] [--Debug] ASSESSMENT_ID
+  pca-assessment-reschedule [--log-level=LEVEL] ASSESSMENT_ID
   pca-assessment-reschedule (-h | --help)
   pca-assessment-reschedule --version
 
@@ -18,13 +18,12 @@ Options:
 # Standard Python Libraries
 import logging
 import json
-import pdb
 
 # Third-Party Libraries
 from docopt import docopt
 
 # Inter-project
-from models import *
+from models import Assessment
 from util.input import *
 from util.set_date import set_date
 
@@ -89,9 +88,6 @@ def reschedule(assessment):
 
 
 def main():
-    """Drops user into pdb to set breakpoints."""
-    if args["--Debug"]:
-        pdb.set_trace()
 
     """Set up logging and call the example function."""
     # Set up logging

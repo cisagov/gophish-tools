@@ -2,7 +2,7 @@
 """GoPhish import loads a JSON File containing a full assessment into GoPhish.
 
 Usage:
-  gophish-import [--log-level=LEVEL] [--Debug] [--reschedule] ASSESSMENT_ID SERVER API_KEY
+  gophish-import [--log-level=LEVEL] [--reschedule] ASSESSMENT_ID SERVER API_KEY
   gophish-import (-h | --help)
   gophish-import --version
 
@@ -22,7 +22,6 @@ Options:
 # Standard Python Libraries
 import json
 import logging
-import pdb
 
 # Third-Party Libraries
 from docopt import docopt
@@ -246,9 +245,6 @@ def build_campaigns(api, assessment):
 
 
 def main():
-    """Drops user into pdb to set breakpoints."""
-    if args["--Debug"]:
-        pdb.set_trace()
 
     """Set up logging and call the example function."""
     # Set up logging
