@@ -103,7 +103,7 @@ def build_assessment():
 
     # Uses prompt to set Assessment and target domains while not allowing blank input
     assessment.domain = get_input(
-        "    Assessment Domain (http://subdomain.domain.tld):"
+        "    Assessment Domain (subdomain.domain.tld):"
     )
     assessment.target_domains = (
         get_input("    Targeted domain(s) separated by spaces:").lower().split(" ")
@@ -163,7 +163,7 @@ def build_campaigns(assessment, campaign_number, template_smtp):
     campaign.page_name = select_page(assessment)
 
     campaign.url = prompt(
-        "    Campaign URL: ", default=assessment.domain, validator=BlankInputValidator()
+        "    Campaign URL: ", default="http://" + assessment.domain, validator=BlankInputValidator()
     )
 
     campaign = review_campaign(campaign)
