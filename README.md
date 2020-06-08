@@ -1,10 +1,10 @@
-# skeleton-python-library #
+# gophish-tools #
 
-[![GitHub Build Status](https://github.com/cisagov/skeleton-python-library/workflows/build/badge.svg)](https://github.com/cisagov/skeleton-python-library/actions)
-[![Coverage Status](https://coveralls.io/repos/github/cisagov/skeleton-python-library/badge.svg?branch=develop)](https://coveralls.io/github/cisagov/skeleton-python-library?branch=develop)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/cisagov/skeleton-python-library.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/skeleton-python-library/alerts/)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/cisagov/skeleton-python-library.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/skeleton-python-library/context:python)
-[![Known Vulnerabilities](https://snyk.io/test/github/cisagov/skeleton-python-library/develop/badge.svg)](https://snyk.io/test/github/cisagov/skeleton-python-library)
+[![GitHub Build Status](https://github.com/cisagov/gophish-tools/workflows/build/badge.svg)](https://github.com/cisagov/gophish-tools/actions)
+[![Coverage Status](https://coveralls.io/repos/github/cisagov/gophish-tools/badge.svg?branch=develop)](https://coveralls.io/github/cisagov/gophish-tools?branch=develop)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/cisagov/gophish-tools.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/gophish-tools/alerts/)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/cisagov/gophish-tools.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/gophish-tools/context:python)
+[![Known Vulnerabilities](https://snyk.io/test/github/cisagov/gophish-tools/develop/badge.svg)](https://snyk.io/test/github/cisagov/gophish-tools)
 
 This is a generic skeleton project that can be used to quickly get a
 new [cisagov](https://github.com/cisagov) Python library GitHub
