@@ -103,7 +103,7 @@ setup(
             "pytest",
         ]
     },
-    # Conveniently allows one to run the CLI tool as `example`
+    # Conveniently allows one to run the CLI tools
     entry_points={
         "console_scripts": [
             "gophish-complete = tools.gophish_complete:main",
@@ -111,8 +111,8 @@ setup(
             "gophish-import = tools.gophish_import:main",
             "gophish-test = tools.gophish_test:main",
             "gophish-cleaner = tools.gophish_cleaner:main",
-            "pca-wizard= assessment.builder:main",
-            "pca-wizard-templates= templates.generate_template:main",
+            "pca-wizard = assessment.builder:main",
+            "pca-wizard-templates = templates.generate_template:main",
             "pca-assessment-reschedule = assessment.reschedule:main",
         ]
     },
