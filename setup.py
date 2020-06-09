@@ -72,20 +72,12 @@ setup(
     include_package_data=True,
     install_requires=[
         "docopt >= 0.6.2",
+        "gophish >= 0.2.5",
+        "httpagentparser",
         "prompt-toolkit == 2.0.9",
         "pytz >= 2019.1",
-        "httpagentparser",
-        "setuptools >= 24.2.0",
         "schema",
-        # GoPhish Requirements
-        "appdirs>=1.4.0",
-        "packaging==16.8",
-        "pyparsing==2.1.10",
-        "python-dateutil==2.6.0",
-        "requests>=2.20.0",
-        "six==1.10.0",
-        # Script Requirements
-        "gophish >= 0.2.5",
+        "setuptools >= 24.2.0",
     ],
     extras_require={
         "test": [
