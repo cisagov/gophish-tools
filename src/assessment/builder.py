@@ -7,9 +7,9 @@ Usage:
   pca-assessment-builder --version
 
 Options:
-  ASSESSMENT_ID     --> Assessment ID
-  -h --help      Show this screen.
-  --version      Show version.
+  ASSESSMENT_ID             Assessment ID.
+  -h --help                 Show this message.
+  --version                 Show version.
   -l --log-level=LEVEL      If specified, then the log level will be set to
                             the specified value.  Valid values are "debug", "info",
                             "warning", "error", and "critical". [default: info]
