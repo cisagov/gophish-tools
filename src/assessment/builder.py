@@ -19,6 +19,7 @@ import copy
 import csv
 import json
 import logging
+from typing import Dict
 
 # Third-Party Libraries
 from docopt import docopt
@@ -48,7 +49,7 @@ from util.validate import (
     validate_email,
 )
 
-args = docopt(__doc__, version="v0.0")
+from ._version import __version__
 
 AUTO_FORWARD = """
                 <html>
@@ -107,14 +108,14 @@ def display_list_pages(assessment):
     print("\n")
 
 
-def build_assessment():
+def build_assessment(assessment_id):
     """Walk user through building a new assessment document.
 
     :return an assessment object
     """
     logging.info("Building Assessment")
     # Initializes assessment object with ID and timezone
-    assessment = Assessment(id=args["ASSESSMENT_ID"], timezone=set_time_zone())
+    assessment = Assessment(id=assessment_id, timezone=set_time_zone())
 
     # Uses prompt to set Assessment and target domains while not allowing blank input
     assessment.domain = get_input("    Assessment Domain (subdomain.domain.tld):")
@@ -664,6 +665,8 @@ def review_page(page):
 
 def main():
     """Set up logging and call the build_assessments function."""
+    args: Dict[str, str] = docopt(__doc__, version=__version__)
+
     # Set up logging
     log_level = args["--log-level"]
     try:
@@ -678,7 +681,7 @@ def main():
         )
         return 1
 
-    assessment = build_assessment()
+    assessment = build_assessment(args["ASSESSMENT_ID"])
 
     with open(f"{assessment.id}.json", "w") as fp:
         json.dump(assessment.as_dict(), fp, indent=4)
