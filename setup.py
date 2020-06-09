@@ -93,6 +93,7 @@ setup(
             "pytest-cov",
             "mock",
             "pytest",
+            "pytest-mock",
         ]
     },
     # Conveniently allows one to run the CLI tools
