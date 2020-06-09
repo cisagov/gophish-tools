@@ -89,7 +89,7 @@ def reschedule(assessment):
 
 
 def main():
-    """Set up logging and call the example function."""
+    """Set up logging and call the reschedule function."""
     # Set up logging
     log_level = args["--log-level"]
     try:

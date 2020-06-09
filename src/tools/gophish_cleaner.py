@@ -148,7 +148,7 @@ def remove_template(api, assessment_id):
 
 
 def main():
-    """Set up logging and call the example function."""
+    """Set up logging, connect to API, remove assessment data."""
     # Set up logging
     log_level = args["--log-level"]
     try:

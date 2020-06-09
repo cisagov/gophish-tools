@@ -131,7 +131,7 @@ def print_summary(api, workingID):
 
 
 def main():
-    """Set up logging and call the example function."""
+    """Set up logging, connect to API, call requested function(s)."""
     # Set up logging
     log_level = args["--log-level"]
     try:
