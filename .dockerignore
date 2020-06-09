@@ -1,0 +1,8 @@
+*.csv
+*.json
+*.txt
+.*
+.git*
+.idea
+__pycache__
+pca_assessment/tests/data

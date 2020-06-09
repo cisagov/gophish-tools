@@ -1,0 +1,66 @@
+{
+  "campaigns": [
+    {
+      "completed_date": "01/01/2025 14:00",
+      "group_name": "RVXX1-G1",
+      "launch_date": "01/01/2025 13:00",
+      "name": "RVXXX1-C1",
+      "page_name": "RVXXX1-1-AutoForward",
+      "smtp": {
+        "from_address": "Camp1 Phish<camp1.phish@bad.domain>",
+        "host": "postfix:587",
+        "ignore_cert": true,
+        "interface_type": "SMTP",
+        "name": "RVXXX1-SP"
+      },
+      "template": {
+        "html": "<html>Body Test</html>",
+        "name": "RVXXX1-T1-ID",
+        "subject": "Campaign 1",
+        "text": "Body Test"
+      },
+      "url": "http://bad.domain/camp1"
+    }
+  ],
+  "domain": "bad.domain",
+  "end_date": "01/06/2025 19:00",
+  "groups": [
+    {
+      "name": "RVXXX1-G1",
+      "targets": [
+        {
+          "email": "john.doe@domain.test",
+          "first_name": "John",
+          "last_name": "Doe",
+          "position": "IT"
+        },
+        {
+          "email": "jane.smith@domain.test",
+          "first_name": "Jane",
+          "last_name": "Smith",
+          "position": "HR"
+        }
+      ]
+    }
+  ],
+  "id": "RVXXX1",
+  "pages": [
+    {
+      "capture_credentials": true,
+      "capture_passwords": false,
+      "html": "<html>Test</html>",
+      "name": "RVXXX1-1-AutoForward",
+      "redirect_url": "http://domain.tld/page"
+    },
+    {
+      "capture_credentials": true,
+      "capture_passwords": false,
+      "html": "<html>Test</html>",
+      "name": "RVXXX1-2-AutoForward",
+      "redirect_url": "http://other_domain.tld/page"
+    }
+  ],
+  "start_date": "01/01/2025 13:00",
+  "target_domain": "domain.test",
+  "timezone": "US/Eastern"
+}

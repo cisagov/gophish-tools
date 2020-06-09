@@ -6,13 +6,38 @@
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/cisagov/gophish-tools.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/gophish-tools/context:python)
 [![Known Vulnerabilities](https://snyk.io/test/github/cisagov/gophish-tools/develop/badge.svg)](https://snyk.io/test/github/cisagov/gophish-tools)
 
-This is a generic skeleton project that can be used to quickly get a
-new [cisagov](https://github.com/cisagov) Python library GitHub
-project started.  This skeleton project contains [licensing
-information](LICENSE), as well as
-[pre-commit hooks](https://pre-commit.com) and
-[GitHub Actions](https://github.com/features/actions) configurations
-appropriate for a Python library project.
+This repository contains a set of tools that can be used by phishing
+campaign assessors to simplify the process of managing GoPhish campaigns.
+
+## Usage ##
+
+### PCA Assessment Docker ###
+
+A python Docker utility for team leads to produce a JSON file containing all
+configurations to run a CISA Phishing Campaign Assessment (PCA).
+
+The PCA Assessment commands implemented in the docker container can be
+aliased into the host environment by using the procedure below.
+
+Alias the container commands to the local environment:
+
+```console
+eval "$(docker run pca-assessment)"
+```
+
+To run a GoPhish Control command:
+
+```console
+pca-assessment-builder -h
+```
+
+### Building the pca-assessment container ###
+
+To build the Docker container for pca-assessment:
+
+```console
+docker build -t pca-assessment .
+```
 
 ## Contributing ##
 

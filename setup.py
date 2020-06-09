@@ -1,5 +1,5 @@
 """
-This is the setup module for the example project.
+This is the setup module for the gophish-tools project.
 
 Based on:
 
@@ -31,10 +31,10 @@ def package_vars(version_file):
 
 
 setup(
-    name="example",
+    name="GoPhish Tools",
     # Versions should comply with PEP440
-    version=package_vars("src/example/_version.py")["__version__"],
-    description="Example python library",
+    version=package_vars("src/assessment/_version.py")["__version__"],
+    description="Helpful tools for interacting with GoPhish",
     long_description=readme(),
     long_description_content_type="text/markdown",
     # NCATS "homepage"
@@ -59,19 +59,34 @@ setup(
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     # What does your project relate to?
-    keywords="skeleton",
+    keywords="gophish automation",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
-    package_data={"example": ["data/*.txt"]},
+    # package_data={"": extra_files},
     py_modules=[splitext(basename(path))[0] for path in glob("src/*.py")],
     include_package_data=True,
-    install_requires=["docopt", "setuptools >= 24.2.0", "schema"],
+    install_requires=[
+        "docopt >= 0.6.2",
+        "prompt-toolkit == 2.0.9",
+        "pytz >= 2019.1",
+        "httpagentparser",
+        "setuptools >= 24.2.0",
+        "schema",
+        # GoPhish Requirements
+        "appdirs>=1.4.0",
+        "packaging==16.8",
+        "pyparsing==2.1.10",
+        "python-dateutil==2.6.0",
+        "requests>=2.20.0",
+        "six==1.10.0",
+        # Script Requirements
+        "gophish >= 0.2.5",
+    ],
     extras_require={
         "test": [
             "pre-commit",
@@ -84,9 +99,21 @@ setup(
             "coveralls != 1.11.0",
             "coverage",
             "pytest-cov",
+            "mock",
             "pytest",
         ]
     },
     # Conveniently allows one to run the CLI tool as `example`
-    entry_points={"console_scripts": ["example = example.example:main"]},
+    entry_points={
+        "console_scripts": [
+            "gophish-complete = tools.gophish_complete:main",
+            "gophish-export = tools.gophish_export:main",
+            "gophish-import = tools.gophish_import:main",
+            "gophish-test = tools.gophish_test:main",
+            "gophish-cleaner = tools.gophish_cleaner:main",
+            "pca-wizard= assessment.builder:main",
+            "pca-wizard-templates= templates.generate_template:main",
+            "pca-assessment-reschedule = assessment.reschedule:main",
+        ]
+    },
 )
