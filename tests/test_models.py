@@ -1,3 +1,4 @@
+#!/usr/bin/env pytest -vs
 """Test for Models."""
 
 # cisagov Libraries

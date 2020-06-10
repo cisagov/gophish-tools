@@ -1,3 +1,4 @@
+#!/usr/bin/env pytest -vs
 """Test for Input."""
 
 # Third-Party Libraries

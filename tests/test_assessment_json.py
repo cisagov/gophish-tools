@@ -1,3 +1,4 @@
+#!/usr/bin/env pytest -vs
 """Tests for assessment JSON."""
 
 # cisagov Libraries
