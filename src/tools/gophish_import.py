@@ -13,7 +13,6 @@ Options:
   -h --help      Show this screen.
   --version      Show version.
   -r --reschedule     Imports a rescheduled campaign.
-  -D --Debug     Enters users into pdb.
   -l --log-level=LEVEL      If specified, then the log level will be set to
                             the specified value.  Valid values are "debug", "info",
                             "warning", "error", and "critical". [default: info]
