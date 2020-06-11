@@ -1,26 +1,26 @@
 #!/usr/bin/env python3
 
-"""PCA Wizard Template.
+"""PCA Wizard Template to be used with PCA Wizard.
 
 Usage:
-  pca-wizard-templates  --emails | --targets
+  pca-wizard-templates (--emails | --targets)
   pca-wizard-templates (-h | --help)
   pca-wizard-templates --version
 Options:
+  -e --emails   JSON file with required fields for email files.
+  -t --targets  Required format of target csv files.
   -h --help     Show this screen.
   --version     Show version.
-  Supporting Files:
-    -e --emails   JSON file with required fields email files
-    -t --targets  Required format of target emails csv
 """
 
 # Standard Python Libraries
 import json
+from typing import Dict
 
 # Third-Party Libraries
 from docopt import docopt
 
-args = docopt(__doc__, version="v2.0")
+from ._version import __version__
 
 EMAIL_TEMPLATE = {
     "id": "Database ID",
@@ -49,6 +49,8 @@ def targets_output():
 
 def main():
     """Execute either email_output() or targets_output()."""
+    args: Dict[str, str] = docopt(__doc__, version=__version__)
+
     if args["--emails"]:
         email_output()
     elif args["--targets"]:
