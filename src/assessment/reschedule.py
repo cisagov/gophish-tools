@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""PCA Assessment Reschedule to adjust scheduling in the PCA JSON File.
+"""PCA Assessment Reschedule to adjust scheduling in an assessment JSON File.
 
 Usage:
   pca-assessment-reschedule [--log-level=LEVEL] ASSESSMENT_ID
@@ -7,10 +7,9 @@ Usage:
   pca-assessment-reschedule --version
 
 Options:
-  ASSESSMENT_ID     --> Assessment ID
-  -h --help      Show this screen.
-  --version      Show version.
-  -D --Debug     Enters users into pdb.
+  ASSESSMENT_ID             Assessment ID.
+  -h --help                 Show this screen.
+  --version                 Show version.
   -l --log-level=LEVEL      If specified, then the log level will be set to
                             the specified value.  Valid values are "debug", "info",
                             "warning", "error", and "critical". [default: info]
@@ -18,6 +17,7 @@ Options:
 # Standard Python Libraries
 import json
 import logging
+from typing import Dict
 
 # Third-Party Libraries
 from docopt import docopt
@@ -27,7 +27,7 @@ from models import Assessment
 from util.input import get_number, get_time_input
 from util.set_date import set_date
 
-args = docopt(__doc__, version="v0.0")
+from ._version import __version__
 
 
 def display_assessment_dates(assessment):
@@ -90,6 +90,8 @@ def reschedule(assessment):
 
 def main():
     """Set up logging and call the reschedule function."""
+    args: Dict[str, str] = docopt(__doc__, version=__version__)
+
     # Set up logging
     log_level = args["--log-level"]
     try:
