@@ -2,23 +2,25 @@
 
 """GoPhish Cleaner for a Phishing Campaign Assessment (PCA).
 
+A tool to remove aspects of an Assessment or a campaign from GoPhish.
+
 Usage:
-  gophish-cleaner (--assessment | --campaigns | --smtp | --pages | --groups | --templates) [--log-level=LEVEL] ASSESSMENT_ID SERVER API_KEY
+  gophish-cleaner (--assessment | --campaigns | --groups | --pages | --smtp | --templates) [--log-level=LEVEL] ASSESSMENT_ID SERVER API_KEY
   gophish-cleaner (-h | --help)
   gophish-cleaner --version
 
 Options:
-  SERVER 	--> Full URL to GoPhish server
-  API_KEY 	--> API Access Key
-  ASSESSMENT_ID      Assessment ID to remove.
-  -a --assessment   Remove the entire assessment.
-  -c --campaigns   Remove only campaigns
-  -s --smtp    Remove only SMTP
-  -p --pages    Remove only pages
-  -g --groups    Remove only groups
-  -t --templates    Remove only templates
-  -h --help      Show this screen.
-  --version      Show version.
+  API_KEY                   API Access Key.
+  ASSESSMENT_ID             Assessment ID to remove.
+  SERVER                    Full URL to GoPhish server.
+  -a --assessment           Remove the entire assessment.
+  -c --campaigns            Remove only campaigns.
+  -g --groups               Remove only groups.
+  -p --pages                Remove only pages.
+  -s --smtp                 Remove only SMTP.
+  -t --templates            Remove only templates.
+  -h --help                 Show this screen.
+  --version                 Show version.
   -l --log-level=LEVEL      If specified, then the log level will be set to
                             the specified value.  Valid values are "debug", "info",
                             "warning", "error", and "critical". [default: info]
@@ -30,6 +32,7 @@ Options:
 # Standard Python Libraries
 import logging
 import sys
+from typing import Dict
 
 # Third-Party Libraries
 from docopt import docopt
@@ -38,7 +41,7 @@ import requests
 # cisagov Libraries
 from tools.connect import connect_api
 
-args = docopt(__doc__, version="v0.1")
+from ._version import __version__
 
 # Support Insecure Request waring.
 requests.packages.urllib3.disable_warnings()
@@ -149,6 +152,8 @@ def remove_template(api, assessment_id):
 
 def main():
     """Set up logging, connect to API, remove assessment data."""
+    args: Dict[str, str] = docopt(__doc__, version=__version__)
+
     # Set up logging
     log_level = args["--log-level"]
     try:

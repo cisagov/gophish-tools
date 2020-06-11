@@ -2,7 +2,7 @@
 
 """GoPhish Export tool for a Phishing Campaign Assessment (PCA).
 
-This tool will export an assessment into a single JSON file.
+This tool will export an assessment data into a single JSON file.
 
 Usage:
   gophish-export [--log-level=LEVEL] ASSESSMENT_ID SERVER API_KEY
@@ -10,10 +10,11 @@ Usage:
   gophish-export --version
 
 Options:
-  SERVER 	--> Full URL to GoPhish server
-  API_KEY 	--> API Access Key
-  -h --help      Show this screen.
-  --version      Show version.
+  API_KEY                   API Access Key.
+  ASSESSMENT_ID             Assessment ID to export.
+  SERVER                    Full URL to GoPhish server.
+  -h --help                 Show this screen.
+  --version                 Show version.
   -l --log-level=LEVEL      If specified, then the log level will be set to
                             the specified value.  Valid values are "debug", "info",
                             "warning", "error", and "critical". [default: info]
@@ -25,6 +26,7 @@ import hashlib
 import json
 import logging
 import sys
+from typing import Dict
 
 # Third-Party Libraries
 from docopt import docopt
@@ -34,21 +36,20 @@ import requests
 # cisagov Libraries
 from tools.connect import connect_api
 
-args = docopt(__doc__, version="v2.0")
+from ._version import __version__
+
 # Support Insecure Request waring.
-
-
 requests.packages.urllib3.disable_warnings()
 
 # import IPython; IPython.embed() #<<< BREAKPOINT >>>
 # sys.exit(0)    # Build dict of relevant campaign data
 
 
-def import_users(api):
+def import_users(api, assessment_id):
     """Add all users to the database."""
     # STAND ALONE
     # Pulls the group IDs for any group starting with assessment ID.
-    groupIDs = pull_gophish_groups(api, args["ASSESSMENT_ID"])
+    groupIDs = pull_gophish_groups(api, assessment_id)
 
     users = list()
 
@@ -65,15 +66,13 @@ def import_users(api):
             user["customer_defined_labels"] = dict()
 
             if "position" in target:
-                user["customer_defined_labels"][args["ASSESSMENT_ID"]] = [
-                    target["position"]
-                ]
+                user["customer_defined_labels"][assessment_id] = [target["position"]]
 
             users.append(user)
 
-        logging.info("Users for {} have been added".format(args["ASSESSMENT_ID"]))
+        logging.info("Users for {} have been added".format(assessment_id))
 
-        with open("data_" + args["ASSESSMENT_ID"] + ".json", "w") as fp:
+        with open("data_" + assessment_id + ".json", "w") as fp:
             json.dump(users, fp, indent=4)
             fp.write(",")
 
@@ -94,18 +93,18 @@ def pull_gophish_groups(api, assessment_id):
     return groups
 
 
-def campaignControl(api):
+def campaignControl(api, assessment_id):
     """Control the campaign importing of an assessment to DB."""
     # STAND ALONE
-    campaignIDs = pull_gophish_campaign(api, args["ASSESSMENT_ID"])
+    campaignIDs = pull_gophish_campaign(api, assessment_id)
     campaigns = list()
 
     for campaign_id in campaignIDs:
         campaigns.append(import_campaign(api, campaign_id))
 
-    logging.info("Successfully added campaigns for {}".format(args["ASSESSMENT_ID"]))
+    logging.info("Successfully added campaigns for {}".format(assessment_id))
 
-    with open("data_" + args["ASSESSMENT_ID"] + ".json", "a") as fp:
+    with open("data_" + assessment_id + ".json", "a") as fp:
         json.dump(campaigns, fp, indent=4)
 
     return True
@@ -238,6 +237,8 @@ def get_application(rawEvent):
 
 def main():
     """Set up logging, connect to API, export all assessment data."""
+    args: Dict[str, str] = docopt(__doc__, version=__version__)
+
     # Set up logging
     log_level = args["--log-level"]
     try:
@@ -263,8 +264,8 @@ def main():
 
     # TODO Validate that requested assessment exists.
 
-    import_users(api)
-    campaignControl(api)
+    import_users(api, args["ASSESSMENT_ID"])
+    campaignControl(api, args["ASSESSMENT_ID"])
 
     logging.info("Data written to data_{}.json".format(args["ASSESSMENT_ID"]))
 
