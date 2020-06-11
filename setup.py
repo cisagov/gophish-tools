@@ -33,7 +33,7 @@ def package_vars(version_file):
 setup(
     name="gophish-tools",
     # Versions should comply with PEP440
-    version=package_vars("src/assessment/_version.py")["__version__"],
+    version=package_vars("src/_version.py")["__version__"],
     description="Helpful tools for interacting with GoPhish",
     long_description=readme(),
     long_description_content_type="text/markdown",

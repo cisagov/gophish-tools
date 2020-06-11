@@ -1,18 +1,22 @@
 #!/usr/bin/env bash
 
-# bump_version.sh (assessment|templates|tools) (show|major|minor|patch|prerelease|build)
+# bump_version.sh (assessment|project|templates|tools) (show|major|minor|patch|prerelease|build)
 
 set -o nounset
 set -o errexit
 set -o pipefail
 
-HELP_INFORMATION="bump_version.sh (assessment|templates|tools) (show|major|minor|patch|prerelease|build|finalize)"
+HELP_INFORMATION="bump_version.sh (assessment|project|templates|tools) (show|major|minor|patch|prerelease|build|finalize)"
 
 if [ $# -ne 2 ]
 then
    echo "$HELP_INFORMATION"
 else
     case $1 in
+        project)
+            VERSION_FILE=src/_version.py
+            old_version=$(sed -n "s/^__version__ = \"\(.*\)\"$/\1/p" "$VERSION_FILE")
+          ;;
         assessment|templates|tools)
             VERSION_FILE=src/$1/_version.py
             old_version=$(sed -n "s/^__version__ = \"\(.*\)\"$/\1/p" "$VERSION_FILE")
