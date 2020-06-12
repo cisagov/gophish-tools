@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 
-"""GoPhish Cleaner for a Phishing Campaign Assessment (PCA).
-
-A tool to remove aspects of an Assessment or a campaign from GoPhish.
+"""Remove an assessment or elements of an assessment.
 
 Usage:
   gophish-cleaner (--assessment | --campaigns | --groups | --pages | --smtp | --templates) [--log-level=LEVEL] ASSESSMENT_ID SERVER API_KEY

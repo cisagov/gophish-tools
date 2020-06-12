@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""PCA Assessment Reschedule to adjust scheduling in an assessment JSON File.
+"""Modify campaign start/end dates in an assessment JSON file.
 
 Usage:
   pca-assessment-reschedule [--log-level=LEVEL] ASSESSMENT_ID

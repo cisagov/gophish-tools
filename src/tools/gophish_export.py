@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 
-"""GoPhish Export tool for a Phishing Campaign Assessment (PCA).
-
-This tool will export an assessment data into a single JSON file.
+"""Export all the data from an assessment into a single JSON file.
 
 Usage:
   gophish-export [--log-level=LEVEL] ASSESSMENT_ID SERVER API_KEY

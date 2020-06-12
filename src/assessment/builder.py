@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""PCA Wizard to create an assessment JSON file.
+"""Create an assessment JSON file.
 
 Usage:
   pca-wizard [--log-level=LEVEL] ASSESSMENT_ID

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""PCA Wizard Template to be used with PCA Wizard.
+"""Generate templates for import into an assessment JSON with the PCA Wizard.
 
 Usage:
   pca-wizard-templates (--emails | --targets)

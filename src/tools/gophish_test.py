@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""GoPhish Testing Tool for a Phishing Campaign Assessment (PCA).
+"""Send a mirror assessment to custom targets.
 
 Usage:
   gophish-test [--log-level=LEVEL] ASSESSMENT_ID SERVER API_KEY
@@ -16,6 +16,9 @@ Options:
   -l --log-level=LEVEL      If specified, then the log level will be set to
                             the specified value.  Valid values are "debug", "info",
                             "warning", "error", and "critical". [default: info]
+
+NOTE:
+  * The test assessment is immediately sent to the customer targets.
 """
 
 # Standard Python Libraries

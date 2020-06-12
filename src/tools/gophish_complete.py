@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 
-"""GoPhish Campaign Completion tool for a Phishing Campaign Assessment (PCA).
-
-User interface to select a campaign to complete or view a summery.  If auto
-flag is provided with a CAMPAIGN_ID that campaign will be completed.
+"""Complete a campaign and/or output a campaign summary.
 
 Usage:
   gophish-complete (--auto=CAMPAIGN_ID | --complete | --summary ) [--log-level=LEVEL] SERVER API_KEY
@@ -22,6 +19,8 @@ Options:
                             the specified value.  Valid values are "debug", "info",
                             "warning", "error", and "critical". [default: info]
 
+NOTE:
+  * If the auto flag is not provided, all assessment campaigns will be listed to select from.
 """
 
 # import IPython; IPython.embed() #<<< BREAKPOINT >>>
