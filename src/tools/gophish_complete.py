@@ -11,8 +11,8 @@ Options:
   API_KEY                   GoPhish API key.
   SERVER                    Full URL to GoPhish server.
   -a --auto=CAMPAIGN_ID     Complete a specific campaign identified by CAMPAIGN_ID.
-  -c --complete             Complete Campaign and show summary.
-  -s --summary              Displays Campaign Summary.
+  -c --complete             Display a list of campaigns to choose which to complete.
+  -s --summary              Choose a campaign from a list to output a summary.
   -h --help                 Show this screen.
   --version                 Show version.
   -l --log-level=LEVEL      If specified, then the log level will be set to
@@ -40,7 +40,7 @@ from tools.connect import connect_api
 
 from ._version import __version__
 
-# Support Insecure Request waring.
+# Support Insecure Request warning.
 requests.packages.urllib3.disable_warnings()
 
 

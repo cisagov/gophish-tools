@@ -2,12 +2,12 @@
 """Modify campaign start/end dates in an assessment JSON file.
 
 Usage:
-  pca-assessment-reschedule [--log-level=LEVEL] ASSESSMENT_ID
+  pca-assessment-reschedule [--log-level=LEVEL] ASSESSMENT_FILE
   pca-assessment-reschedule (-h | --help)
   pca-assessment-reschedule --version
 
 Options:
-  ASSESSMENT_ID             Assessment ID.
+  ASSESSMENT_FILE           JSON file containing the assessment information.
   -h --help                 Show this screen.
   --version                 Show version.
   -l --log-level=LEVEL      If specified, then the log level will be set to
@@ -107,12 +107,12 @@ def main():
         return 1
 
     try:
-        with open(f"{args['ASSESSMENT_ID']}.json") as json_file:
+        with open(args["ASSESSMENT_FILE"]) as json_file:
             json_data = json.load(json_file)
 
     except EnvironmentError:
         logging.critical(
-            f"JSON File not found for Assessment: {args['ASSESSMENT_ID']}.html"
+            f"JSON File not found for Assessment: {args['ASSESSMENT_FILE']}"
         )
         logging.critical("Please run command from the location with the file.")
         # Bandit complains about the input() function, but it is safe to

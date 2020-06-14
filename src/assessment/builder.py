@@ -7,7 +7,7 @@ Usage:
   pca-wizard --version
 
 Options:
-  ASSESSMENT_ID             Assessment ID.
+  ASSESSMENT_ID             ID of the assessment to create a JSON file for.
   -h --help                 Show this message.
   --version                 Show version.
   -l --log-level=LEVEL      If specified, then the log level will be set to
