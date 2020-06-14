@@ -38,7 +38,7 @@ from util.validate import validate_email
 
 from ._version import __version__
 
-# Support Insecure Request waring.
+# Support Insecure Request warning.
 requests.packages.urllib3.disable_warnings()
 
 

@@ -34,7 +34,7 @@ from tools.connect import connect_api
 
 from ._version import __version__
 
-# Suppress Insecure Request waring.
+# Suppress Insecure Request warning.
 requests.packages.urllib3.disable_warnings()
 
 

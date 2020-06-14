@@ -36,7 +36,7 @@ from tools.connect import connect_api
 
 from ._version import __version__
 
-# Support Insecure Request waring.
+# Support Insecure Request warning.
 requests.packages.urllib3.disable_warnings()
 
 # import IPython; IPython.embed() #<<< BREAKPOINT >>>
