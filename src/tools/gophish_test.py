@@ -8,8 +8,8 @@ Usage:
   gophish-test --version
 
 Options:
-  API_KEY                   API Access Key.
-  ASSESSMENT_ID             Assessment ID to test.
+  API_KEY                   GoPhish API key.
+  ASSESSMENT_ID             ID of the assessment to test.
   SERVER                    Full URL to GoPhish server.
   -h --help                 Show this screen.
   --version                 Show version.
@@ -18,7 +18,7 @@ Options:
                             "warning", "error", and "critical". [default: info]
 
 NOTE:
-  * The test assessment is immediately sent to the customer targets.
+  * The test assessment is immediately sent to the new targets provided.
 """
 
 # Standard Python Libraries

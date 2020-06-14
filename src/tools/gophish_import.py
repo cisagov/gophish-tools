@@ -8,10 +8,10 @@ Usage:
   gophish-import --version
 
 Options:
-  API_KEY                   API Access Key.
-  ASSESSMENT_FILE           Assessment JSON file.
+  API_KEY                   GoPhish API key.
+  ASSESSMENT_FILE           Name of the JSON file containing assessment data.
   SERVER                    Full URL to GoPhish server.
-  -r --reschedule           Import a rescheduled campaign.
+  -r --reschedule           Adjust the current schedule of an assessment with the new schedule in the ASSESSMENT_FILE.
   -h --help                 Show this screen.
   --version                 Show version.
   -l --log-level=LEVEL      If specified, then the log level will be set to

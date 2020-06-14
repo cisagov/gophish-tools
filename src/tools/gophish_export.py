@@ -8,8 +8,8 @@ Usage:
   gophish-export --version
 
 Options:
-  API_KEY                   API Access Key.
-  ASSESSMENT_ID             Assessment ID to export.
+  API_KEY                   GoPhish API key.
+  ASSESSMENT_ID             ID of the assessment to export data from.
   SERVER                    Full URL to GoPhish server.
   -h --help                 Show this screen.
   --version                 Show version.

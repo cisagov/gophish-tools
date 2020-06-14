@@ -8,7 +8,7 @@ Usage:
   gophish-complete --version
 
 Options:
-  API_KEY                   API Access Key.
+  API_KEY                   GoPhish API key.
   SERVER                    Full URL to GoPhish server.
   -a --auto=CAMPAIGN_ID     Complete a specific campaign identified by CAMPAIGN_ID.
   -c --complete             Complete Campaign and show summary.

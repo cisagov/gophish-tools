@@ -8,15 +8,15 @@ Usage:
   gophish-cleaner --version
 
 Options:
-  API_KEY                   API Access Key.
-  ASSESSMENT_ID             Assessment ID to remove.
+  API_KEY                   GoPhish API key.
+  ASSESSMENT_ID             ID of the assessment to remove data from.
   SERVER                    Full URL to GoPhish server.
-  -a --assessment           Remove the entire assessment.
-  -c --campaigns            Remove only campaigns.
-  -g --groups               Remove only groups.
-  -p --pages                Remove only pages.
-  -s --smtp                 Remove only SMTP.
-  -t --templates            Remove only templates.
+  -a --assessment           Remove all data for the specified assessment.
+  -c --campaigns            Remove all campaigns from the specified assessment.
+  -g --groups               Remove all users and groups from the specified assessment.
+  -p --pages                Remove all landing pages from the specified assessment.
+  -s --smtp                 Remove all sender profiles from the specified assessment.
+  -t --templates            Remove all email templates from the specified assessment.
   -h --help                 Show this screen.
   --version                 Show version.
   -l --log-level=LEVEL      If specified, then the log level will be set to

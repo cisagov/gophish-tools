@@ -7,8 +7,8 @@ Usage:
   pca-wizard-templates (-h | --help)
   pca-wizard-templates --version
 Options:
-  -e --emails   JSON file with required fields for email files.
-  -t --targets  Required format of target csv files.
+  -e --emails   Output a JSON template file for phishing emails.
+  -t --targets  Output a CSV template file for phishing targets.
   -h --help     Show this screen.
   --version     Show version.
 """
