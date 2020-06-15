@@ -51,7 +51,7 @@ An example assessment JSON can be found [here](src/assessment/sample_assessment.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
-| id | RV number. | string | | yes |
+| id | Assessment identifier (e.g. "RV0000"). | string | | yes |
 | timezone | Timezone name based on [pytz](http://pytz.sourceforge.net/) timezones. | string | | yes |
 | domain | Assessment domain for GoPhish public interface. | string | | yes |
 | target_domain | Approved target domains where all email recipients must reside. | list(string) | | yes |
@@ -67,7 +67,7 @@ An example assessment JSON can be found [here](src/assessment/sample_assessment.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
-| name | Group name in the format of `{RV number}-G{Number}`. | string | | yes |
+| name | Group name in the format of `{assessment identifier}-G{integer}` (e.g. "RV0000-G1"). | string | | yes |
 | targets | List of email recipients, [example](#target-dictionary). | list(dictionaries) | | yes |
 
 ### Target Dictionary ###
@@ -83,7 +83,7 @@ An example assessment JSON can be found [here](src/assessment/sample_assessment.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
-| name | Page name in the format of `{RV Number}-{Page Number}-{descriptor}`. | string | | yes |
+| name | Page name in the format of `{assessment identifier}-{integer}-{descriptor}` (e.g. "RV0000-1-AutoForward"). | string | | yes |
 | capture_credentials | Indicates to GoPhish if the page will forward after an action. | boolean | | yes |
 | capture_passwords | Allows for capturing of user input, currently not used by PCA. | boolean | `False` | yes |
 | html | Content of the landing page in HTML format. | string | | yes |
@@ -92,7 +92,7 @@ An example assessment JSON can be found [here](src/assessment/sample_assessment.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
-| name | Campaign name in the format of `{RV Number}-C{Campaign Number}`. | string | | yes |
+| name | Campaign name in the format of `{assessment identifier}-C{integer}` (e.g. "RV0000-C1"). | string | | yes |
 | launch_date | Campaign launch date in 24-hr ISO format with offset. | string | | yes |
 | completed_date | Campaign completion date in 24-hr ISO format with offset. | string | | yes |
 | url | Full URL for the campaign's landing page. | string | | yes |
@@ -105,7 +105,7 @@ An example assessment JSON can be found [here](src/assessment/sample_assessment.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
-| name | Template name in the format of `{RV Number}-T{Campaign Number}-{Mongo Template ID}`. | string | | yes |
+| name | Template name in the format of `{assessment identifier}-T{integer}-{template identifier}` (e.g. "RV0000-T1-1A2B3D"). | string | | yes |
 | subject | Email subject as seen by recipients. | string | | yes |
 | html | HTML representation of the email. | string | | yes |
 | test | Plain text representation of the email. | string | | yes |
@@ -114,8 +114,8 @@ An example assessment JSON can be found [here](src/assessment/sample_assessment.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
-| name | Sending profile name in the format of `{RV Number}-SP-{Campaign Number}`. | string | | yes |
-| from_address | From email address with display name, required format: `{Display Name}<{Sending Email Address}>`. | string | | yes |
+| name | Sending profile name in the format of `{assessment identifier}-SP-{integer}` (e.g. "RV0000-SP-1"). | string | | yes |
+| from_address | From email address with display name, required format: `{display name}<{sending email address}>`. | string | | yes |
 | host | Email server for GoPhish to send email through.| string | `postfix:587`| yes |
 | interface_type | Type of interface GoPhish will use with mail server. | string | `SMTP` | yes |
 | ignore_cert | Indicate if GoPhish should ignore certs with mail server. | boolean | `True` | yes |
