@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Send a mirror assessment to custom targets.
+"""Send a duplicate assessment from GoPhish to custom targets as a test.
 
 Usage:
   gophish-test [--log-level=LEVEL] ASSESSMENT_ID SERVER API_KEY
@@ -18,7 +18,8 @@ Options:
                             "warning", "error", and "critical". [default: info]
 
 NOTE:
-  * The test assessment is immediately sent to the new targets provided.
+  * The test assessment is an exact copy of the real assessment that will be immediately sent
+  to the custom targets provided in this tool.
 """
 
 # Standard Python Libraries
