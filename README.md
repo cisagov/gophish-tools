@@ -46,7 +46,7 @@ details.
 
 ## Assessment JSON Field Dictionary ##
 
-The following items are included in the assessment JSON as produced by the `pca-wizard`.
+The following items are included in the assessment JSON as produced by the `pca-wizard`. An example assessment JSON can be found [here](src/assessment/sample_assessment.json)
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
