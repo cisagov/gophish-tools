@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Remove an assessment or elements of an assessment.
+"""Remove an assessment or elements of an assessment in GoPhish.
 
 Usage:
   gophish-cleaner (--assessment | --campaigns | --groups | --pages | --smtp | --templates) [--log-level=LEVEL] ASSESSMENT_ID SERVER API_KEY

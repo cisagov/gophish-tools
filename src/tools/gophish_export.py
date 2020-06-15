@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Export all the data from an assessment into a single JSON file.
+"""Export all the data from an assessment within GoPhish into a single JSON file.
 
 Usage:
   gophish-export [--log-level=LEVEL] ASSESSMENT_ID SERVER API_KEY

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Complete a campaign and/or output a campaign summary.
+"""Complete a campaign in GoPhish and/or output a GoPhish campaign summary.
 
 Usage:
   gophish-complete (--auto=CAMPAIGN_ID | --complete | --summary ) [--log-level=LEVEL] SERVER API_KEY

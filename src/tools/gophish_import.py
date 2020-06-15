@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Import an assessment JSON file.
+"""Import an assessment JSON file into GoPhish.
 
 Usage:
   gophish-import [--log-level=LEVEL] [--reschedule] ASSESSMENT_FILE SERVER API_KEY
