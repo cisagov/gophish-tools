@@ -111,9 +111,7 @@ def main():
             json_data = json.load(json_file)
 
     except EnvironmentError:
-        logging.critical(
-            f"JSON File not found for Assessment: {args['ASSESSMENT_FILE']}"
-        )
+        logging.critical(f"JSON file not found: {args['ASSESSMENT_FILE']}")
         logging.critical("Please run command from the location with the file.")
         # Bandit complains about the input() function, but it is safe to
         # use in Python 3, which is required by this project.
@@ -126,7 +124,7 @@ def main():
     with open(f"{assessment.id}-reschedule.json", "w") as fp:
         json.dump(assessment.as_dict(), fp, indent=4)
 
-    logging.info(f"Assessment JSON ready: {assessment.id}.json")
+    logging.info(f"Assessment JSON ready: {assessment.id}-reschedule.json")
     # Stop logging and clean up
     logging.shutdown()
 
