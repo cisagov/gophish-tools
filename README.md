@@ -44,6 +44,81 @@ docker build -t pca-assessment .
 We welcome contributions!  Please see [here](CONTRIBUTING.md) for
 details.
 
+## Assessment JSON Field Dictionary ##
+
+The following items are included in the assessment JSON as produced by the `pca-wizard`.
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-------:|:--------:|
+| id | RV number. | string | | yes |
+| timezone | Timezone name based on [pytz](http://pytz.sourceforge.net/) timezones. | string | | yes |
+| domain | Assessment domain for GoPhish public interface. | string | | yes |
+| target_domain | Approved target domains where all email recipients must reside. | list(string) | | yes |
+| start_date| Assessment start date in 24-hr ISO format with offset. | string | | yes |
+| end_date | Assessment end date in 24-hr ISO format with offset. | string | | yes |
+| reschedule | Indicates if the assessment json is a rescheduled assessment. | boolean | | yes |
+| start_campaign | The campaign that the assessment should start at. | integer | `1` | yes |
+| groups | Consolidated list of email recipients grouped to receive campaigns, [example](#group-dictionary).| list(dictionaries)  | | yes |
+| pages |  GoPhish landing pages, [example](#page-dictionary).| list(dictionaries)  | | yes |
+| campaigns | Assessment campaigns, [example](#campaign-dictionary). | list(dictionaries) | | yes |
+
+### Group Dictionary ###
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-------:|:--------:|
+| name | Group name in the format of `{RV number}-G{Number}`. | string | | yes |
+| targets | List of email recipients, [example](#target-dictionary). | list(dictionaries) | | yes |
+
+### Target Dictionary ###
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-------:|:--------:|
+| first_name | Recipient's first name. | string | | yes |
+| last_name | Recipient's last name. | string | | yes |
+| email | Recipient's email address | string | | yes |
+| position | Position name for use in creating sub-groups of recipients within the organization such as HR, IT, etc. | string | | no |
+
+### Page Dictionary ###
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-------:|:--------:|
+| name | Page name in the format of `{RV Number}-{Page Number}-{descriptor}`. | string | | yes |
+| capture_credentials | Indicates to GoPhish if the page will forward after an action. | boolean | | yes |
+| capture_passwords | Allows for capturing of user input, currently not used by PCA. | boolean | `False` | yes |
+| html | Content of the landing page in HTML format. | string | | yes |
+
+### Campaign Dictionary ###
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-------:|:--------:|
+| name | Campaign name in the format of `{RV Number}-C{Campaign Number}`. | string | | yes |
+| launch_date | Campaign launch date in 24-hr ISO format with offset. | string | | yes |
+| completed_date | Campaign completion date in 24-hr ISO format with offset. | string | | yes |
+| url | Full URL for the campaign's landing page. | string | | yes |
+| page_name | Landing page name as defined in the assessment json. | string | | yes |
+| group_name | Group name as defined in the assessment json. | string | | yes |
+| template | Single email template for the campaign, [example](#template-dictionary). | dictionary | | yes |
+| smtp | Single GoPhish sending profile, [example](#smtp-dictionary). | dictionary | | yes |
+
+### Template Dictionary ###
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-------:|:--------:|
+| name | Template name in the format of `{RV Number}-T{Campaign Number}-{Mongo Template ID}`. | string | | yes |
+| subject | Email subject as seen by recipients. | string | | yes |
+| html | HTML representation of the email. | string | | yes |
+| test | Plain text representation of the email. | string | | yes |
+
+### SMTP Dictionary ###
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-------:|:--------:|
+| name | Sending profile name in the format of `{RV Number}-SP-{Campaign Number}`. | string | | yes |
+| from_address | From email address with display name, required format: `{Display Name}<{Sending Email Address}>`. | string | | yes |
+| host | Email server for GoPhish to send email through.| string | `postfix:587`| yes |
+| interface_type | Type of interface GoPhish will use with mail server | string | `SMTP` | yes |
+| ignore_cert | Indicate if GoPhish should ignore certs with mail server | boolean | `True` | yes |
+
 ## License ##
 
 This project is in the worldwide [public domain](LICENSE).
