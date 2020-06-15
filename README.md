@@ -58,7 +58,7 @@ An example assessment JSON can be found [here](src/assessment/sample_assessment.
 | start_date| Assessment start date in 24-hr ISO format with offset. | string | | yes |
 | end_date | Assessment end date in 24-hr ISO format with offset. | string | | yes |
 | reschedule | Indicates if the assessment json is a rescheduled assessment. | boolean | | yes |
-| start_campaign | The campaign that the assessment should start at. | integer | `1` | yes |
+| start_campaign | The campaign that the assessment should start at. | integer | `1` | no |
 | groups | Consolidated list of email recipients grouped to receive campaigns, [example](#group-dictionary).| list(dictionaries)  | | yes |
 | pages |  GoPhish landing pages, [example](#page-dictionary).| list(dictionaries)  | | yes |
 | campaigns | Assessment campaigns, [example](#campaign-dictionary). | list(dictionaries) | | yes |
@@ -85,7 +85,7 @@ An example assessment JSON can be found [here](src/assessment/sample_assessment.
 |------|-------------|:----:|:-------:|:--------:|
 | name | Page name in the format of `{assessment identifier}-{integer}-{descriptor}` (e.g. "RV0000-1-AutoForward"). | string | | yes |
 | capture_credentials | Indicates to GoPhish if the page will forward after an action. | boolean | | yes |
-| capture_passwords | Allows for capturing of user input, currently not used by PCA. | boolean | `False` | yes |
+| capture_passwords | Allows for capturing of user input, currently not used by PCA. | boolean | `False` | no |
 | html | Content of the landing page in HTML format. | string | | yes |
 
 ### Campaign Dictionary ###
@@ -116,9 +116,9 @@ An example assessment JSON can be found [here](src/assessment/sample_assessment.
 |------|-------------|:----:|:-------:|:--------:|
 | name | Sending profile name in the format of `{assessment identifier}-SP-{integer}` (e.g. "RV0000-SP-1"). | string | | yes |
 | from_address | From email address with display name, required format: `{display name}<{sending email address}>`. | string | | yes |
-| host | Email server for GoPhish to send email through.| string | `postfix:587`| yes |
-| interface_type | Type of interface GoPhish will use with mail server. | string | `SMTP` | yes |
-| ignore_cert | Indicate if GoPhish should ignore certs with mail server. | boolean | `True` | yes |
+| host | Email server for GoPhish to send email through.| string | `postfix:587`| no |
+| interface_type | Type of interface GoPhish will use with mail server. | string | `SMTP` | no |
+| ignore_cert | Indicate if GoPhish should ignore certs with mail server. | boolean | `True` | no |
 
 ## License ##
 
