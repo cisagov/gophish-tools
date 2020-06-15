@@ -55,12 +55,12 @@ An example assessment JSON can be found [here](src/assessment/sample_assessment.
 | timezone | Timezone name based on [pytz](http://pytz.sourceforge.net/) timezones. | string | | yes |
 | domain | Assessment domain for GoPhish public interface. | string | | yes |
 | target_domain | Approved target domains where all email recipients must reside. | list(string) | | yes |
-| start_date| Assessment start date in 24-hr ISO format with offset. | string | | yes |
+| start_date | Assessment start date in 24-hr ISO format with offset. | string | | yes |
 | end_date | Assessment end date in 24-hr ISO format with offset. | string | | yes |
 | reschedule | Indicates if the assessment json is a rescheduled assessment. | boolean | | yes |
 | start_campaign | The campaign that the assessment should start at. | integer | `1` | no |
-| groups | Consolidated list of email recipients grouped to receive campaigns, [example](#group-dictionary).| list(dictionaries)  | | yes |
-| pages |  GoPhish landing pages, [example](#page-dictionary).| list(dictionaries)  | | yes |
+| groups | Consolidated list of email recipients grouped to receive campaigns, [example](#group-dictionary). | list(dictionaries) | | yes |
+| pages | GoPhish landing pages, [example](#page-dictionary). | list(dictionaries) | | yes |
 | campaigns | Assessment campaigns, [example](#campaign-dictionary). | list(dictionaries) | | yes |
 
 ### Group Dictionary ###
@@ -116,7 +116,7 @@ An example assessment JSON can be found [here](src/assessment/sample_assessment.
 |------|-------------|:----:|:-------:|:--------:|
 | name | Sending profile name in the format of `{assessment identifier}-SP-{integer}` (e.g. "RV0000-SP-1"). | string | | yes |
 | from_address | From email address with display name, required format: `{display name}<{sending email address}>`. | string | | yes |
-| host | Email server for GoPhish to send email through.| string | `postfix:587`| no |
+| host | Email server for GoPhish to send email through. | string | `postfix:587` | no |
 | interface_type | Type of interface GoPhish will use with mail server. | string | `SMTP` | no |
 | ignore_cert | Indicate if GoPhish should ignore certs with mail server. | boolean | `True` | no |
 
