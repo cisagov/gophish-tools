@@ -46,7 +46,8 @@ details.
 
 ## Assessment JSON Field Dictionary ##
 
-The following items are included in the assessment JSON as produced by the `pca-wizard`. An example assessment JSON can be found [here](src/assessment/sample_assessment.json)
+The following items are included in the assessment JSON as produced by the `pca-wizard`.
+An example assessment JSON can be found [here](src/assessment/sample_assessment.json).
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
@@ -75,7 +76,7 @@ The following items are included in the assessment JSON as produced by the `pca-
 |------|-------------|:----:|:-------:|:--------:|
 | first_name | Recipient's first name. | string | | yes |
 | last_name | Recipient's last name. | string | | yes |
-| email | Recipient's email address | string | | yes |
+| email | Recipient's email address. | string | | yes |
 | position | Position name for use in creating sub-groups of recipients within the organization such as HR, IT, etc. | string | | no |
 
 ### Page Dictionary ###
@@ -116,8 +117,8 @@ The following items are included in the assessment JSON as produced by the `pca-
 | name | Sending profile name in the format of `{RV Number}-SP-{Campaign Number}`. | string | | yes |
 | from_address | From email address with display name, required format: `{Display Name}<{Sending Email Address}>`. | string | | yes |
 | host | Email server for GoPhish to send email through.| string | `postfix:587`| yes |
-| interface_type | Type of interface GoPhish will use with mail server | string | `SMTP` | yes |
-| ignore_cert | Indicate if GoPhish should ignore certs with mail server | boolean | `True` | yes |
+| interface_type | Type of interface GoPhish will use with mail server. | string | `SMTP` | yes |
+| ignore_cert | Indicate if GoPhish should ignore certs with mail server. | boolean | `True` | yes |
 
 ## License ##
 
