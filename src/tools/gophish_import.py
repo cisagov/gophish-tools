@@ -34,7 +34,9 @@ from tools.connect import connect_api
 
 from ._version import __version__
 
-# Suppress Insecure Request warning.
+# Disable "Insecure Request" warning: GoPhish uses a self-signed certificate
+# as default for https connections, which can not be  verified by a third
+# party; thus, an SSL insecure request warning is produced.
 requests.packages.urllib3.disable_warnings()
 
 
