@@ -38,7 +38,7 @@ import requests
 
 # cisagov Libraries
 from tools.connect import connect_api
-from util.input import get_input
+from util.input import get_input, get_number
 
 from ._version import __version__
 
@@ -52,7 +52,7 @@ def get_campaign_id(campaign_name, campaigns):
     """Get campaign id from campaign name.
 
     Args:
-        campaign_name (string): Fill campaign name.
+        campaign_name (string): Full campaign name.
         campaigns (dict): Campaign id as key, campaign name as value.
 
     Raises:
@@ -65,7 +65,7 @@ def get_campaign_id(campaign_name, campaigns):
         if name_value == campaign_name:
             return campaign_id
 
-    raise LookupError(f'Campaign Name "{campaign_name}" not found')
+    raise LookupError(f'Campaign Name "{campaign_name}" not found.')
 
 
 def get_campaigns(api, assessment_id):
@@ -76,7 +76,7 @@ def get_campaigns(api, assessment_id):
         assessment_id (string): Assessment identifier to get campaigns from.
 
     Raises:
-        LookupError: If no campaigns are found for the assessmen identifier, raise exception.
+        LookupError: If no campaigns are found for the assessment identifier, raise exception.
 
     Returns:
         dict: Campaign id as key, campaign name as value.
@@ -95,7 +95,7 @@ def get_campaigns(api, assessment_id):
     return assessmentCampaigns
 
 
-def select_campaigns(campaigns):
+def select_campaign(campaigns):
     """Return the ID of a selected campaign."""
     print("Please select a Campaign ID:")
     print("\tID: Name")
@@ -106,8 +106,8 @@ def select_campaigns(campaigns):
     print("")
 
     while True:
-        inputId = get_input("ID: ")
-        if int(inputId) in campaigns:
+        inputId = get_number("ID: ")
+        if inputId in campaigns:
             break
         else:
             logging.warning("Bad Campaign ID")
@@ -163,21 +163,24 @@ def main():
         )
         return 1
 
-    else:
-        # Connect to API
-        try:
-            api = connect_api(args["API_KEY"], args["SERVER"])
-            logging.debug(f'Connected to: {args["SERVER"]}')
-        except Exception as e:
-            logging.critical(print(e.args[0]))
-            sys.exit(1)
+    # Connect to API
+    try:
+        api = connect_api(args["API_KEY"], args["SERVER"])
+        logging.debug(f'Connected to: {args["SERVER"]}')
+    except Exception as e:
+        logging.critical(print(e.args[0]))
+        sys.exit(1)
 
+    # Gets assessment id from campaign name or user input.
     if not args["CAMPAIGN_NAME"]:
         assessment_id = get_input("Enter the Assessment ID")
     else:
-        # Sets assessment id from first section of campaign name which should be the assessment id.
+        # Sets assessment id from first section of campaign name. If the
+        # assessment wizard is used to build the assessment the campaign
+        # name will allways start with the assessment identifier.
         assessment_id = args["CAMPAIGN_NAME"].split("-")[0]
 
+    # Gather all campaigns associated with assessment identifier.
     try:
         campaigns = get_campaigns(api, assessment_id)
         success = True
@@ -187,7 +190,7 @@ def main():
 
     if args["--complete"] and success:
         if not args["CAMPAIGN_NAME"]:
-            workingID = select_campaigns(campaigns)
+            workingID = select_campaign(campaigns)
         else:
             try:
                 workingID = get_campaign_id(args["CAMPAIGN_NAME"], campaigns)
@@ -200,7 +203,7 @@ def main():
 
     elif args["--summary"] and success:
         if not args["CAMPAIGN_NAME"]:
-            workingID = select_campaigns(campaigns)
+            workingID = select_campaign(campaigns)
         else:
             try:
                 workingID = get_campaign_id(args["CAMPAIGN_NAME"], campaigns)
