@@ -10,7 +10,7 @@ Usage:
 Options:
   API_KEY                   GoPhish API key.
   SERVER                    Full URL to GoPhish server.
-  -C --Campaign=NAME        GoPhish campaign name.
+  -c --campaign=NAME        GoPhish campaign name.
   -c --complete             Complete a campaign within GoPhish.
   -s --summary              Output a summary of a GoPhish campaign.
   -h --help                 Show this screen.
@@ -20,7 +20,7 @@ Options:
                             "warning", "error", and "critical". [default: info]
 
 NOTE:
-  * If the campaign option with a campaign name is not provided, all assessment campaigns will be listed to select from.
+  * If a campaign name is not provided, all assessment campaigns will be listed to select from.
 """
 
 # import IPython; IPython.embed() #<<< BREAKPOINT >>>
@@ -55,27 +55,27 @@ def get_campaign_id(campaign_name, campaigns):
         campaigns (dict): Campaign id as key, campaign name as value.
 
     Raises:
-        LookupError: When the campaign name is not found, raise exception.
+        LookupError: Campaign name is not found in campaigns dictionary.
 
     Return:
-        Return campign id that corresponds to campaign name provided.
+        Campaign id corresponding to the campaign name provided.
     """
     for campaign_id, name_value in campaigns.items():
         if name_value == campaign_name:
             return campaign_id
 
-    raise LookupError(f'Campaign Name "{campaign_name}" not found.')
+    raise LookupError(f'Campaign name "{campaign_name}" not found.')
 
 
 def get_campaigns(api, assessment_id):
     """Return a dictionary containing all campaigns.
 
     Args:
-        api (GoPhish API): Connection to GoPhish server via the API
+        api (GoPhish API): Connection to GoPhish server via the API.
         assessment_id (string): Assessment identifier to get campaigns from.
 
     Raises:
-        LookupError: If no campaigns are found for the assessment identifier, raise exception.
+        LookupError: No campaigns found for the provided assessment id.
 
     Returns:
         dict: Campaign id as key, campaign name as value.
@@ -89,7 +89,7 @@ def get_campaigns(api, assessment_id):
             assessmentCampaigns[campaign.id] = campaign.name
 
     if len(assessmentCampaigns) == 0:
-        raise LookupError(f"No Campaigns found for Assessment {assessment_id}")
+        raise LookupError(f"No campaigns found for assessment {assessment_id}")
 
     return assessmentCampaigns
 
@@ -99,8 +99,8 @@ def select_campaign(campaigns):
     print("Please select a Campaign ID:")
     print("\tID: Name")
 
-    for key, name in campaigns.items():
-        print(f"\t {str(key)}: {name}")
+    for id, name in campaigns.items():
+        print(f"\t {id}: {name}")
 
     print("")
 
@@ -176,7 +176,7 @@ def main():
     else:
         # Sets assessment id from first section of campaign name. If the
         # assessment wizard is used to build the assessment the campaign
-        # name will allways start with the assessment identifier.
+        # name will always start with the assessment identifier.
         assessment_id = args["--Campaign"].split("-")[0]
 
     # Gather all campaigns associated with assessment identifier.
