@@ -1,24 +1,24 @@
 #!/usr/bin/env python3
 
-"""GoPhish Cleaner for a Phishing Campaign Assessment (PCA).
+"""Remove an assessment or elements of an assessment in GoPhish.
 
 Usage:
-  gophish-cleaner (--assessment | --campaigns | --smtp | --pages | --groups | --templates) [--log-level=LEVEL] ASSESSMENT_ID SERVER API_KEY
+  gophish-cleaner (--assessment | --campaigns | --groups | --pages | --smtp | --templates) [--log-level=LEVEL] ASSESSMENT_ID SERVER API_KEY
   gophish-cleaner (-h | --help)
   gophish-cleaner --version
 
 Options:
-  SERVER 	--> Full URL to GoPhish server
-  API_KEY 	--> API Access Key
-  ASSESSMENT_ID      Assessment ID to remove.
-  -a --assessment   Remove the entire assessment.
-  -c --campaigns   Remove only campaigns
-  -s --smtp    Remove only SMTP
-  -p --pages    Remove only pages
-  -g --groups    Remove only groups
-  -t --templates    Remove only templates
-  -h --help      Show this screen.
-  --version      Show version.
+  API_KEY                   GoPhish API key.
+  ASSESSMENT_ID             ID of the assessment to remove data from.
+  SERVER                    Full URL to GoPhish server.
+  -a --assessment           Remove all data for the specified assessment.
+  -c --campaigns            Remove all campaigns from the specified assessment.
+  -g --groups               Remove all users and groups from the specified assessment.
+  -p --pages                Remove all landing pages from the specified assessment.
+  -s --smtp                 Remove all sender profiles from the specified assessment.
+  -t --templates            Remove all email templates from the specified assessment.
+  -h --help                 Show this screen.
+  --version                 Show version.
   -l --log-level=LEVEL      If specified, then the log level will be set to
                             the specified value.  Valid values are "debug", "info",
                             "warning", "error", and "critical". [default: info]
@@ -30,6 +30,7 @@ Options:
 # Standard Python Libraries
 import logging
 import sys
+from typing import Dict
 
 # Third-Party Libraries
 from docopt import docopt
@@ -38,9 +39,11 @@ import requests
 # cisagov Libraries
 from tools.connect import connect_api
 
-args = docopt(__doc__, version="v0.1")
+from ._version import __version__
 
-# Support Insecure Request waring.
+# Disable "Insecure Request" warning: GoPhish uses a self-signed certificate
+# as default for https connections, which can not be  verified by a third
+# party; thus, an SSL insecure request warning is produced.
 requests.packages.urllib3.disable_warnings()
 
 
@@ -149,6 +152,8 @@ def remove_template(api, assessment_id):
 
 def main():
     """Set up logging, connect to API, remove assessment data."""
+    args: Dict[str, str] = docopt(__doc__, version=__version__)
+
     # Set up logging
     log_level = args["--log-level"]
     try:

@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
-"""PCA Assessment Reschedule to adjust scheduling in the PCA JSON File.
+"""Modify campaign start/end dates in an assessment JSON file.
 
 Usage:
-  pca-assessment-reschedule [--log-level=LEVEL] ASSESSMENT_ID
+  pca-assessment-reschedule [--log-level=LEVEL] ASSESSMENT_FILE
   pca-assessment-reschedule (-h | --help)
   pca-assessment-reschedule --version
 
 Options:
-  ASSESSMENT_ID     --> Assessment ID
-  -h --help      Show this screen.
-  --version      Show version.
-  -D --Debug     Enters users into pdb.
+  ASSESSMENT_FILE           JSON file containing the assessment information.
+  -h --help                 Show this screen.
+  --version                 Show version.
   -l --log-level=LEVEL      If specified, then the log level will be set to
                             the specified value.  Valid values are "debug", "info",
                             "warning", "error", and "critical". [default: info]
@@ -18,6 +17,7 @@ Options:
 # Standard Python Libraries
 import json
 import logging
+from typing import Dict
 
 # Third-Party Libraries
 from docopt import docopt
@@ -27,7 +27,7 @@ from models import Assessment
 from util.input import get_number, get_time_input
 from util.set_date import set_date
 
-args = docopt(__doc__, version="v0.0")
+from ._version import __version__
 
 
 def display_assessment_dates(assessment):
@@ -90,6 +90,8 @@ def reschedule(assessment):
 
 def main():
     """Set up logging and call the reschedule function."""
+    args: Dict[str, str] = docopt(__doc__, version=__version__)
+
     # Set up logging
     log_level = args["--log-level"]
     try:
@@ -105,13 +107,11 @@ def main():
         return 1
 
     try:
-        with open(f"{args['ASSESSMENT_ID']}.json") as json_file:
+        with open(args["ASSESSMENT_FILE"]) as json_file:
             json_data = json.load(json_file)
 
     except EnvironmentError:
-        logging.critical(
-            f"JSON File not found for Assessment: {args['ASSESSMENT_ID']}.html"
-        )
+        logging.critical(f"JSON file not found: {args['ASSESSMENT_FILE']}")
         logging.critical("Please run command from the location with the file.")
         # Bandit complains about the input() function, but it is safe to
         # use in Python 3, which is required by this project.
@@ -124,7 +124,7 @@ def main():
     with open(f"{assessment.id}-reschedule.json", "w") as fp:
         json.dump(assessment.as_dict(), fp, indent=4)
 
-    logging.info(f"Assessment JSON ready: {assessment.id}.json")
+    logging.info(f"Assessment JSON ready: {assessment.id}-reschedule.json")
     # Stop logging and clean up
     logging.shutdown()
 

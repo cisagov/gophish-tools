@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""GoPhish Testing Module for a Phishing Campaign Assessment (PCA).
+"""Send a duplicate assessment from GoPhish to custom targets as a test.
 
 Usage:
   gophish-test [--log-level=LEVEL] ASSESSMENT_ID SERVER API_KEY
@@ -8,19 +8,24 @@ Usage:
   gophish-test --version
 
 Options:
-  SERVER      Full URL to GoPhish server
-  API_KEY      API Access Key
-  ASSESSMENT_ID      Assessment ID to test.
-  -h --help      Show this screen.
-  --version      Show version.
+  API_KEY                   GoPhish API key.
+  ASSESSMENT_ID             ID of the assessment to test.
+  SERVER                    Full URL to GoPhish server.
+  -h --help                 Show this screen.
+  --version                 Show version.
   -l --log-level=LEVEL      If specified, then the log level will be set to
                             the specified value.  Valid values are "debug", "info",
                             "warning", "error", and "critical". [default: info]
+
+NOTE:
+  * The test assessment is an exact copy of the real assessment that will be immediately sent
+  to the custom targets provided in this tool.
 """
 
 # Standard Python Libraries
 import logging
 import sys
+from typing import Dict
 
 # Third-Party Libraries
 from docopt import docopt
@@ -32,9 +37,11 @@ from tools.connect import connect_api
 from util.input import get_input
 from util.validate import validate_email
 
-args = docopt(__doc__, version="v0.1")
+from ._version import __version__
 
-# Support Insecure Request waring.
+# Disable "Insecure Request" warning: GoPhish uses a self-signed certificate
+# as default for https connections, which can not be  verified by a third
+# party; thus, an SSL insecure request warning is produced.
 requests.packages.urllib3.disable_warnings()
 
 
@@ -95,9 +102,9 @@ def add_group(api, assessment_id):
     return newGroup.name
 
 
-def campaign_test(api, assessmentCampaigns):
+def campaign_test(api, assessmentCampaigns, assessment_id):
     """Create test campaigns."""
-    tempGroups = [Group(name=add_group(api, args["ASSESSMENT_ID"]))]
+    tempGroups = [Group(name=add_group(api, assessment_id))]
 
     for campaign in assessmentCampaigns:
         tempUrl = campaign.url
@@ -125,6 +132,8 @@ def campaign_test(api, assessmentCampaigns):
 
 def main():
     """Set up logging, connect to API, load all test data."""
+    args: Dict[str, str] = docopt(__doc__, version=__version__)
+
     # Set up logging
     log_level = args["--log-level"]
     try:
@@ -150,9 +159,7 @@ def main():
     assessmentCampaigns = get_campaigns(api, args["ASSESSMENT_ID"])
 
     if len(assessmentCampaigns) > 0:
-        campaign_test(
-            api, assessmentCampaigns,
-        )
+        campaign_test(api, assessmentCampaigns, args["ASSESSMENT_ID"])
 
     # Stop logging and clean up
     logging.shutdown()

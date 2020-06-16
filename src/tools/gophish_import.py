@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
-"""GoPhish import loads a JSON File containing a full assessment into GoPhish.
+
+"""Import an assessment JSON file into GoPhish.
 
 Usage:
-  gophish-import [--log-level=LEVEL] [--reschedule] ASSESSMENT_ID SERVER API_KEY
+  gophish-import [--log-level=LEVEL] [--reschedule] ASSESSMENT_FILE SERVER API_KEY
   gophish-import (-h | --help)
   gophish-import --version
 
 Options:
-  ASSESSMENT_ID  --> Assessment ID
-  SERVER         --> Full URL to GoPhish server
-  API_KEY        --> API Access Key
-  -h --help      Show this screen.
-  --version      Show version.
-  -r --reschedule     Imports a rescheduled campaign.
+  API_KEY                   GoPhish API key.
+  ASSESSMENT_FILE           Name of the JSON file containing assessment data.
+  SERVER                    Full URL to GoPhish server.
+  -r --reschedule           Adjust the current schedule of an assessment with the new schedule in the ASSESSMENT_FILE.
+  -h --help                 Show this screen.
+  --version                 Show version.
   -l --log-level=LEVEL      If specified, then the log level will be set to
                             the specified value.  Valid values are "debug", "info",
                             "warning", "error", and "critical". [default: info]
@@ -21,6 +22,7 @@ Options:
 # Standard Python Libraries
 import json
 import logging
+from typing import Dict
 
 # Third-Party Libraries
 from docopt import docopt
@@ -30,9 +32,11 @@ import requests
 # cisagov Libraries
 from tools.connect import connect_api
 
-args = docopt(__doc__, version="v0.0")
+from ._version import __version__
 
-# Suppress Insecure Request waring.
+# Disable "Insecure Request" warning: GoPhish uses a self-signed certificate
+# as default for https connections, which can not be  verified by a third
+# party; thus, an SSL insecure request warning is produced.
 requests.packages.urllib3.disable_warnings()
 
 
@@ -248,6 +252,8 @@ def build_campaigns(api, assessment):
 
 def main():
     """Set up logging, connect to API, import all assessment data."""
+    args: Dict[str, str] = docopt(__doc__, version=__version__)
+
     # Set up logging
     log_level = args["--log-level"]
     try:
@@ -273,7 +279,7 @@ def main():
 
     # Load assessment JSON from file
     try:
-        with open(f'{args["ASSESSMENT_ID"]}.json') as json_file:
+        with open(args["ASSESSMENT_FILE"]) as json_file:
             assessment = json.load(json_file)
     except FileNotFoundError as e:
         logging.error(f"{e}\n")

@@ -1,28 +1,26 @@
 #!/usr/bin/env python3
 
-"""GoPhish Campaign Completion tool for a Phishing Campaign Assessment (PCA).
-
-User interface to select a campaign to complete or view a summery.  If auto
-flag is provided with a CAMPAIGN_ID that campaign will be completed.
+"""Complete a campaign in GoPhish and/or output a GoPhish campaign summary.
 
 Usage:
-  gophish-complete (--summary | --complete | --auto=CAMPAIGN_ID) [--log-level=LEVEL] SERVER API_KEY
+  gophish-complete (--auto=CAMPAIGN_ID | --complete | --summary ) [--log-level=LEVEL] SERVER API_KEY
   gophish-complete (-h | --help)
   gophish-complete --version
 
-
 Options:
-  SERVER 	--> Full URL to GoPhish server
-  API_KEY 	--> API Access Key
-  -c --complete   Completes Campaign and shows summary
-  -s --summary    Displays Campaign Summary
-  -h --help      Show this screen.
-  --version      Show version.
+  API_KEY                   GoPhish API key.
+  SERVER                    Full URL to GoPhish server.
+  -a --auto=CAMPAIGN_ID     Complete a specific campaign identified by CAMPAIGN_ID.
+  -c --complete             Display a list of campaigns to choose which to complete.
+  -s --summary              Choose a campaign from a list to output a summary.
+  -h --help                 Show this screen.
+  --version                 Show version.
   -l --log-level=LEVEL      If specified, then the log level will be set to
                             the specified value.  Valid values are "debug", "info",
                             "warning", "error", and "critical". [default: info]
-  -a --auto=CAMPAIGN_ID     To complete a specific campaign, pass the campaign
-                            id in this flag.
+
+NOTE:
+  * If the auto flag is not provided, all assessment campaigns will be listed to select from.
 """
 
 # import IPython; IPython.embed() #<<< BREAKPOINT >>>
@@ -31,6 +29,7 @@ Options:
 # Standard Python Libraries
 import logging
 import sys
+from typing import Dict
 
 # Third-Party Libraries
 from docopt import docopt
@@ -39,9 +38,11 @@ import requests
 # cisagov Libraries
 from tools.connect import connect_api
 
-args = docopt(__doc__, version="v0.1")
+from ._version import __version__
 
-# Support Insecure Request waring.
+# Disable "Insecure Request" warning: GoPhish uses a self-signed certificate
+# as default for https connections, which can not be  verified by a third
+# party; thus, an SSL insecure request warning is produced.
 requests.packages.urllib3.disable_warnings()
 
 
@@ -93,15 +94,9 @@ def select_campaigns(campaigns):
     return inputId
 
 
-def complete_campaign(api, workingID):
+def complete_campaign(api, api_key, server, workingID):
     """Complete a campaign."""
-    url = (
-        args["SERVER"]
-        + "/api/campaigns/"
-        + workingID
-        + "/complete?api_key="
-        + args["API_KEY"]
-    )
+    url = f"{server}/api/campaigns/{workingID}/complete?api_key={api_key}"
 
     # Bandit complains about disabling the SSL certificate check, but we have
     # no choice here since we are using a self-signed certificate.
@@ -132,6 +127,8 @@ def print_summary(api, workingID):
 
 def main():
     """Set up logging, connect to API, call requested function(s)."""
+    args: Dict[str, str] = docopt(__doc__, version=__version__)
+
     # Set up logging
     log_level = args["--log-level"]
     try:
@@ -158,7 +155,7 @@ def main():
     if args["--complete"]:
         campaigns = get_campaigns(api)
         workingID = select_campaigns(campaigns)
-        success = complete_campaign(api, workingID)
+        success = complete_campaign(api, args["API_KEY"], args["SERVER"], workingID)
 
     elif args["--summary"]:
         campaigns = get_campaigns(api)
@@ -166,7 +163,9 @@ def main():
         success = print_summary(api, workingID)
 
     elif args["--auto"]:
-        success = complete_campaign(api, args["--auto"])
+        success = complete_campaign(
+            api, args["API_KEY"], args["SERVER"], args["--auto"]
+        )
 
     if not success:
         sys.exit(-1)
