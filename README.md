@@ -85,7 +85,7 @@ An example assessment JSON can be found [here](src/assessment/sample_assessment.
 |------|-------------|:----:|:-------:|:--------:|
 | name | Page name in the format of `{assessment identifier}-{integer}-{descriptor}` (e.g. "RV0000-1-AutoForward"). | string | | yes |
 | capture_credentials | Capture all non-password input with GoPhish. Supports forwarding after submit action. | boolean | | yes |
-| capture_passwords | Capture password input by the user, but note that captured input is **currently stored in plain text.** | boolean | `False` | no |
+| capture_passwords | Capture password input by the user, but note that captured input is **stored in plain text as of GoPhish version 0.9.0.** | boolean | `False` | no |
 | html | Content of the landing page in HTML format. | string | | yes |
 
 ### Campaign Dictionary ###
