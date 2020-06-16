@@ -174,10 +174,9 @@ def main():
     if not args["--campaign"]:
         assessment_id = get_input("Enter the Assessment ID")
     else:
-        # Sets assessment id from first section of campaign name. If the
-        # assessment wizard is used to build the assessment the campaign
-        # name will always start with the assessment identifier.
-        assessment_id = args["--campaign"].split("-")[0]
+        # By setting assessment id to a blank string, all campaigns
+        # will be returned and searched for campaign name.
+        assessment_id = ""
 
     # Gather all campaigns associated with assessment identifier.
     try:
