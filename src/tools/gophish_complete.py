@@ -12,8 +12,8 @@ Options:
   API_KEY                   GoPhish API key.
   CAMPAIGN_NAME             GoPhish campaign name.
   SERVER                    Full URL to GoPhish server.
-  -c --complete             Display a list of campaigns to choose which to complete.
-  -s --summary              Choose a campaign from a list to output a summary.
+  -c --complete             Complete a campaign within GoPhish.
+  -s --summary              Output a summary of a GoPhish campaign.
   -h --help                 Show this screen.
   --version                 Show version.
   -l --log-level=LEVEL      If specified, then the log level will be set to
