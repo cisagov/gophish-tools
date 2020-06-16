@@ -52,7 +52,7 @@ An example assessment JSON can be found [here](src/assessment/sample_assessment.
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
 | id | Assessment identifier (e.g. "RV0000"). | string | | yes |
-| timezone | Timezone name based on [pytz](http://pytz.sourceforge.net/) timezones. | string | | yes |
+| timezone | Timezone name based on [pytz](http://pytz.sourceforge.net/) timezones. (e.g. "US/Eastern") | string | | yes |
 | domain | Assessment domain for GoPhish public interface. | string | | yes |
 | target_domain | Approved target domains where all email recipients must reside. | list(string) | | yes |
 | start_date | Assessment start date in 24-hr ISO format with offset. | string | | yes |
@@ -84,8 +84,8 @@ An example assessment JSON can be found [here](src/assessment/sample_assessment.
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
 | name | Page name in the format of `{assessment identifier}-{integer}-{descriptor}` (e.g. "RV0000-1-AutoForward"). | string | | yes |
-| capture_credentials | Indicates to GoPhish if the page will forward after an action. | boolean | | yes |
-| capture_passwords | Allows for capturing of user input, currently not used by PCA. | boolean | `False` | no |
+| capture_credentials | Capture all non-password input with GoPhish. Supports forwarding after submit action. | boolean | | yes |
+| capture_passwords | Capture password input by the user, but note that captured input is **currently stored in plain text.** | boolean | `False` | no |
 | html | Content of the landing page in HTML format. | string | | yes |
 
 ### Campaign Dictionary ###
@@ -98,8 +98,8 @@ An example assessment JSON can be found [here](src/assessment/sample_assessment.
 | url | Full URL for the campaign's landing page. | string | | yes |
 | page_name | Landing page name as defined in the assessment json. | string | | yes |
 | group_name | Group name as defined in the assessment json. | string | | yes |
-| template | Single email template for the campaign, [example](#template-dictionary). | dictionary | | yes |
-| smtp | Single GoPhish sending profile, [example](#smtp-dictionary). | dictionary | | yes |
+| template | Email template for the campaign, [example](#template-dictionary). | dictionary | | yes |
+| smtp | GoPhish sending profile, [example](#smtp-dictionary). | dictionary | | yes |
 
 ### Template Dictionary ###
 
