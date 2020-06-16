@@ -3,15 +3,14 @@
 """Complete a campaign in GoPhish and/or output a GoPhish campaign summary.
 
 Usage:
-  gophish-complete (--complete | --summary) [--log-level=LEVEL] SERVER API_KEY
-  gophish-complete CAMPAIGN_NAME (--complete | --summary) [--log-level=LEVEL] SERVER API_KEY
+  gophish-complete (--complete | --summary) [--Campaign=NAME] [--log-level=LEVEL] SERVER API_KEY
   gophish-complete (-h | --help)
   gophish-complete --version
 
 Options:
   API_KEY                   GoPhish API key.
-  CAMPAIGN_NAME             GoPhish campaign name.
   SERVER                    Full URL to GoPhish server.
+  -C --Campaign=NAME        GoPhish campaign name.
   -c --complete             Complete a campaign within GoPhish.
   -s --summary              Output a summary of a GoPhish campaign.
   -h --help                 Show this screen.
@@ -21,7 +20,7 @@ Options:
                             "warning", "error", and "critical". [default: info]
 
 NOTE:
-  * If the campaign name is not provided, all assessment campaigns will be listed to select from.
+  * If the campaign option with a campaign name is not provided, all assessment campaigns will be listed to select from.
 """
 
 # import IPython; IPython.embed() #<<< BREAKPOINT >>>
@@ -172,13 +171,13 @@ def main():
         sys.exit(1)
 
     # Gets assessment id from campaign name or user input.
-    if not args["CAMPAIGN_NAME"]:
+    if not args["--Campaign"]:
         assessment_id = get_input("Enter the Assessment ID")
     else:
         # Sets assessment id from first section of campaign name. If the
         # assessment wizard is used to build the assessment the campaign
         # name will allways start with the assessment identifier.
-        assessment_id = args["CAMPAIGN_NAME"].split("-")[0]
+        assessment_id = args["--Campaign"].split("-")[0]
 
     # Gather all campaigns associated with assessment identifier.
     try:
@@ -189,11 +188,11 @@ def main():
         success = False
 
     if args["--complete"] and success:
-        if not args["CAMPAIGN_NAME"]:
+        if not args["--Campaign"]:
             workingID = select_campaign(campaigns)
         else:
             try:
-                workingID = get_campaign_id(args["CAMPAIGN_NAME"], campaigns)
+                workingID = get_campaign_id(args["--Campaign"], campaigns)
             except LookupError as err:
                 logging.warning(err)
                 success = False
@@ -202,11 +201,11 @@ def main():
             success = complete_campaign(api, args["API_KEY"], args["SERVER"], workingID)
 
     elif args["--summary"] and success:
-        if not args["CAMPAIGN_NAME"]:
+        if not args["--Campaign"]:
             workingID = select_campaign(campaigns)
         else:
             try:
-                workingID = get_campaign_id(args["CAMPAIGN_NAME"], campaigns)
+                workingID = get_campaign_id(args["--Campaign"], campaigns)
             except LookupError as err:
                 logging.warning(err)
                 success = False
