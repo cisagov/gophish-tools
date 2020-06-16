@@ -3,7 +3,7 @@
 """Complete a campaign in GoPhish and/or output a GoPhish campaign summary.
 
 Usage:
-  gophish-complete (--complete | --summary) [--campaign=NAME] [--log-level=LEVEL] SERVER API_KEY
+  gophish-complete [--campaign=NAME] [--summary-only] [--log-level=LEVEL] SERVER API_KEY
   gophish-complete (-h | --help)
   gophish-complete --version
 
@@ -11,8 +11,7 @@ Options:
   API_KEY                   GoPhish API key.
   SERVER                    Full URL to GoPhish server.
   -c --campaign=NAME        GoPhish campaign name.
-  --complete                Complete a campaign within GoPhish.
-  -s --summary              Output a summary of a GoPhish campaign.
+  -s --summary-only         Output a summary of a GoPhish campaign.
   -h --help                 Show this screen.
   --version                 Show version.
   -l --log-level=LEVEL      If specified, then the log level will be set to
@@ -115,19 +114,27 @@ def select_campaign(campaigns):
     return inputId
 
 
-def complete_campaign(api, api_key, server, workingID):
-    """Complete a campaign."""
+def complete_campaign(api_key, server, workingID):
+    """Complete a campaign in GoPhish.
+
+    Args:
+        api_key (string): GoPhish API key.
+        server (string): Full URL to GoPhish server.
+        workingID (int): GoPhish Campaign ID
+
+    Raises:
+        UserWarning: GoPhish is unsuccessful in completing the campaign.
+    """
     url = f"{server}/api/campaigns/{workingID}/complete?api_key={api_key}"
 
     # Bandit complains about disabling the SSL certificate check, but we have
     # no choice here since we are using a self-signed certificate.
     response = requests.get(url=url, verify=False)  # nosec
 
-    print(f'\n{response.json()["message"]}')
-
-    print_summary(api, workingID)
-
-    return True
+    if not response.json()["success"]:
+        raise UserWarning(response.json()["message"])
+    else:
+        print(f'\n{response.json()["message"]}')
 
 
 def print_summary(api, workingID):
@@ -181,36 +188,24 @@ def main():
     # Gather all campaigns associated with assessment identifier.
     try:
         campaigns = get_campaigns(api, assessment_id)
+        if not args["--campaign"]:
+            workingID = select_campaign(campaigns)
+        else:
+            workingID = get_campaign_id(args["--campaign"], campaigns)
+
+        if not args["--summary-only"]:
+            complete_campaign(args["API_KEY"], args["SERVER"], workingID)
+
+        print_summary(api, workingID)
         success = True
+
     except LookupError as err:
-        logging.warning(err)
+        logging.error(err)
         success = False
 
-    if args["--complete"] and success:
-        if not args["--campaign"]:
-            workingID = select_campaign(campaigns)
-        else:
-            try:
-                workingID = get_campaign_id(args["--campaign"], campaigns)
-            except LookupError as err:
-                logging.warning(err)
-                success = False
-
-        if success and workingID:
-            success = complete_campaign(api, args["API_KEY"], args["SERVER"], workingID)
-
-    elif args["--summary"] and success:
-        if not args["--campaign"]:
-            workingID = select_campaign(campaigns)
-        else:
-            try:
-                workingID = get_campaign_id(args["--campaign"], campaigns)
-            except LookupError as err:
-                logging.warning(err)
-                success = False
-
-        if success and workingID:
-            success = print_summary(api, workingID)
+    except UserWarning as err:
+        logging.warning(err)
+        success = False
 
     if not success:
         sys.exit(-1)
