@@ -65,8 +65,8 @@ An example assessment JSON can be found [here](src/assessment/sample_assessment.
 
 ### Group Dictionary ###
 
-Groups are imported from a templated `csv` file that can be found
-with `pca-wizard-templates  --targets`.
+Groups are imported from a templated `csv` file that can be genearted
+with the command `pca-wizard-templates  --targets`.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
@@ -106,8 +106,8 @@ with `pca-wizard-templates  --targets`.
 
 ### Template Dictionary ###
 
-Email Templates can be imported from a templated `json` file that can be found
-with `pca-wizard-templates  --emails`.
+Email templates can be imported from a templated `json` file that can be be genearted
+with the command `pca-wizard-templates  --emails`.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
