@@ -56,7 +56,7 @@ def get_campaign_id(campaign_name, campaigns):
     Raises:
         LookupError: Campaign name is not found in campaigns dictionary.
 
-    Return:
+    Returns:
         Campaign id corresponding to the campaign name provided.
     """
     for campaign_id, name_value in campaigns.items():

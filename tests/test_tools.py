@@ -9,7 +9,7 @@ from tools.gophish_complete import get_campaign_id
 
 
 class TestComplete:
-    """Test gophis-complete script."""
+    """Test gophish-complete script."""
 
     @pytest.mark.parametrize(
         "campaigns", [{"1": "RV0000-C1", "2": "RV0000-C2", "3": "RV0000-C3"}]
