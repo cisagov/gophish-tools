@@ -54,7 +54,7 @@ An example assessment JSON can be found [here](src/assessment/sample_assessment.
 | id | Assessment identifier. (e.g. "RV0000") | string | | yes |
 | timezone | Timezone name based on [pytz](http://pytz.sourceforge.net/) timezones. (e.g. "US/Eastern") | string | | yes |
 | domain | Assessment domain for GoPhish public interface. (e.g. "domain.tld") | string | | yes |
-| target_domain | Approved target domains where all email recipients must reside. (e.g. `["target1.tld", "target2.tld"]`) | list(string) | | yes |
+| target_domain | Approved target domains where all email recipients must reside. (e.g. ["target1.tld", "target2.tld"]) | list(string) | | yes |
 | start_date | Assessment start date in 24-hr ISO format with offset. (e.g. "2020-01-01T14:00:00-04:00") | string | | yes |
 | end_date | Assessment end date in 24-hr ISO format with offset. (e.g. "2020-01-06T15:30:00-04:00") | string | | yes |
 | reschedule | Indicates if the assessment json is a rescheduled assessment. | boolean | | yes |
@@ -65,7 +65,7 @@ An example assessment JSON can be found [here](src/assessment/sample_assessment.
 
 ### Group Dictionary ###
 
-Groups are imported from a templated `csv` file that can be genearted
+Groups are imported from a templated `csv` file that can be generated
 with the command `pca-wizard-templates  --targets`.
 
 | Name | Description | Type | Default | Required |
@@ -79,7 +79,7 @@ with the command `pca-wizard-templates  --targets`.
 |------|-------------|:----:|:-------:|:--------:|
 | first_name | Recipient's first name. | string | | yes |
 | last_name | Recipient's last name. | string | | yes |
-| email | Recipient's email address. (e.g. "john.doe@target1.tld") | string | | yes |
+| email | Recipient's email address. (e.g. "john.doe<span>@target1.tld") | string | | yes |
 | position | Position name for use in creating sub-groups of recipients within the organization such as "HR", "IT", etc. | string | | no |
 
 ### Page Dictionary ###
@@ -98,15 +98,15 @@ with the command `pca-wizard-templates  --targets`.
 | name | Campaign name in the format of `{assessment identifier}-C{integer}` (e.g. "RV0000-C1"). | string | | yes |
 | launch_date | Campaign launch date in 24-hr ISO format with offset. (e.g. "2020-01-01T14:00:00-04:00")  | string | | yes |
 | completed_date | Campaign completion date in 24-hr ISO format with offset. (e.g. "2020-01-01T15:30:00-04:00")  | string | | yes |
-| url | Full URL for the campaign's landing page. (e.g. `http://domain.tld/camp/1`) | string | | yes |
+| url | Full URL for the campaign's landing page. (e.g. "http<span>://domain.tld/camp/1") | string | | yes |
 | page_name | Landing page name as defined in the assessment json. | string | | yes |
 | group_name | Group name as defined in the assessment json. | string | | yes |
-| template | Email template for the campaign, [example](#template-dictionary). | dictionary | | yes |
+| template | Email template for the campaign, [example](#email-template-dictionary). | dictionary | | yes |
 | smtp | GoPhish sending profile, [example](#smtp-dictionary). | dictionary | | yes |
 
-### Template Dictionary ###
+### Email Template Dictionary ###
 
-Email templates can be imported from a templated `json` file that can be be genearted
+Email templates can be imported from a templated `json` file that can be be generated
 with the command `pca-wizard-templates  --emails`.
 
 | Name | Description | Type | Default | Required |
@@ -121,9 +121,9 @@ with the command `pca-wizard-templates  --emails`.
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
 | name | Sending profile name in the format of `{assessment identifier}-SP-{integer}` (e.g. "RV0000-SP-1"). | string | | yes |
-| from_address | From email address with display name, required format: `{display name}<{sending email address}>`. (e.g. `John Doe<john.doe@domain.tld>`) | string | | yes |
-| host | Email server for GoPhish to send email through. | string | `postfix:587` | no |
-| interface_type | Type of interface GoPhish will use with mail server. | string | `SMTP` | no |
+| from_address | From email address with display name, required format: `{display name}<{sending email address}>`. (e.g. "John Doe\<john.doe<span>@domain.tld\>") | string | | yes |
+| host | Email server for GoPhish to send email through. | string | "postfix:587" | no |
+| interface_type | Type of interface GoPhish will use with mail server. | string | "SMTP" | no |
 | ignore_cert | Indicate if GoPhish should ignore certs with mail server. | boolean | `True` | no |
 
 ## License ##
