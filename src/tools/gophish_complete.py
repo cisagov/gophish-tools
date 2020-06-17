@@ -69,6 +69,10 @@ def get_campaign_id(campaign_name, campaigns):
 def get_campaigns(api, assessment_id=""):
     """Return a dictionary containing all campaigns.
 
+    When called with a blank string for the assessment_id, the default value,
+    all campaigns in all assessments will be returned. If an assessment_id is
+    provided, then only the campaigns for that assessment will be returned.
+
     Args:
         api (GoPhish API): Connection to GoPhish server via the API.
         assessment_id (string): Assessment identifier to get campaigns from.
@@ -179,7 +183,7 @@ def main():
 
     try:
         if args["--campaign"]:
-            # Use Campaign name to find campaign id.
+            # Use campaign name to find campaign id.
             campaigns = get_campaigns(api)
             campaign_id = get_campaign_id(args["--campaign"], campaigns)
         else:
