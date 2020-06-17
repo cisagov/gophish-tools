@@ -66,7 +66,7 @@ def get_campaign_id(campaign_name, campaigns):
     raise LookupError(f'Campaign name "{campaign_name}" not found.')
 
 
-def get_campaigns(api, assessment_id):
+def get_campaigns(api, assessment_id=""):
     """Return a dictionary containing all campaigns.
 
     Args:
@@ -177,38 +177,34 @@ def main():
         logging.critical(print(e.args[0]))
         sys.exit(1)
 
-    # Gets assessment id from campaign name or user input.
-    if not args["--campaign"]:
-        assessment_id = get_input("Enter the Assessment ID")
-    else:
-        # By setting assessment id to a blank string, all campaigns
-        # will be returned and searched for campaign name.
-        assessment_id = ""
-
-    # Gather all campaigns associated with assessment identifier.
     try:
-        campaigns = get_campaigns(api, assessment_id)
-        if not args["--campaign"]:
-            workingID = select_campaign(campaigns)
+        if args["--campaign"]:
+            # Use Campaign name to find campaign id.
+            campaigns = get_campaigns(api)
+            campaign_id = get_campaign_id(args["--campaign"], campaigns)
         else:
-            workingID = get_campaign_id(args["--campaign"], campaigns)
-
-        if not args["--summary-only"]:
-            complete_campaign(args["API_KEY"], args["SERVER"], workingID)
-
-        print_summary(api, workingID)
-        success = True
+            # User inputs assessment id and selects campaign from lists.
+            assessment_id = get_input("Enter the Assessment ID:")
+            campaigns = get_campaigns(api, assessment_id)
+            campaign_id = select_campaign(campaigns)
 
     except LookupError as err:
         logging.error(err)
-        success = False
+        sys.exit(1)
 
-    except UserWarning as err:
-        logging.warning(err)
-        success = False
+    if args["--summary-only"]:
+        # Output summary only.
+        print_summary(api, campaign_id)
+    else:
+        # Complete and output summary.
+        try:
+            complete_campaign(args["API_KEY"], args["SERVER"], campaign_id)
 
-    if not success:
-        sys.exit(-1)
+        except UserWarning as err:
+            logging.warning(err)
+            sys.exit(1)
+
+        print_summary(api, campaign_id)
 
 
 if __name__ == "__main__":
