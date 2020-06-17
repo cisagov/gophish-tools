@@ -45,6 +45,24 @@ requests.packages.urllib3.disable_warnings()
 # sys.exit(0)    # Build dict of relevant campaign data
 
 
+def assessment_exists(api, assessment_id):
+    """Check GoPhish has campaigns for designated assessment.
+
+    Args:
+        api (GoPhish API): Connection to GoPhish server via the API.
+        assessment_id (string): Assessment identifier to get campaigns from.
+
+    Returns:
+        boolean: Indicates if a campaign is found starting with assessment_id.
+    """
+    allCampaigns = api.campaigns.get()
+    for campaign in allCampaigns:
+        if campaign.name.startswith(assessment_id):
+            return True
+
+    return False
+
+
 def import_users(api, assessment_id):
     """Add all users to the database."""
     # STAND ALONE
@@ -260,12 +278,16 @@ def main():
             logging.critical(print(e.args[0]))
             sys.exit(1)
 
-    # TODO Validate that requested assessment exists.
+    if assessment_exists(api, args["ASSESSMENT_ID"]):
+        import_users(api, args["ASSESSMENT_ID"])
+        campaignControl(api, args["ASSESSMENT_ID"])
+        logging.info(f'Data written to data_{args["ASSESSMENT_ID"]}.json')
 
-    import_users(api, args["ASSESSMENT_ID"])
-    campaignControl(api, args["ASSESSMENT_ID"])
-
-    logging.info(f'Data written to data_{args["ASSESSMENT_ID"]}.json')
+    else:
+        logging.error(
+            f'Assessment "{args["ASSESSMENT_ID"]}" does not exists in GoPhish.'
+        )
+        sys.exit(1)
 
 
 if __name__ == "__main__":
