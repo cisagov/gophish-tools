@@ -70,9 +70,9 @@ def import_users(api, assessment_id):
 
             users.append(user)
 
-        logging.info("Users for {} have been added".format(assessment_id))
+        logging.info(f"Users for {assessment_id} have been added")
 
-        with open("data_" + assessment_id + ".json", "w") as fp:
+        with open(f"data_{assessment_id}.json", "w") as fp:
             json.dump(users, fp, indent=4)
             fp.write(",")
 
@@ -102,9 +102,9 @@ def campaignControl(api, assessment_id):
     for campaign_id in campaignIDs:
         campaigns.append(import_campaign(api, campaign_id))
 
-    logging.info("Successfully added campaigns for {}".format(assessment_id))
+    logging.info(f"Successfully added campaigns for {assessment_id}")
 
-    with open("data_" + assessment_id + ".json", "a") as fp:
+    with open(f"data_{assessment_id}.json", "a") as fp:
         json.dump(campaigns, fp, indent=4)
 
     return True
@@ -247,9 +247,7 @@ def main():
         )
     except ValueError:
         logging.critical(
-            '"{}"is not a valid logging level.  Possible values are debug, info, warning, and error.'.format(
-                log_level
-            )
+            f'"{log_level}"is not a valid logging level.  Possible values are debug, info, warning, and error.'
         )
         return 1
 
@@ -257,7 +255,7 @@ def main():
         # Connect to API
         try:
             api = connect_api(args["API_KEY"], args["SERVER"])
-            logging.debug("Connected to: {}".format(args["SERVER"]))
+            logging.debug('Connected to: {args["SERVER"]}')
         except Exception as e:
             logging.critical(print(e.args[0]))
             sys.exit(1)
@@ -267,7 +265,7 @@ def main():
     import_users(api, args["ASSESSMENT_ID"])
     campaignControl(api, args["ASSESSMENT_ID"])
 
-    logging.info("Data written to data_{}.json".format(args["ASSESSMENT_ID"]))
+    logging.info(f'Data written to data_{args["ASSESSMENT_ID"]}.json')
 
 
 if __name__ == "__main__":
