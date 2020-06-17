@@ -54,4 +54,4 @@ jobs:
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USER }}
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PW }}
-          DOCKERHUB_REPOSITORY: $IMAGE_NAME
+          DOCKERHUB_REPOSITORY: ${{ env.IMAGE_NAME }}
