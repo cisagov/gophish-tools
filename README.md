@@ -59,9 +59,9 @@ An example assessment JSON can be found [here](src/assessment/sample_assessment.
 | end_date | Assessment end date in 24-hr ISO format with offset. (e.g. "2020-01-06T15:30:00-04:00") | string | | yes |
 | reschedule | Indicates if the assessment json is a rescheduled assessment. | boolean | | yes |
 | start_campaign | The campaign that the assessment should start at. | integer | `1` | no |
-| groups | Consolidated list of email recipients grouped to receive campaigns, [example](#group-dictionary). | list(dictionaries) | | yes |
-| pages | GoPhish landing pages, [example](#page-dictionary). | list(dictionaries) | | yes |
-| campaigns | Assessment campaigns, [example](#campaign-dictionary). | list(dictionaries) | | yes |
+| groups | Consolidated list of email recipients grouped to receive campaigns, [example](#group-dictionary). | list(dict) | | yes |
+| pages | GoPhish landing pages, [example](#page-dictionary). | list(dict) | | yes |
+| campaigns | Assessment campaigns, [example](#campaign-dictionary). | list(dict) | | yes |
 
 ### Group Dictionary ###
 
@@ -71,7 +71,7 @@ with the command `pca-wizard-templates  --targets`.
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
 | name | Group name in the format of `{assessment identifier}-G{integer}` (e.g. "RV0000-G1"). | string | | yes |
-| targets | List of email recipients, [example](#target-dictionary). | list(dictionaries) | | yes |
+| targets | List of email recipients, [example](#target-dictionary). | list(dict) | | yes |
 
 ### Target Dictionary ###
 
@@ -101,8 +101,8 @@ with the command `pca-wizard-templates  --targets`.
 | url | Full URL for the campaign's landing page. (e.g. "http<span>://domain.tld/camp/1") | string | | yes |
 | page_name | Landing page name as defined in the assessment json. | string | | yes |
 | group_name | Group name as defined in the assessment json. | string | | yes |
-| template | Email template for the campaign, [example](#email-template-dictionary). | dictionary | | yes |
-| smtp | GoPhish sending profile, [example](#smtp-dictionary). | dictionary | | yes |
+| template | Email template for the campaign, [example](#email-template-dictionary). | dict | | yes |
+| smtp | GoPhish sending profile, [example](#smtp-dictionary). | dict | | yes |
 
 ### Email Template Dictionary ###
 
