@@ -118,18 +118,18 @@ def select_campaign(campaigns):
     return inputId
 
 
-def complete_campaign(api_key, server, workingID):
+def complete_campaign(api_key, server, campaign_id):
     """Complete a campaign in GoPhish.
 
     Args:
         api_key (string): GoPhish API key.
         server (string): Full URL to GoPhish server.
-        workingID (int): GoPhish Campaign ID
+        campaign_id (int): GoPhish campaign id.
 
     Raises:
         UserWarning: GoPhish is unsuccessful in completing the campaign.
     """
-    url = f"{server}/api/campaigns/{workingID}/complete?api_key={api_key}"
+    url = f"{server}/api/campaigns/{campaign_id}/complete?api_key={api_key}"
 
     # Bandit complains about disabling the SSL certificate check, but we have
     # no choice here since we are using a self-signed certificate.
@@ -141,9 +141,9 @@ def complete_campaign(api_key, server, workingID):
         print(f'\n{response.json()["message"]}')
 
 
-def print_summary(api, workingID):
+def print_summary(api, campaign_id):
     """Print a campaign summary."""
-    summary = api.campaigns.summary(campaign_id=workingID)
+    summary = api.campaigns.summary(campaign_id=campaign_id)
 
     print("Campaign Summary:")
     print(f"\tName: {summary.name}")
@@ -169,7 +169,7 @@ def main():
         )
     except ValueError:
         logging.critical(
-            f'"{log_level}"is not a valid logging level.  Possible values are debug, info, warning, and error.'
+            f'"{log_level}"is not a valid logging level. Possible values are debug, info, warning, and error.'
         )
         return 1
 
