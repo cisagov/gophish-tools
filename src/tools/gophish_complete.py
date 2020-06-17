@@ -3,16 +3,15 @@
 """Complete a campaign in GoPhish and/or output a GoPhish campaign summary.
 
 Usage:
-  gophish-complete (--auto=CAMPAIGN_ID | --complete | --summary ) [--log-level=LEVEL] SERVER API_KEY
+  gophish-complete [--campaign=NAME] [--summary-only] [--log-level=LEVEL] SERVER API_KEY
   gophish-complete (-h | --help)
   gophish-complete --version
 
 Options:
   API_KEY                   GoPhish API key.
   SERVER                    Full URL to GoPhish server.
-  -a --auto=CAMPAIGN_ID     Complete a specific campaign identified by CAMPAIGN_ID.
-  -c --complete             Display a list of campaigns to choose which to complete.
-  -s --summary              Choose a campaign from a list to output a summary.
+  -c --campaign=NAME        GoPhish campaign name.
+  -s --summary-only         Output a summary of a GoPhish campaign.
   -h --help                 Show this screen.
   --version                 Show version.
   -l --log-level=LEVEL      If specified, then the log level will be set to
@@ -20,7 +19,7 @@ Options:
                             "warning", "error", and "critical". [default: info]
 
 NOTE:
-  * If the auto flag is not provided, all assessment campaigns will be listed to select from.
+  * If a campaign name is not provided, all assessment campaigns will be listed to select from.
 """
 
 # import IPython; IPython.embed() #<<< BREAKPOINT >>>
@@ -37,6 +36,7 @@ import requests
 
 # cisagov Libraries
 from tools.connect import connect_api
+from util.input import get_input, get_number
 
 from ._version import __version__
 
@@ -46,46 +46,70 @@ from ._version import __version__
 requests.packages.urllib3.disable_warnings()
 
 
-def get_campaigns(api):
-    """Return a dictionary containing all campaigns."""
+def get_campaign_id(campaign_name, campaigns):
+    """Get campaign id from campaign name.
+
+    Args:
+        campaign_name (string): Full campaign name.
+        campaigns (dict): Campaign id as key, campaign name as value.
+
+    Raises:
+        LookupError: Campaign name is not found in campaigns dictionary.
+
+    Returns:
+        Campaign id corresponding to the campaign name provided.
+    """
+    for campaign_id, name_value in campaigns.items():
+        if name_value == campaign_name:
+            return campaign_id
+
+    raise LookupError(f'Campaign name "{campaign_name}" not found.')
+
+
+def get_campaigns(api, assessment_id=""):
+    """Return a dictionary containing all campaigns.
+
+    When called with a blank string for the assessment_id, the default value,
+    all campaigns in all assessments will be returned. If an assessment_id is
+    provided, then only the campaigns for that assessment will be returned.
+
+    Args:
+        api (GoPhish API): Connection to GoPhish server via the API.
+        assessment_id (string): Assessment identifier to get campaigns from.
+
+    Raises:
+        LookupError: No campaigns found for the provided assessment id.
+
+    Returns:
+        dict: Campaign id as key, campaign name as value.
+    """
     allCampaigns = api.campaigns.get()
 
-    while True:
-        # Bandit complains about the input() function, but it is safe to
-        # use in Python 3, which is required by this project.
-        assessment_id = input("Enter Assessment ID: ")  # nosec
-        assessmentCampaigns = dict()
+    assessmentCampaigns = dict()
 
-        for campaign in allCampaigns:
-            if campaign.name.startswith(assessment_id):
-                assessmentCampaigns[campaign.id] = campaign.name
+    for campaign in allCampaigns:
+        if campaign.name.startswith(assessment_id):
+            assessmentCampaigns[campaign.id] = campaign.name
 
-        if len(assessmentCampaigns):
-            break
-        else:
-            logging.warning(
-                "No Campaigns found for Assessment {}".format(assessment_id)
-            )
-            print("Please try again...")
+    if len(assessmentCampaigns) == 0:
+        raise LookupError(f"No campaigns found for assessment {assessment_id}")
 
     return assessmentCampaigns
 
 
-def select_campaigns(campaigns):
+def select_campaign(campaigns):
     """Return the ID of a selected campaign."""
     print("Please select a Campaign ID:")
     print("\tID: Name")
 
-    for key, name in campaigns.items():
-        print("\t" + str(key) + ": " + name)
+    for id, name in campaigns.items():
+        print(f"\t {id}: {name}")
 
     print("")
 
     while True:
-        # Bandit complains about the input() function, but it is safe to
-        # use in Python 3, which is required by this project.
-        inputId = input("ID: ")  # nosec
-        if int(inputId) in campaigns:
+        inputId = get_number("ID: ")
+        if inputId in campaigns:
             break
         else:
             logging.warning("Bad Campaign ID")
@@ -94,33 +118,41 @@ def select_campaigns(campaigns):
     return inputId
 
 
-def complete_campaign(api, api_key, server, workingID):
-    """Complete a campaign."""
-    url = f"{server}/api/campaigns/{workingID}/complete?api_key={api_key}"
+def complete_campaign(api_key, server, campaign_id):
+    """Complete a campaign in GoPhish.
+
+    Args:
+        api_key (string): GoPhish API key.
+        server (string): Full URL to GoPhish server.
+        campaign_id (int): GoPhish campaign id.
+
+    Raises:
+        UserWarning: GoPhish is unsuccessful in completing the campaign.
+    """
+    url = f"{server}/api/campaigns/{campaign_id}/complete?api_key={api_key}"
 
     # Bandit complains about disabling the SSL certificate check, but we have
     # no choice here since we are using a self-signed certificate.
     response = requests.get(url=url, verify=False)  # nosec
 
-    print("\n" + response.json()["message"])
+    if not response.json()["success"]:
+        raise UserWarning(response.json()["message"])
+    else:
+        print(f'\n{response.json()["message"]}')
 
-    print_summary(api, workingID)
 
-    return True
-
-
-def print_summary(api, workingID):
+def print_summary(api, campaign_id):
     """Print a campaign summary."""
-    summary = api.campaigns.summary(campaign_id=workingID)
+    summary = api.campaigns.summary(campaign_id=campaign_id)
 
     print("Campaign Summary:")
-    print("\tName: " + summary.name)
-    print("\tStatus: " + summary.status)
-    print("\tLaunch Date: " + summary.launch_date)
-    print("\tCompleted Date: " + summary.completed_date)
-    print("\tTotal Users: " + str(summary.stats.total))
-    print("\tTotal Sent: " + str(summary.stats.sent))
-    print("\tTotal Clicks: " + str(summary.stats.clicked))
+    print(f"\tName: {summary.name}")
+    print(f"\tStatus: {summary.status}")
+    print(f"\tLaunch Date: {summary.launch_date}")
+    print(f"\tCompleted Date: {summary.completed_date}")
+    print(f"\tTotal Users: {summary.stats.total}")
+    print(f"\tTotal Sent: {summary.stats.sent}")
+    print(f"\tTotal Clicks:  {summary.stats.clicked}")
 
     return True
 
@@ -137,38 +169,46 @@ def main():
         )
     except ValueError:
         logging.critical(
-            '"{}"is not a valid logging level.  Possible values are debug, info, warning, and error.'.format(
-                log_level
-            )
+            f'"{log_level}"is not a valid logging level. Possible values are debug, info, warning, and error.'
         )
         return 1
 
+    # Connect to API
+    try:
+        api = connect_api(args["API_KEY"], args["SERVER"])
+        logging.debug(f'Connected to: {args["SERVER"]}')
+    except Exception as e:
+        logging.critical(print(e.args[0]))
+        sys.exit(1)
+
+    try:
+        if args["--campaign"]:
+            # Use campaign name to find campaign id.
+            campaigns = get_campaigns(api)
+            campaign_id = get_campaign_id(args["--campaign"], campaigns)
+        else:
+            # User inputs assessment id and selects campaign from lists.
+            assessment_id = get_input("Enter the Assessment ID:")
+            campaigns = get_campaigns(api, assessment_id)
+            campaign_id = select_campaign(campaigns)
+
+    except LookupError as err:
+        logging.error(err)
+        sys.exit(1)
+
+    if args["--summary-only"]:
+        # Output summary only.
+        print_summary(api, campaign_id)
     else:
-        # Connect to API
+        # Complete and output summary.
         try:
-            api = connect_api(args["API_KEY"], args["SERVER"])
-            logging.debug("Connected to: {}".format(args["SERVER"]))
-        except Exception as e:
-            logging.critical(print(e.args[0]))
+            complete_campaign(args["API_KEY"], args["SERVER"], campaign_id)
+
+        except UserWarning as err:
+            logging.warning(err)
             sys.exit(1)
 
-    if args["--complete"]:
-        campaigns = get_campaigns(api)
-        workingID = select_campaigns(campaigns)
-        success = complete_campaign(api, args["API_KEY"], args["SERVER"], workingID)
-
-    elif args["--summary"]:
-        campaigns = get_campaigns(api)
-        workingID = select_campaigns(campaigns)
-        success = print_summary(api, workingID)
-
-    elif args["--auto"]:
-        success = complete_campaign(
-            api, args["API_KEY"], args["SERVER"], args["--auto"]
-        )
-
-    if not success:
-        sys.exit(-1)
+        print_summary(api, campaign_id)
 
 
 if __name__ == "__main__":
