@@ -65,6 +65,9 @@ An example assessment JSON can be found [here](src/assessment/sample_assessment.
 
 ### Group Dictionary ###
 
+Groups are imported from a templated `csv` file that can be found
+with `pca-wizard-templates  --targets`.
+
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
 | name | Group name in the format of `{assessment identifier}-G{integer}` (e.g. "RV0000-G1"). | string | | yes |
@@ -102,6 +105,9 @@ An example assessment JSON can be found [here](src/assessment/sample_assessment.
 | smtp | GoPhish sending profile, [example](#smtp-dictionary). | dictionary | | yes |
 
 ### Template Dictionary ###
+
+Email Templates can be imported from a templated `json` file that can be found
+with `pca-wizard-templates  --emails`.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
