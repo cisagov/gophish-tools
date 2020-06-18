@@ -14,44 +14,81 @@
 This repository contains a set of scripts that can be used by phishing
 campaign assessors to simplify the process of managing GoPhish campaigns.
 
+## Scripts ##
+
+* `gophish-cleaner` - Removes an assessment or elements of an assessment
+  in GoPhish.
+* `gophish-complete` - Completes a campaign in GoPhish and/or outputs a
+  GoPhish campaign summary.
+* `gophish-export` - Exports all the data from an assessment within GoPhish
+  into a single JSON file.
+* `gophish-import` - Imports an assessment JSON file into GoPhish.
+* `gophish-test` - Sends a duplicate assessment from GoPhish to custom
+  targets as a test.
+* `pca-wizard` - Creates an assessment JSON file via an interactive "wizard".
+* `pca-wizard-templates` - Generates templates for files needed when creating
+  an assessment JSON with `pca-wizard`.
+
 ## Usage ##
 
-### PCA Assessment Docker ###
+The scripts in this project can be executed either in a local Python
+environment or in a Docker container.
 
-A python Docker utility for team leads to produce a JSON file containing all
-configurations to run a CISA Phishing Campaign Assessment (PCA).
+### Install and run via local Python ###
 
-The PCA Assessment commands implemented in the docker container can be
-aliased into the host environment by using the procedure below.
+We strongly encourage the use of virtual Python environments.  Please see
+[this section](CONTRIBUTING.md#installing-and-using-pyenv-and-pyenv-virtualenv)
+in our ["Contributing" document](CONTRIBUTING.md) for information on how
+to set up and use a virtual Python environment.
 
-Alias the container commands to the local environment:
-
-```console
-eval "$(docker run pca-assessment)"
-```
-
-To run a GoPhish Control command:
+To install the scripts in your local Python environment:
 
 ```console
-pca-assessment-builder -h
+git clone https://github.com/cisagov/gophish-tools.git
+cd gophish-tools
+pip install --requirement requirements.txt
 ```
 
-### Building the pca-assessment container ###
-
-To build the Docker container for pca-assessment:
+After the scripts have been installed, they can be run like any other script:
 
 ```console
-docker build -t pca-assessment .
+gophish-import
 ```
 
-## Contributing ##
+### Pull or build Docker image ###
 
-We welcome contributions!  Please see [here](CONTRIBUTING.md) for
-details.
+Pull `cisagov/gophish-tools` from the Docker repository:
+
+```console
+docker pull cisagov/gophish-tools
+```
+
+Or build `cisagov/gophish-tools` from source:
+
+```console
+git clone https://github.com/cisagov/gophish-tools.git
+cd gophish-tools
+docker build --tag cisagov/gophish-tools .
+```
+
+### Run scripts via Docker ###
+
+The easiest way to use the containerized scripts is to alias them in your
+local shell:
+
+```console
+eval "$(docker run cisagov/gophish-tools)"
+```
+
+That will add aliases to your **current shell** for all of the
+[scripts](#scripts) mentioned above, plus an additional one for
+`gophish-tools-bash`, which can be used to start up a `bash` shell inside
+a `gophish-tools` container.
 
 ## Assessment JSON Field Dictionary ##
 
-The following items are included in the assessment JSON as produced by the `pca-wizard`.
+The following items are included in the assessment JSON as produced by
+`pca-wizard`.
 An example assessment JSON can be found [here](src/assessment/sample_assessment.json).
 
 | Name | Description | Type | Default | Required |
@@ -130,6 +167,11 @@ with the command `pca-wizard-templates  --emails`.
 | host | Email server for GoPhish to send email through. | string | "postfix:587" | no |
 | interface_type | Type of interface GoPhish will use with mail server. | string | "SMTP" | no |
 | ignore_cert | Indicate if GoPhish should ignore certs with mail server. | boolean | `True` | no |
+
+## Contributing ##
+
+We welcome contributions!  Please see [here](CONTRIBUTING.md) for
+details.
 
 ## License ##
 
