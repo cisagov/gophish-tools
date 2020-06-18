@@ -20,6 +20,8 @@ from models.models import (
     Template,
 )
 
+"""Support items for test_modules.py """
+
 AUTO_FORWARD = """
                 <html>
                     <body onload=\"document.forms[\'auto_forward\'].submit()\">
@@ -101,7 +103,7 @@ def campaign_json(template_json, smtp_json):
             "launch_date": "01/01/2025 13:00",
             "completed_date": "01/01/2025 14:00",
             "url": "http://bad.domain/camp1",
-            "group_name": "RVXX1-G1",
+            "group_name": "RVXXX1-G1",
             "template": template_json,
             "smtp": smtp_json,
         }
@@ -205,7 +207,7 @@ def campaign_object(template_object, smtp_object):
         launch_date="01/01/2025 13:00",
         completed_date="01/01/2025 14:00",
         url="http://bad.domain/camp1",
-        group_name="RVXX1-G1",
+        group_name="RVXXX1-G1",
         template=template_object,
         smtp=smtp_object,
     )
@@ -225,6 +227,30 @@ def assessment_object(group_object, page_object, campaign_object):
         page=page_object,
         campaigns=[campaign_object],
     )
+
+
+@pytest.fixture
+def multiple_campaign_object(campaign_object):
+    """Return list of campaigns."""
+    campaigns = list()
+
+    for x in range(1, 8):
+        campaigns.append(
+            Campaign(
+                name=f"RVXXX1-C{x}",
+                launch_date=f"01/0{x}/2025 13:00",
+                completed_date=f"01/0{x}/2025 14:00",
+                url=f"http://bad.domain/camp{x}",
+                group_name="RVXXX1-G1",
+                template=template_object,
+                smtp=smtp_object,
+            )
+        )
+
+    # Make a campaign from a different assessment.
+    # campaigns[6].name = f"RVXXX2-C7"
+
+    return campaigns
 
 
 def pytest_addoption(parser):
