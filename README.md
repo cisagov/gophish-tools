@@ -6,7 +6,12 @@
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/cisagov/gophish-tools.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/gophish-tools/context:python)
 [![Known Vulnerabilities](https://snyk.io/test/github/cisagov/gophish-tools/develop/badge.svg)](https://snyk.io/test/github/cisagov/gophish-tools)
 
-This repository contains a set of tools that can be used by phishing
+## Docker Image ##
+
+![MicroBadger Layers](https://img.shields.io/microbadger/layers/cisagov/gophish-tools)
+![Docker Image Size](https://img.shields.io/docker/image-size/cisagov/gophish-tools)
+
+This repository contains a set of scripts that can be used by phishing
 campaign assessors to simplify the process of managing GoPhish campaigns.
 
 ## Usage ##
