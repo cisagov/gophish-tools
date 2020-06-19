@@ -75,7 +75,7 @@ def import_users(api, assessment_id):
         assessment_id (string): Assessment identifier to get campaigns from.
 
     Returns:
-        boolean: Indicates users were successfully parsed.
+        List of users from the assessment's group(s).
     """
     groupIDs = pull_gophish_groups(api, assessment_id)
 
@@ -99,11 +99,7 @@ def import_users(api, assessment_id):
 
     logging.info(f"Users for {assessment_id} have been added")
 
-    with open(f"data_{assessment_id}.json", "w") as fp:
-        json.dump(users, fp, indent=4)
-        fp.write(",")
-
-    return True
+    return users
 
 
 def pull_gophish_groups(api, assessment_id):
@@ -129,7 +125,7 @@ def campaignControl(api, assessment_id):
         assessment_id (string): Assessment identifier to get campaigns from.
 
     Returns:
-        boolean: Indicates campaigns were successfully parsed.
+        List of the assessment's campaigns with data.
     """
     campaignIDs = pull_gophish_campaign(api, assessment_id)
     campaigns = list()
@@ -139,10 +135,7 @@ def campaignControl(api, assessment_id):
 
     logging.info(f"Successfully added campaigns for {assessment_id}")
 
-    with open(f"data_{assessment_id}.json", "a") as fp:
-        json.dump(campaigns, fp, indent=4)
-
-    return True
+    return campaigns
 
 
 def pull_gophish_campaign(api, assessment_id):
@@ -288,8 +281,17 @@ def main():
             sys.exit(1)
 
     if assessment_exists(api, args["ASSESSMENT_ID"]):
-        import_users(api, args["ASSESSMENT_ID"])
-        campaignControl(api, args["ASSESSMENT_ID"])
+        assessment_dict: Dict = dict()
+
+        # Add users list in assessment dict.
+        assessment_dict["users"] = import_users(api, args["ASSESSMENT_ID"])
+
+        # Add campaigns list to the assessment dict.
+        assessment_dict["campaigns"] = campaignControl(api, args["ASSESSMENT_ID"])
+
+        with open(f'data_{args["ASSESSMENT_ID"]}.json', "w") as fp:
+            json.dump(assessment_dict, fp, indent=4)
+
         logging.info(f'Data written to data_{args["ASSESSMENT_ID"]}.json')
 
     else:
