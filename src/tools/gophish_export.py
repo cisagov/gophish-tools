@@ -227,7 +227,6 @@ def get_email_status(api, campaign_id):
             ).hexdigest()
 
             # Pulls time string trimming microseconds before converting to datetime.
-            # TODO Confirm this needs to happen.
             rawEvent["time"] = datetime.strptime(
                 rawEvent["time"].split(".")[0], "%Y-%m-%dT%H:%M:%S"
             )
@@ -283,7 +282,7 @@ def main():
     if assessment_exists(api, args["ASSESSMENT_ID"]):
         assessment_dict: Dict = dict()
 
-        # Add users list in assessment dict.
+        # Add users list to assessment dict.
         assessment_dict["users"] = import_users(api, args["ASSESSMENT_ID"])
 
         # Add campaigns list to the assessment dict.
@@ -296,7 +295,7 @@ def main():
 
     else:
         logging.error(
-            f'Assessment "{args["ASSESSMENT_ID"]}" does not exists in GoPhish.'
+            f'Assessment "{args["ASSESSMENT_ID"]}" does not exist in GoPhish.'
         )
         sys.exit(1)
 

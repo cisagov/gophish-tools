@@ -1,5 +1,5 @@
 #!/usr/bin/env pytest -vs
-"""Tests for Validation functions."""
+"""Tests for GoPhish tool functions."""
 
 # Third-Party Libraries
 from mock import patch
