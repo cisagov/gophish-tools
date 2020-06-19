@@ -7,6 +7,8 @@ https://docs.pytest.org/en/latest/writing_plugins.html#conftest-py-plugins
 import json
 
 # Third-Party Libraries
+from gophish.models import Group as GoPhish_Group
+from gophish.models import User as GoPhish_User
 import pytest
 
 # cisagov Libraries
@@ -231,7 +233,7 @@ def assessment_object(group_object, page_object, campaign_object):
 
 @pytest.fixture
 def multiple_campaign_object(campaign_object):
-    """Return list of campaigns."""
+    """Return list of campaign objects."""
     campaigns = list()
 
     for x in range(1, 8):
@@ -248,9 +250,66 @@ def multiple_campaign_object(campaign_object):
         )
 
     # Make a campaign from a different assessment.
-    # campaigns[6].name = f"RVXXX2-C7"
+    campaigns[6].name = "RVXXX2-C7"
 
     return campaigns
+
+
+@pytest.fixture
+def multiple_gophish_group_object():
+    """Return list of GoPhish group objects."""
+    groups = list()
+
+    for x in range(1, 3):
+        groups.append(
+            GoPhish_Group(
+                group_id={x},
+                name=f"RVXXX1-G{x}",
+                targets=[
+                    GoPhish_User(
+                        first_name="Jane",
+                        last_name="Smith",
+                        email=f"jane.smith{x}@domain.tld",
+                        position="IT",
+                    ),
+                    GoPhish_User(
+                        first_name="John",
+                        last_name="Doe",
+                        email=f"john.doe{x}@domain.tld",
+                        position="HR",
+                    ),
+                ],
+            )
+        )
+
+    return groups
+
+
+@pytest.fixture
+def database_user_json():
+    """Return a User JSON with 4 emails matching the database."""
+    return [
+        {
+            # jane.smith1@domain.tld
+            "id": "8d2b7505ad58056cf54b94ad17e6755934738e78125998bd0e629306443ce10e",
+            "customer_defined_labels": {"RVXXX1": ["IT"]},
+        },
+        {
+            # john.doe1@domain.tld
+            "id": "1907e8321f1c133289062fa073c7a3cfb64726ba6a14d05f037e5e5a8cb7a0e3",
+            "customer_defined_labels": {"RVXXX1": ["HR"]},
+        },
+        {
+            # jane.smith2@domain.tld
+            "id": "d59c37c1c75e5c8a52a8ec0a344c39c2a02c4a8ee880d623d9ba140e18e4affa",
+            "customer_defined_labels": {"RVXXX1": ["IT"]},
+        },
+        {
+            # john.doe2@domain.tld
+            "id": "5c0618940faf762813ff7a097d8aa7a3908477f48ff94d414a442ea743615eff",
+            "customer_defined_labels": {"RVXXX1": ["HR"]},
+        },
+    ]
 
 
 def pytest_addoption(parser):

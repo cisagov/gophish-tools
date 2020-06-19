@@ -2,7 +2,7 @@
 """Tests for Validation functions."""
 
 # Third-Party Libraries
-import mock
+from mock import patch
 import pytest
 
 # cisagov Libraries
@@ -31,16 +31,33 @@ class TestComplete:
 class TestExport:
     """Test gophish-export script."""
 
-    @mock.patch("tools.connect")
+    @patch("tools.connect")
     def test_assessment_exists_found(self, mock_api, multiple_campaign_object):
         """Verify True is returned when assessment is in GoPhish."""
         mock_api.campaigns.get.return_value = multiple_campaign_object
 
         assert gophish_export.assessment_exists(mock_api, "RVXXX1") is True
 
-    @mock.patch("tools.connect")
+    @patch("tools.connect")
     def test_assessment_exists_not_found(self, mock_api, multiple_campaign_object):
         """Verify False is returned when assessment is not in GoPhish."""
         mock_api.campaigns.get.return_value = multiple_campaign_object
 
         assert gophish_export.assessment_exists(mock_api, "RVXXX3") is False
+
+    def mock_pull_gophish_groups(self, s, group_object):
+        """Return a mock list of GoPhish group objects."""
+        return group_object
+
+    # Mocks the group id's returned for the assessment's groups.
+    @patch("tools.gophish_export.pull_gophish_groups", return_value=[1, 2])
+    # Mock API to allow GoPhish group objects to be returned.
+    @patch("tools.connect")
+    def test_import_users(
+        self, mock_api, mock_export, multiple_gophish_group_object, database_user_json
+    ):
+        """Verify the appropriate JSON is created by importing users."""
+        # mock_export.pull_gophish_groups.return_value = [1]
+        mock_api.groups.get.side_effect = multiple_gophish_group_object
+
+        assert gophish_export.import_users(mock_api, "RVXXX1") == database_user_json
