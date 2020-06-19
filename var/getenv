@@ -1,28 +1,29 @@
 #!/bin/bash
 
 echo '################################################################################'
-echo '# The following output is used to setup aliases to containerized pca-assessment commands'
-echo '# To apply these changes under bash use a command similar to:'
-echo '# eval "$(docker run pca-assessment)"'
-echo '#'
-echo '# Environment variables:'
-echo '# PCA_CON_IMAGE, defaults to "pca-assessment" if not set'
+echo '# The following output is used to setup aliases to containerized commands.'
+echo '# To apply these changes in a shell, eval the output of this container:'
+echo '#   eval "$(docker run cisagov/gophish-tools)"'
+echo '# '
+echo '# Environment variable:'
+echo '# GOPHISH_TOOLS_IMAGE, defaults to "cisagov/gophish-tools" if not set'
 echo '# '
 echo '################################################################################'
 echo
 
 cd /usr/local/bin
 
-# create output that can be evaled to create aliases for pca-assessment commands
+# Create output that can be eval'd to create aliases for the various
+# commands in gophish-tools
 for f in pca-*
 do
-  echo alias $f=\"docker run -it --network host --rm --volume \\\`pwd\\\`:/home/pca \\\"\\\${PCA_CON_IMAGE:-pca-assessment}\\\" $f\"
+  echo alias $f=\"docker run -it --network host --rm --volume \\\`pwd\\\`:/home/cisa \\\"\\\${GOPHISH_TOOLS_IMAGE:-cisagov/gophish-tools}\\\" $f\"
 done
 
 for f in gophish-*
 do
-  echo alias $f=\"docker run -it --network host --rm --volume \\\`pwd\\\`:/home/pca \\\"\\\${PCA_CON_IMAGE:-pca-assessment}\\\" $f\"
+  echo alias $f=\"docker run -it --network host --rm --volume \\\`pwd\\\`:/home/cisa \\\"\\\${GOPHISH_TOOLS_IMAGE:-cisagov/gophish-tools}\\\" $f\"
 done
 
-# create an alias to start bash in the container
-echo alias pca-assessment-bash=\"docker run -it --rm --network host --volume \\\`pwd\\\`:/home/pca \\\"\\\${PCA_CON_IMAGE:-pca-assessment}\\\" /bin/bash\"
+# Create an alias to execute a shell in the gophish-tools container
+echo alias gophish-tools-bash=\"docker run -it --rm --network host --volume \\\`pwd\\\`:/home/cisa \\\"\\\${GOPHISH_TOOLS_IMAGE:-cisagov/gophish-tools}\\\" /bin/bash\"
