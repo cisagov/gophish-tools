@@ -1,12 +1,15 @@
 #!/usr/bin/env pytest -vs
 """Tests for assessment JSON."""
 
-# # Standard Python Libraries
-# import sys
-# from unittest.mock import patch
-#
-# # cisagov Libraries
-# import assessment.builder as assessment_builder
+# Standard Python Libraries
+import sys
+from unittest.mock import patch
+
+# Third-Party Libraries
+import mock
+
+# cisagov Libraries
+import assessment.builder as assessment_builder
 
 # TODO Make test_emails csv
 
@@ -105,16 +108,21 @@ class TestPlainAssessment:
 
     # TODO: Replace with a useful, functioning test
 
-    # def test_assessment(self, monkeypatch):
-    #     """Construct a test assessment from mock data."""
-    #     with patch.object(sys, "argv", ["pca-wizard", "RVXXX1"]):
-    #         assessment_builder.get_input = self.mock_get_input
-    #         assessment_builder.input = self.mock_input
-    #         assessment_builder.yes_no_prompt = self.mock_yes_no
-    #         assessment_builder.get_number = self.mock_get_number
-    #         assessment_builder.get_time_input = self.mock_get_time_input
-    #         assessment_builder.prompt = self.mock_prompt
-    #         assessment_builder.radiolist_dialog = self.mock_radio
-    #         # assessment_builder.args["ASSESSMENT_ID"] = "RVXXX1"  # self.mock_id_arg
-    #         assessment_builder.main()
-    #     assert True
+    @mock.patch("docopt.docopt")
+    def test_assessment(self, mock_docopt, monkeypatch):
+        """Construct a test assessment from mock data."""
+        with patch.object(sys, "argv", ["pca-wizard", "RVXXX1"]):
+            assessment_builder.get_input = self.mock_get_input
+            assessment_builder.input = self.mock_input
+            assessment_builder.yes_no_prompt = self.mock_yes_no
+            assessment_builder.get_number = self.mock_get_number
+            assessment_builder.get_time_input = self.mock_get_time_input
+            assessment_builder.prompt = self.mock_prompt
+            assessment_builder.radiolist_dialog = self.mock_radio
+
+            # mock_docopt is used within the called function
+            # Ignoring Flake8 F841 for this line.
+            mock_docopt = {"ASSESSMENT_ID": "RVXXX1"}  # noqa
+
+            assessment_builder.main()
+        assert True
