@@ -133,7 +133,7 @@ def export_campaigns(api, assessment_id):
     for campaign_id in campaignIDs:
         campaigns.append(get_campaign_data(api, campaign_id))
 
-    logging.info(f"{len(campaigns)} campaigns added for assessment {assessment_id}.")
+    logging.info(f"{len(campaigns)} campaigns found for assessment {assessment_id}.")
 
     return campaigns
 
