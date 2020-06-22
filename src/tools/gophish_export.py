@@ -41,48 +41,72 @@ from ._version import __version__
 # party; thus, an SSL insecure request warning is produced.
 requests.packages.urllib3.disable_warnings()
 
-# import IPython; IPython.embed() #<<< BREAKPOINT >>>
-# sys.exit(0)    # Build dict of relevant campaign data
+
+def assessment_exists(api, assessment_id):
+    """Check if GoPhish has at least one campaign for designated assessment.
+
+    Args:
+        api (GoPhish API): Connection to GoPhish server via the API.
+        assessment_id (string): Assessment identifier to get campaigns from.
+
+    Returns:
+        boolean: Indicates if a campaign is found starting with assessment_id.
+    """
+    allCampaigns = api.campaigns.get()
+    for campaign in allCampaigns:
+        if campaign.name.startswith(assessment_id):
+            return True
+
+    return False
 
 
-def import_users(api, assessment_id):
-    """Add all users to the database."""
-    # STAND ALONE
-    # Pulls the group IDs for any group starting with assessment ID.
-    groupIDs = pull_gophish_groups(api, assessment_id)
+def export_targets(api, assessment_id):
+    """Add all targets to a list.
 
-    users = list()
+    Achieved by pulling the group IDs for any group starting with
+    the assessment id. The targets within the group are then parsed
+    into a targets list of target dicts. Each target dict includes a
+    sha256 hash of the target's email and assessment id with any labels.
+
+    Args:
+        api (GoPhish API): Connection to GoPhish server via the API.
+        assessment_id (string): Assessment identifier to get campaigns from.
+
+    Returns:
+        List of targets from the assessment's group(s).
+    """
+    groupIDs = get_group_ids(api, assessment_id)
+
+    targets = list()
 
     for group_id in groupIDs:
-        # Pulls target list for parsing
-        targets = api.groups.get(group_id).as_dict()["targets"]
+        # Gets target list for parsing.
+        raw_targets = api.groups.get(group_id).as_dict()["targets"]
 
-        for target in targets:
+        for raw_target in raw_targets:
 
-            user = dict()
-            # Checks if user is in database.
+            target = dict()
 
-            user["id"] = hashlib.sha256(target["email"].encode("utf-8")).hexdigest()
-            user["customer_defined_labels"] = dict()
+            target["id"] = hashlib.sha256(
+                raw_target["email"].encode("utf-8")
+            ).hexdigest()
+            target["customer_defined_labels"] = dict()
 
-            if "position" in target:
-                user["customer_defined_labels"][assessment_id] = [target["position"]]
+            if "position" in raw_target:
+                target["customer_defined_labels"][assessment_id] = [
+                    raw_target["position"]
+                ]
 
-            users.append(user)
+            targets.append(target)
 
-        logging.info("Users for {} have been added".format(assessment_id))
+    logging.info(f"{len(targets)} email targets found for assessment {assessment_id}.")
 
-        with open("data_" + assessment_id + ".json", "w") as fp:
-            json.dump(users, fp, indent=4)
-            fp.write(",")
-
-    return True
+    return targets
 
 
-def pull_gophish_groups(api, assessment_id):
+def get_group_ids(api, assessment_id):
     """Return a list of group IDs for all groups starting with specified assessment_id."""
-    # SUPPORTER - userControl
-    rawGroup = api.groups.get()  # holds raw list of campaigns from GoPhish
+    rawGroup = api.groups.get()  # Holds raw list of campaigns from GoPhish.
     groups = list()  # Holds list of campaign IDs that match the assessment.
 
     for group in rawGroup:
@@ -93,27 +117,30 @@ def pull_gophish_groups(api, assessment_id):
     return groups
 
 
-def campaignControl(api, assessment_id):
-    """Control the campaign importing of an assessment to DB."""
-    # STAND ALONE
-    campaignIDs = pull_gophish_campaign(api, assessment_id)
+def export_campaigns(api, assessment_id):
+    """Add all the campaigns' data for an assessment to a list.
+
+    Args:
+        api (GoPhish API): Connection to GoPhish server via the API.
+        assessment_id (string): Assessment identifier to get campaigns from.
+
+    Returns:
+        List of the assessment's campaigns with data.
+    """
+    campaignIDs = get_campaign_ids(api, assessment_id)
     campaigns = list()
 
     for campaign_id in campaignIDs:
-        campaigns.append(import_campaign(api, campaign_id))
+        campaigns.append(get_campaign_data(api, campaign_id))
 
-    logging.info("Successfully added campaigns for {}".format(assessment_id))
+    logging.info(f"{len(campaigns)} campaigns found for assessment {assessment_id}.")
 
-    with open("data_" + assessment_id + ".json", "a") as fp:
-        json.dump(campaigns, fp, indent=4)
-
-    return True
+    return campaigns
 
 
-def pull_gophish_campaign(api, assessment_id):
+def get_campaign_ids(api, assessment_id):
     """Return a list of campaign IDs for all campaigns starting with specified assessment_id."""
-    # SUPPORTER - campaignControl
-    rawCampaigns = api.campaigns.get()  # holds raw list of campaigns from GoPhish
+    rawCampaigns = api.campaigns.get()  # Holds raw list of campaigns from GoPhish.
     campaigns = list()  # Holds list of campaign IDs that match the assessment.
 
     for campaign in rawCampaigns:
@@ -124,12 +151,11 @@ def pull_gophish_campaign(api, assessment_id):
     return campaigns
 
 
-def import_campaign(api, campaign_id):
-    """Return campaign metadata for given campaign IDs."""
-    # SUPPORTER - campaignControl
+def get_campaign_data(api, campaign_id):
+    """Return campaign metadata for the given campaign ID."""
     campaign = dict()
 
-    # Pulls the campaign data as dict from database
+    # Pulls the campaign data as dict from GoPhish.
     rawCampaign: dict = api.campaigns.get(campaign_id).as_dict()
 
     campaign["id"] = rawCampaign["name"]
@@ -140,32 +166,29 @@ def import_campaign(api, campaign_id):
 
     campaign["subject"] = rawCampaign["template"]["subject"]
 
-    # Gets Template ID
+    # Get the template ID from the GoPhish template name.
     campaign["template"] = (
         api.templates.get(rawCampaign["template"]["id"]).as_dict()["name"].split("-")[2]
     )
 
-    campaign["clicks"] = import_clicks(api, campaign_id)
+    campaign["clicks"] = get_click_data(api, campaign_id)
 
-    # Imports the e-mail send status.
+    # Get the e-mail send status from GoPhish.
     campaign["status"] = get_email_status(api, campaign_id)
 
     return campaign
 
 
-def import_clicks(api, campaign_id):
+def get_click_data(api, campaign_id):
     """Return a list of all clicks for a given campaign."""
-    # SUPPORTER - import_campaign
-
-    # Builds out Click
     rawEvents = api.campaigns.get(campaign_id).as_dict()["timeline"]
-    clicks = list()  # Holds list of all users that clicked
+    clicks = list()  # Holds list of all users that clicked.
 
     for rawEvent in rawEvents:
         if rawEvent["message"] == "Clicked Link":
             click = dict()
 
-            # Builds out click document
+            # Builds out click document.
             click["user"] = hashlib.sha256(
                 rawEvent["email"].encode("utf-8")
             ).hexdigest()
@@ -174,7 +197,6 @@ def import_clicks(api, campaign_id):
             click["time"] = rawEvent["time"]
 
             click["application"] = get_application(rawEvent)
-            # Adds user that clicked to a list to be returned.
 
             clicks.append(click)
 
@@ -182,9 +204,7 @@ def import_clicks(api, campaign_id):
 
 
 def get_email_status(api, campaign_id):
-    """Import email status."""
-    # SUPPORTER - import_campaign
-
+    """Return the email send status and time."""
     rawEvents = api.campaigns.get(campaign_id).as_dict()["timeline"]
     status = list()
     for rawEvent in rawEvents:
@@ -205,7 +225,7 @@ def get_email_status(api, campaign_id):
                 rawEvent["email"].encode("utf-8")
             ).hexdigest()
 
-            # Pulls time string trimming microseconds before converting to datetime.
+            # Trim microseconds before converting to datetime.
             rawEvent["time"] = datetime.strptime(
                 rawEvent["time"].split(".")[0], "%Y-%m-%dT%H:%M:%S"
             )
@@ -221,13 +241,11 @@ def get_email_status(api, campaign_id):
 
 def get_application(rawEvent):
     """Return application details."""
-    # SUPPORTER - import_clicks
-
     application = dict()
 
     application["external_ip"] = rawEvent["details"]["browser"]["address"]
 
-    # Processes user agent string.
+    # Process user agent string.
     userAgent = rawEvent["details"]["browser"]["user-agent"]
     application["name"] = httpagentparser.detect(userAgent)["platform"]["name"]
     application["version"] = httpagentparser.detect(userAgent)["platform"]["version"]
@@ -247,9 +265,7 @@ def main():
         )
     except ValueError:
         logging.critical(
-            '"{}"is not a valid logging level.  Possible values are debug, info, warning, and error.'.format(
-                log_level
-            )
+            f'"{log_level}"is not a valid logging level. Possible values are debug, info, warning, and error.'
         )
         return 1
 
@@ -257,17 +273,30 @@ def main():
         # Connect to API
         try:
             api = connect_api(args["API_KEY"], args["SERVER"])
-            logging.debug("Connected to: {}".format(args["SERVER"]))
+            logging.debug(f'Connected to: {args["SERVER"]}')
         except Exception as e:
             logging.critical(print(e.args[0]))
             sys.exit(1)
 
-    # TODO Validate that requested assessment exists.
+    if assessment_exists(api, args["ASSESSMENT_ID"]):
+        assessment_dict: Dict = dict()
 
-    import_users(api, args["ASSESSMENT_ID"])
-    campaignControl(api, args["ASSESSMENT_ID"])
+        # Add targets list to assessment dict.
+        assessment_dict["targets"] = export_targets(api, args["ASSESSMENT_ID"])
 
-    logging.info("Data written to data_{}.json".format(args["ASSESSMENT_ID"]))
+        # Add campaigns list to the assessment dict.
+        assessment_dict["campaigns"] = export_campaigns(api, args["ASSESSMENT_ID"])
+
+        with open(f'data_{args["ASSESSMENT_ID"]}.json', "w") as fp:
+            json.dump(assessment_dict, fp, indent=4)
+
+        logging.info(f'Data written to data_{args["ASSESSMENT_ID"]}.json')
+
+    else:
+        logging.error(
+            f'Assessment "{args["ASSESSMENT_ID"]}" does not exist in GoPhish.'
+        )
+        sys.exit(1)
 
 
 if __name__ == "__main__":
