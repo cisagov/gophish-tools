@@ -2,8 +2,10 @@
 """Tests for assessment JSON."""
 
 # Standard Python Libraries
+import csv
+from io import StringIO
 import sys
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 # Third-Party Libraries
 import mock
@@ -74,6 +76,31 @@ class TestPlainAssessment:
 
     radio_dialog_values = [["1. Time Zone - 63", "US/Eastern"]]
 
+    csv_data = StringIO(
+        """\
+        First Name,Last Name,Email,Position
+        classroom,pattern,classroom.pattern@target.tld,HR
+        rice,bent,rice.bent@target.tld,IT
+        center,sort,center.sort@target.tld,HR
+        decide,health,decide.health@target.tld,IT"""
+    )
+
+    def json_content_data(self=""):
+        """Return a list of dicts mocking email template json files."""
+        data = list()
+        for x in range(1, 7):
+            data.append(
+                {
+                    "id": f"a1b2c3{x}",
+                    "from_address": f"Test{x} <test{x}@domain.tld>",
+                    "subject": f"Test {x}",
+                    "html": f'<div><div id="body"><p>Test {x} {{.URL}}</p></div></div>',
+                    "text": f"Test {x}\n {{.URL}}",
+                }
+            )
+
+        return data
+
     def mock_get_input(self, s):
         """Return a mock input value."""
         return self.get_input_values.pop(0)[1]
@@ -102,13 +129,14 @@ class TestPlainAssessment:
         """Return a mock radio dialog value."""
         return self.radio_dialog_values.pop(0)[1]
 
-    def mock_id_arg(self, s):
-        """Return a mock assessment ID value."""
-        return "RVXXX1"
-
     # TODO: Replace with a useful, functioning test
 
     @mock.patch("docopt.docopt")
+    @mock.patch("assessment.builder.open", MagicMock())
+    @mock.patch("json.load", MagicMock(side_effect=json_content_data()))
+    @mock.patch(
+        "csv.reader", return_value=csv.reader(csv_data, delimiter=","),
+    )
     def test_assessment(self, mock_docopt, monkeypatch):
         """Construct a test assessment from mock data."""
         with patch.object(sys, "argv", ["pca-wizard", "RVXXX1"]):
