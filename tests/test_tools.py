@@ -55,9 +55,9 @@ class TestExport:
     # Mock API to allow GoPhish group objects to be returned.
     @patch("tools.connect")
     def test_export_targets(
-        self, mock_api, mock_export, multiple_gophish_group_object, database_user_json
+        self, mock_api, mock_export, multiple_gophish_group_object, email_target_json
     ):
         """Verify the appropriate JSON is created by export targets."""
         mock_api.groups.get.side_effect = multiple_gophish_group_object
 
-        assert export_targets(mock_api, "RVXXX1") == database_user_json
+        assert export_targets(mock_api, "RVXXX1") == email_target_json

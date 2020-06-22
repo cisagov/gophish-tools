@@ -4,6 +4,7 @@ https://docs.pytest.org/en/latest/writing_plugins.html#conftest-py-plugins
 """
 
 # Standard Python Libraries
+import hashlib
 import json
 
 # Third-Party Libraries
@@ -232,7 +233,7 @@ def assessment_object(group_object, page_object, campaign_object):
 
 
 @pytest.fixture
-def multiple_campaign_object(campaign_object):
+def multiple_campaign_object(template_object, smtp_object):
     """Return list of campaign objects."""
     campaigns = list()
 
@@ -286,30 +287,23 @@ def multiple_gophish_group_object():
 
 
 @pytest.fixture
-def database_user_json():
-    """Return a User JSON with 4 emails matching the database."""
-    return [
-        {
-            # jane.smith1@domain.tld
-            "id": "8d2b7505ad58056cf54b94ad17e6755934738e78125998bd0e629306443ce10e",
-            "customer_defined_labels": {"RVXXX1": ["IT"]},
-        },
-        {
-            # john.doe1@domain.tld
-            "id": "1907e8321f1c133289062fa073c7a3cfb64726ba6a14d05f037e5e5a8cb7a0e3",
-            "customer_defined_labels": {"RVXXX1": ["HR"]},
-        },
-        {
-            # jane.smith2@domain.tld
-            "id": "d59c37c1c75e5c8a52a8ec0a344c39c2a02c4a8ee880d623d9ba140e18e4affa",
-            "customer_defined_labels": {"RVXXX1": ["IT"]},
-        },
-        {
-            # john.doe2@domain.tld
-            "id": "5c0618940faf762813ff7a097d8aa7a3908477f48ff94d414a442ea743615eff",
-            "customer_defined_labels": {"RVXXX1": ["HR"]},
-        },
-    ]
+def email_target_json():
+    """Return a email target JSON with 4 emails matching the GoPhish group object."""
+    users = list()
+    for (email, position) in [
+        ("jane.smith1@domain.tld", "IT"),
+        ("john.doe1@domain.tld", "HR"),
+        ("jane.smith2@domain.tld", "IT"),
+        ("john.doe2@domain.tld", "HR"),
+    ]:
+        users.append(
+            {
+                "id": hashlib.sha256(email.encode("utf-8")).hexdigest(),
+                "customer_defined_labels": {"RVXXX1": [position]},
+            }
+        )
+
+    return users
 
 
 def pytest_addoption(parser):
