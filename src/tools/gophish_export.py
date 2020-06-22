@@ -43,7 +43,7 @@ requests.packages.urllib3.disable_warnings()
 
 
 def assessment_exists(api, assessment_id):
-    """Check GoPhish has campaigns for designated assessment.
+    """Check if GoPhish has at least one campaign for designated assessment.
 
     Args:
         api (GoPhish API): Connection to GoPhish server via the API.
@@ -65,10 +65,8 @@ def import_users(api, assessment_id):
 
     Achieved by pulling the group IDs for any group starting with
     the assessment id. The targets within the group are then parsed
-    into a users list of user dicts. The user dicts includes a
-    sha256 hash of the target's email and  assessment id with any labels.
-
-    Results are saved to a json file.
+    into a users list of user dicts. Each user dicts includes a
+    sha256 hash of the target's email and assessment id with any labels.
 
     Args:
         api (GoPhish API): Connection to GoPhish server via the API.
@@ -82,7 +80,7 @@ def import_users(api, assessment_id):
     users = list()
 
     for group_id in groupIDs:
-        # Pulls target list for parsing
+        # Gets target list for parsing.
         targets = api.groups.get(group_id).as_dict()["targets"]
 
         for target in targets:
@@ -104,7 +102,7 @@ def import_users(api, assessment_id):
 
 def pull_gophish_groups(api, assessment_id):
     """Return a list of group IDs for all groups starting with specified assessment_id."""
-    rawGroup = api.groups.get()  # holds raw list of campaigns from GoPhish
+    rawGroup = api.groups.get()  # Holds raw list of campaigns from GoPhish.
     groups = list()  # Holds list of campaign IDs that match the assessment.
 
     for group in rawGroup:
@@ -117,8 +115,6 @@ def pull_gophish_groups(api, assessment_id):
 
 def campaignControl(api, assessment_id):
     """Control the campaign importing of an assessment to DB.
-
-    Results are saved to a json file.
 
     Args:
         api (GoPhish API): Connection to GoPhish server via the API.
@@ -140,7 +136,7 @@ def campaignControl(api, assessment_id):
 
 def pull_gophish_campaign(api, assessment_id):
     """Return a list of campaign IDs for all campaigns starting with specified assessment_id."""
-    rawCampaigns = api.campaigns.get()  # holds raw list of campaigns from GoPhish
+    rawCampaigns = api.campaigns.get()  # Holds raw list of campaigns from GoPhish.
     campaigns = list()  # Holds list of campaign IDs that match the assessment.
 
     for campaign in rawCampaigns:
@@ -155,7 +151,7 @@ def import_campaign(api, campaign_id):
     """Return campaign metadata for given campaign IDs."""
     campaign = dict()
 
-    # Pulls the campaign data as dict from database
+    # Pulls the campaign data as dict from GoPhish.
     rawCampaign: dict = api.campaigns.get(campaign_id).as_dict()
 
     campaign["id"] = rawCampaign["name"]
@@ -166,7 +162,7 @@ def import_campaign(api, campaign_id):
 
     campaign["subject"] = rawCampaign["template"]["subject"]
 
-    # Gets Template ID
+    # Gets template ID.
     campaign["template"] = (
         api.templates.get(rawCampaign["template"]["id"]).as_dict()["name"].split("-")[2]
     )
@@ -182,13 +178,13 @@ def import_campaign(api, campaign_id):
 def import_clicks(api, campaign_id):
     """Return a list of all clicks for a given campaign."""
     rawEvents = api.campaigns.get(campaign_id).as_dict()["timeline"]
-    clicks = list()  # Holds list of all users that clicked
+    clicks = list()  # Holds list of all users that clicked.
 
     for rawEvent in rawEvents:
         if rawEvent["message"] == "Clicked Link":
             click = dict()
 
-            # Builds out click document
+            # Builds out click document.
             click["user"] = hashlib.sha256(
                 rawEvent["email"].encode("utf-8")
             ).hexdigest()
@@ -197,15 +193,15 @@ def import_clicks(api, campaign_id):
             click["time"] = rawEvent["time"]
 
             click["application"] = get_application(rawEvent)
-            # Adds user that clicked to a list to be returned.
 
+            # Adds user that clicked to a list to be returned.
             clicks.append(click)
 
     return clicks
 
 
 def get_email_status(api, campaign_id):
-    """Import email status."""
+    """Return the email send status and time."""
     rawEvents = api.campaigns.get(campaign_id).as_dict()["timeline"]
     status = list()
     for rawEvent in rawEvents:
@@ -266,7 +262,7 @@ def main():
         )
     except ValueError:
         logging.critical(
-            f'"{log_level}"is not a valid logging level.  Possible values are debug, info, warning, and error.'
+            f'"{log_level}"is not a valid logging level. Possible values are debug, info, warning, and error.'
         )
         return 1
 
