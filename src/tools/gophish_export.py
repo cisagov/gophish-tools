@@ -65,7 +65,7 @@ def export_targets(api, assessment_id):
 
     Achieved by pulling the group IDs for any group starting with
     the assessment id. The targets within the group are then parsed
-    into a targets list of target dicts. Each target dicts includes a
+    into a targets list of target dicts. Each target dict includes a
     sha256 hash of the target's email and assessment id with any labels.
 
     Args:
@@ -148,7 +148,7 @@ def get_campaign_ids(api, assessment_id):
 
 
 def get_campaign_data(api, campaign_id):
-    """Return campaign metadata for given campaign ID."""
+    """Return campaign metadata for the given campaign ID."""
     campaign = dict()
 
     # Pulls the campaign data as dict from GoPhish.
@@ -162,14 +162,14 @@ def get_campaign_data(api, campaign_id):
 
     campaign["subject"] = rawCampaign["template"]["subject"]
 
-    # Gets template ID.
+    # Get the template ID from the GoPhish template name.
     campaign["template"] = (
         api.templates.get(rawCampaign["template"]["id"]).as_dict()["name"].split("-")[2]
     )
 
     campaign["clicks"] = get_click_data(api, campaign_id)
 
-    # Imports the e-mail send status.
+    # Get the e-mail send status from GoPhish.
     campaign["status"] = get_email_status(api, campaign_id)
 
     return campaign
@@ -221,7 +221,7 @@ def get_email_status(api, campaign_id):
                 rawEvent["email"].encode("utf-8")
             ).hexdigest()
 
-            # Pulls time string trimming microseconds before converting to datetime.
+            # Trim microseconds before converting to datetime.
             rawEvent["time"] = datetime.strptime(
                 rawEvent["time"].split(".")[0], "%Y-%m-%dT%H:%M:%S"
             )
@@ -241,7 +241,7 @@ def get_application(rawEvent):
 
     application["external_ip"] = rawEvent["details"]["browser"]["address"]
 
-    # Processes user agent string.
+    # Process user agent string.
     userAgent = rawEvent["details"]["browser"]["user-agent"]
     application["name"] = httpagentparser.detect(userAgent)["platform"]["name"]
     application["version"] = httpagentparser.detect(userAgent)["platform"]["version"]
@@ -277,8 +277,8 @@ def main():
     if assessment_exists(api, args["ASSESSMENT_ID"]):
         assessment_dict: Dict = dict()
 
-        # Add users list to assessment dict.
-        assessment_dict["users"] = export_targets(api, args["ASSESSMENT_ID"])
+        # Add targets list to assessment dict.
+        assessment_dict["targets"] = export_targets(api, args["ASSESSMENT_ID"])
 
         # Add campaigns list to the assessment dict.
         assessment_dict["campaigns"] = export_campaigns(api, args["ASSESSMENT_ID"])
