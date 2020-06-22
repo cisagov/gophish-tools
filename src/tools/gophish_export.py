@@ -60,12 +60,12 @@ def assessment_exists(api, assessment_id):
     return False
 
 
-def import_users(api, assessment_id):
-    """Add all users to the database.
+def export_targets(api, assessment_id):
+    """Add all targets to a list.
 
     Achieved by pulling the group IDs for any group starting with
     the assessment id. The targets within the group are then parsed
-    into a users list of user dicts. Each user dicts includes a
+    into a targets list of target dicts. Each target dicts includes a
     sha256 hash of the target's email and assessment id with any labels.
 
     Args:
@@ -73,7 +73,7 @@ def import_users(api, assessment_id):
         assessment_id (string): Assessment identifier to get campaigns from.
 
     Returns:
-        List of users from the assessment's group(s).
+        List of targets from the assessment's group(s).
     """
     groupIDs = pull_gophish_groups(api, assessment_id)
 
@@ -95,7 +95,7 @@ def import_users(api, assessment_id):
 
             users.append(user)
 
-    logging.info(f"Users for {assessment_id} have been added")
+    logging.info(f"{len(users)} email targets found for assessment {assessment_id}.")
 
     return users
 
@@ -270,7 +270,7 @@ def main():
         # Connect to API
         try:
             api = connect_api(args["API_KEY"], args["SERVER"])
-            logging.debug('Connected to: {args["SERVER"]}')
+            logging.debug(f'Connected to: {args["SERVER"]}')
         except Exception as e:
             logging.critical(print(e.args[0]))
             sys.exit(1)
@@ -279,7 +279,7 @@ def main():
         assessment_dict: Dict = dict()
 
         # Add users list to assessment dict.
-        assessment_dict["users"] = import_users(api, args["ASSESSMENT_ID"])
+        assessment_dict["users"] = export_targets(api, args["ASSESSMENT_ID"])
 
         # Add campaigns list to the assessment dict.
         assessment_dict["campaigns"] = campaignControl(api, args["ASSESSMENT_ID"])
