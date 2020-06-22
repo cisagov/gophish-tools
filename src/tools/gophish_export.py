@@ -75,7 +75,7 @@ def export_targets(api, assessment_id):
     Returns:
         List of targets from the assessment's group(s).
     """
-    groupIDs = pull_gophish_groups(api, assessment_id)
+    groupIDs = get_group_ids(api, assessment_id)
 
     users = list()
 
@@ -100,7 +100,7 @@ def export_targets(api, assessment_id):
     return users
 
 
-def pull_gophish_groups(api, assessment_id):
+def get_group_ids(api, assessment_id):
     """Return a list of group IDs for all groups starting with specified assessment_id."""
     rawGroup = api.groups.get()  # Holds raw list of campaigns from GoPhish.
     groups = list()  # Holds list of campaign IDs that match the assessment.
@@ -113,8 +113,8 @@ def pull_gophish_groups(api, assessment_id):
     return groups
 
 
-def campaignControl(api, assessment_id):
-    """Control the campaign importing of an assessment to DB.
+def export_campaigns(api, assessment_id):
+    """Add all the campaigns' data for an assessment to a list.
 
     Args:
         api (GoPhish API): Connection to GoPhish server via the API.
@@ -123,18 +123,18 @@ def campaignControl(api, assessment_id):
     Returns:
         List of the assessment's campaigns with data.
     """
-    campaignIDs = pull_gophish_campaign(api, assessment_id)
+    campaignIDs = get_campaign_ids(api, assessment_id)
     campaigns = list()
 
     for campaign_id in campaignIDs:
-        campaigns.append(import_campaign(api, campaign_id))
+        campaigns.append(get_campaign_data(api, campaign_id))
 
-    logging.info(f"Successfully added campaigns for {assessment_id}")
+    logging.info(f"{len(campaigns)} campaigns added for assessment {assessment_id}.")
 
     return campaigns
 
 
-def pull_gophish_campaign(api, assessment_id):
+def get_campaign_ids(api, assessment_id):
     """Return a list of campaign IDs for all campaigns starting with specified assessment_id."""
     rawCampaigns = api.campaigns.get()  # Holds raw list of campaigns from GoPhish.
     campaigns = list()  # Holds list of campaign IDs that match the assessment.
@@ -147,8 +147,8 @@ def pull_gophish_campaign(api, assessment_id):
     return campaigns
 
 
-def import_campaign(api, campaign_id):
-    """Return campaign metadata for given campaign IDs."""
+def get_campaign_data(api, campaign_id):
+    """Return campaign metadata for given campaign ID."""
     campaign = dict()
 
     # Pulls the campaign data as dict from GoPhish.
@@ -167,7 +167,7 @@ def import_campaign(api, campaign_id):
         api.templates.get(rawCampaign["template"]["id"]).as_dict()["name"].split("-")[2]
     )
 
-    campaign["clicks"] = import_clicks(api, campaign_id)
+    campaign["clicks"] = get_click_data(api, campaign_id)
 
     # Imports the e-mail send status.
     campaign["status"] = get_email_status(api, campaign_id)
@@ -175,7 +175,7 @@ def import_campaign(api, campaign_id):
     return campaign
 
 
-def import_clicks(api, campaign_id):
+def get_click_data(api, campaign_id):
     """Return a list of all clicks for a given campaign."""
     rawEvents = api.campaigns.get(campaign_id).as_dict()["timeline"]
     clicks = list()  # Holds list of all users that clicked.
@@ -194,7 +194,6 @@ def import_clicks(api, campaign_id):
 
             click["application"] = get_application(rawEvent)
 
-            # Adds user that clicked to a list to be returned.
             clicks.append(click)
 
     return clicks
@@ -282,7 +281,7 @@ def main():
         assessment_dict["users"] = export_targets(api, args["ASSESSMENT_ID"])
 
         # Add campaigns list to the assessment dict.
-        assessment_dict["campaigns"] = campaignControl(api, args["ASSESSMENT_ID"])
+        assessment_dict["campaigns"] = export_campaigns(api, args["ASSESSMENT_ID"])
 
         with open(f'data_{args["ASSESSMENT_ID"]}.json', "w") as fp:
             json.dump(assessment_dict, fp, indent=4)
