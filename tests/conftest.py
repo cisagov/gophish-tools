@@ -289,21 +289,21 @@ def multiple_gophish_group_object():
 @pytest.fixture
 def email_target_json():
     """Return a email target JSON with 4 emails matching the GoPhish group object."""
-    users = list()
+    targets = list()
     for (email, position) in [
         ("jane.smith1@domain.tld", "IT"),
         ("john.doe1@domain.tld", "HR"),
         ("jane.smith2@domain.tld", "IT"),
         ("john.doe2@domain.tld", "HR"),
     ]:
-        users.append(
+        targets.append(
             {
                 "id": hashlib.sha256(email.encode("utf-8")).hexdigest(),
                 "customer_defined_labels": {"RVXXX1": [position]},
             }
         )
 
-    return users
+    return targets
 
 
 def pytest_addoption(parser):

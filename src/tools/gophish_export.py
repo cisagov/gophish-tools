@@ -77,27 +77,31 @@ def export_targets(api, assessment_id):
     """
     groupIDs = get_group_ids(api, assessment_id)
 
-    users = list()
+    targets = list()
 
     for group_id in groupIDs:
         # Gets target list for parsing.
-        targets = api.groups.get(group_id).as_dict()["targets"]
+        raw_targets = api.groups.get(group_id).as_dict()["targets"]
 
-        for target in targets:
+        for raw_target in raw_targets:
 
-            user = dict()
+            target = dict()
 
-            user["id"] = hashlib.sha256(target["email"].encode("utf-8")).hexdigest()
-            user["customer_defined_labels"] = dict()
+            target["id"] = hashlib.sha256(
+                raw_target["email"].encode("utf-8")
+            ).hexdigest()
+            target["customer_defined_labels"] = dict()
 
-            if "position" in target:
-                user["customer_defined_labels"][assessment_id] = [target["position"]]
+            if "position" in raw_target:
+                target["customer_defined_labels"][assessment_id] = [
+                    raw_target["position"]
+                ]
 
-            users.append(user)
+            targets.append(target)
 
-    logging.info(f"{len(users)} email targets found for assessment {assessment_id}.")
+    logging.info(f"{len(targets)} email targets found for assessment {assessment_id}.")
 
-    return users
+    return targets
 
 
 def get_group_ids(api, assessment_id):
