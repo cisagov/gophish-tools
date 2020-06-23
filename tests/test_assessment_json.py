@@ -77,16 +77,15 @@ class TestPlainAssessment:
     radio_dialog_values = [["1. Time Zone - 63", "US/Eastern"]]
 
     csv_data = StringIO(
-        """\
-        First Name,Last Name,Email,Position
-        classroom,pattern,classroom.pattern@target.tld,HR
-        rice,bent,rice.bent@target.tld,IT
-        center,sort,center.sort@target.tld,HR
+        """First Name,Last Name,Email,Position\n
+        classroom,pattern,classroom.pattern@target.tld,HR\n
+        rice,bent,rice.bent@target.tld,IT\n
+        center,sort,center.sort@target.tld,HR\n
         decide,health,decide.health@target.tld,IT"""
     )
 
     def json_content_data(self=""):
-        """Return a list of dicts mocking email template json files."""
+        """Return a list of dictionaries mocking email template json files."""
         data = list()
         for x in range(1, 7):
             data.append(
@@ -135,7 +134,7 @@ class TestPlainAssessment:
     @mock.patch("assessment.builder.open", MagicMock())
     @mock.patch("json.load", MagicMock(side_effect=json_content_data()))
     @mock.patch(
-        "csv.reader", return_value=csv.reader(csv_data, delimiter=","),
+        "csv.DictReader", return_value=csv.DictReader(csv_data, delimiter=","),
     )
     def test_assessment(self, mock_docopt, monkeypatch):
         """Construct a test assessment from mock data."""
