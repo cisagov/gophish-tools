@@ -43,6 +43,7 @@ from util.set_date import set_date
 from util.validate import (
     BlankInputValidator,
     EmailValidator,
+    FormatError,
     MissingKey,
     email_import_validation,
     validate_domain,
@@ -403,161 +404,173 @@ def create_email(assessment, campaign_number=""):
 
 def build_groups(id, target_domains):
     """Build groups."""
-    logging.info("Getting Group Metadata")
+    logging.info("Getting group metadata")
     groups = list()
 
-    # Looks through to get the number of groups as a number with error checking
     num_groups = get_number("    How many groups do you need?")
 
     if num_groups > 1:
-        logging.warning("NOTE: Please load each group as a different CSV")
+        logging.warning("NOTE: Please load each group as a separate CSV")
 
-    labels = yes_no_prompt("    Are there customer labels?")
+    labels = yes_no_prompt("    Are there customer labels")
 
     for group_num in range(int(num_groups)):
-        logging.info(f"Building Group {group_num + 1}")
+        logging.info(f"Building group {group_num + 1}")
 
         new_group = Group(name=f"{id}-G{str(group_num + 1)}")
 
         new_group.targets = build_emails(target_domains, labels)
 
-        logging.info(f"Group Ready: {new_group.name}")
+        logging.info(f"Group ready: {new_group.name}")
         groups.append(new_group)
 
     return groups
 
 
 def build_emails(domains, labels):
-    """Build emails."""
-    # Holds list of Users to be added to group.
+    """Build targets for a group."""
     targets = list()
-    domain_miss_match = list()
+    domain_mismatch = list()
     format_error = list()
 
-    # Receives the file name and checks if it exists.
+    # Loop to allow file not found and 0 targets loaded to be addressed immediately.
     while True:
+        email_file_name = get_input("    E-mail CSV name:")
+
+        # Receives the file name and checks if it exists.
         try:
-            email_file_name = get_input("    E-mail CSV name:")
-            # Drops .csv if included so it can always be added as fail safe.
-            email_file_name = email_file_name.split(".", 1)[0]
+            with open(email_file_name) as csv_file:
+                raw_target_list = list(csv.DictReader(csv_file, delimiter=","))
 
-            with open(email_file_name + ".csv") as csv_file:
-                read_csv = csv.reader(csv_file, delimiter=",")
-                next(read_csv)
+        except EnvironmentError:
+            logging.critical(f"Email file not found: {email_file_name}")
+            print("\t Please try again...")
 
-                for row in read_csv:
-                    # Checks e-mail format, if false prints message.
-                    if not validate_email(row[2]):
-                        format_error.append(row)
-                    # Checks that the domain matches, if false prints message,
-                    elif not validate_domain(row[2], domains):
-                        domain_miss_match.append(row)
+        else:
+            for raw_target in raw_target_list:
+                # Checks e-mail format.
+                try:
+                    validate_email(raw_target["Email"])
+                except FormatError:
+                    format_error.append(raw_target)
+
+                else:
+                    # Checks that the domain matches
+                    if not validate_domain(raw_target["Email"], domains):
+                        domain_mismatch.append(raw_target)
 
                     else:
                         target = Target(
-                            first_name=row[0], last_name=row[1], email=row[2]
+                            first_name=raw_target["First Name"],
+                            last_name=raw_target["Last Name"],
+                            email=raw_target["Email"],
                         )
-                        target = target_add_label(labels, row, target)
+                        target = target_add_label(labels, raw_target, target)
                         targets.append(target)
 
-                # Works through emails found to include formatting errors.
-                print("\n")
-                if len(format_error) < 2:
-                    for email in format_error:
-                        email[2] = prompt(
+            # Address email formatting errors:
+            # If less than 2 errors, automatically loop through each to correct
+            # Else, allow user to choose to loop through or exclude erroneous emails.
+            print("\n")
+            if len(format_error) < 2:
+                for error_target in format_error:
+                    error_target["Email"] = prompt(
+                        "Correct email formatting: ",
+                        default=error_target["Email"],
+                        validator=EmailValidator(),
+                    )
+                    if not validate_domain(error_target["Email"], domains):
+                        domain_mismatch.append(error_target)
+                    else:
+                        target = Target(
+                            first_name=error_target["First Name"],
+                            last_name=error_target["Last Name"],
+                            email=error_target["Email"],
+                        )
+                        target = target_add_label(labels, error_target, target)
+                        targets.append(target)
+            else:
+                logging.error(f"{len(format_error)} formatting errors")
+                if yes_no_prompt("Would you like to correct each here") == "yes":
+                    for error_target in format_error:
+                        error_target["Email"] = prompt(
                             "Correct Email Formatting: ",
-                            default=email[2],
+                            default=error_target["Email"],
                             validator=EmailValidator(),
                         )
-                        if not validate_domain(email[2], domains):
-                            domain_miss_match.append(email)
+                        if not validate_domain(error_target["Email"], domains):
+                            domain_mismatch.append(error_target)
                         else:
                             target = Target(
-                                first_name=email[0], last_name=email[1], email=email[2]
+                                first_name=error_target["First Name"],
+                                last_name=error_target["Last Name"],
+                                email=error_target["Email"],
                             )
-                            target = target_add_label(labels, email, target)
+                            target = target_add_label(labels, error_target, target)
                             targets.append(target)
                 else:
-                    logging.error("{} Formatting Errors".format(len(format_error)))
-                    if yes_no_prompt("Would you like to correct each here") == "yes":
-                        for email in format_error:
-                            email[2] = prompt(
-                                "Correct Email Formatting: ",
-                                default=email[2],
+                    logging.warning(
+                        f"{len(format_error)} incorrectly formatted emails will not be added, continuing..."
+                    )
+
+            # Address email domains that do not match:
+            # If less than 2 errors, automatically loop through each to correct
+            # Else, allow user to choose to loop through or exclude erroneous emails.
+            if len(domain_mismatch) < 2:
+                for error_target in domain_mismatch:
+                    error_target["Email"] = prompt(
+                        "Correct email domain: ",
+                        default=error_target["Email"],
+                        validator=EmailValidator(),
+                    )
+            else:
+                logging.error(f"{len(domain_mismatch)} domain mismatch errors")
+                if yes_no_prompt("Would you like to correct each here") == "yes":
+                    for error_target in domain_mismatch:
+                        while True:
+                            error_target["Email"] = prompt(
+                                "Correct email domain: ",
+                                default=error_target["Email"],
                                 validator=EmailValidator(),
                             )
-                            if not validate_domain(email[2], domains):
-                                domain_miss_match.append(email)
-                            else:
+                            if validate_domain(error_target["Email"], domains):
                                 target = Target(
-                                    first_name=row[0], last_name=row[1], email=row[2]
+                                    first_name=error_target["First Name"],
+                                    last_name=error_target["Last Name"],
+                                    email=error_target["Email"],
                                 )
-                                target = target_add_label(labels, email, target)
+                                target = target_add_label(labels, error_target, target)
                                 targets.append(target)
-                    else:
-                        logging.warning(
-                            "Incorrectly formatted Emails will not be added, continuing..."
-                        )
-
-                # Works through emails found to have domain miss match.
-                if len(domain_miss_match) < 2:
-                    for email in domain_miss_match:
-                        email[2] = prompt(
-                            "Correct Email Domain: ",
-                            default=email[2],
-                            validator=EmailValidator(),
-                        )
+                                break
                 else:
-                    logging.error(
-                        "{} Domain Miss Match Errors".format(len(format_error))
+                    logging.warning(
+                        f"{len(domain_mismatch)} emails with incorrect domains will not be added, continuing..."
                     )
-                    if yes_no_prompt("Would you like to correct each here") == "yes":
-                        for email in domain_miss_match:
-                            while True:
-                                email[2] = prompt(
-                                    "Correct Email Domain: ",
-                                    default=email[2],
-                                    validator=EmailValidator(),
-                                )
-                                if validate_domain(email[2], domains):
-                                    target = Target(
-                                        first_name=row[0],
-                                        last_name=row[1],
-                                        email=row[2],
-                                    )
-                                    target = target_add_label(labels, email, target)
-                                    targets.append(target)
-                                    break
-                    else:
-                        logging.warning(
-                            "Incorrectly formatted Emails will not be added, continuing..."
-                        )
 
-            if len(targets) == 0:
-                raise Exception("No targets loaded")
-            break
-        except EnvironmentError:
-            logging.critical("Email File not found: {}.csv".format(email_file_name))
-            print("\t Please try again...")
-        except Exception:
-            # Logs and indicates the user should correct before clicking ok which will re-run the import.
-            logging.critical("No targets loaded")
-            message_dialog(
-                title="Missing Targets",
-                text="No targets loaded from file, please check file before clicking Ok.",
-            )
-            continue
+            try:
+                if len(targets) == 0:
+                    raise Exception("No targets loaded")
+                break
+
+            except Exception:
+                # Logs and indicates the user should correct before clicking ok which will re-run the import.
+                logging.critical("No targets loaded, please try again...")
+                message_dialog(
+                    title="Missing Targets",
+                    text=f"No targets loaded from {email_file_name}, please check the file before clicking Ok.",
+                )
+                continue
 
     return targets
 
 
-def target_add_label(labels, email, target):
+def target_add_label(labels, raw_target, target):
     """Add a label to a target."""
-    if labels == "yes" and not email[3]:
-        logging.error("Missing Label for {}".format(target.email))
+    if labels == "yes" and not raw_target["Position"]:
+        logging.error(f"Missing label for {target.email}")
         target.position = get_input("Please enter a label:")
     else:
-        target.position = email[3]
+        target.position = raw_target["Position"]
     return target
 
 
