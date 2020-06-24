@@ -146,7 +146,7 @@ def get_campaign_ids(api, assessment_id):
 
     for campaign in rawCampaigns:
         campaign = campaign.as_dict()
-        if campaign["name"].startswith(assessment_id):
+        if match(rf"^{assessment_id}+[-]", campaign["name"]):
             campaigns.append(campaign["id"])
 
     return campaigns
