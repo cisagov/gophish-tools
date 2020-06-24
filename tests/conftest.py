@@ -8,6 +8,7 @@ import hashlib
 import json
 
 # Third-Party Libraries
+from gophish.models import Campaign as GoPhish_Campaign
 from gophish.models import Group as GoPhish_Group
 from gophish.models import User as GoPhish_User
 import pytest
@@ -237,7 +238,7 @@ def multiple_campaign_object(template_object, smtp_object):
     """Return list of campaign objects."""
     campaigns = list()
 
-    for x in range(1, 8):
+    for x in range(1, 10):
         campaigns.append(
             Campaign(
                 name=f"RVXXX1-C{x}",
@@ -253,6 +254,13 @@ def multiple_campaign_object(template_object, smtp_object):
     # Make a campaign from a different assessment.
     campaigns[6].name = "RVXXX2-C7"
 
+    # Below support test that do not find matching ID.
+    # Make campaign with extra character on after failing test id.
+    campaigns[7].name = "RVXXX32-C7"
+
+    # Make campaign with extra character on before failing test id.
+    campaigns[8].name = "ERVXXX3-C7"
+
     return campaigns
 
 
@@ -264,7 +272,7 @@ def multiple_gophish_group_object():
     for x in range(1, 3):
         groups.append(
             GoPhish_Group(
-                group_id={x},
+                group_id=x,
                 name=f"RVXXX1-G{x}",
                 targets=[
                     GoPhish_User(
@@ -282,6 +290,78 @@ def multiple_gophish_group_object():
                 ],
             )
         )
+        groups[x - 1].id = x
+
+    return groups
+
+
+@pytest.fixture
+def multiple_gophish_group_object_mismatch(multiple_gophish_group_object):
+    """Return list of GoPhish group objects with mismatched IDs."""
+    groups = multiple_gophish_group_object
+
+    # Straight mismatch
+    groups.append(
+        GoPhish_Group(
+            name="RVXXX2-G1",
+            targets=[
+                GoPhish_User(
+                    first_name="Jane",
+                    last_name="Smith",
+                    email="jane.smith7@domain.tld",
+                    position="IT",
+                ),
+                GoPhish_User(
+                    first_name="John",
+                    last_name="Doe",
+                    email="john.doe7@domain.tld",
+                    position="HR",
+                ),
+            ],
+        )
+    )
+
+    # Extra character before matching ID.
+    groups.append(
+        GoPhish_Group(
+            name="ERVXXX1-G1",
+            targets=[
+                GoPhish_User(
+                    first_name="Jane",
+                    last_name="Smith",
+                    email="jane.smith@domain.tld",
+                    position="IT",
+                ),
+                GoPhish_User(
+                    first_name="John",
+                    last_name="Doe",
+                    email="john.doe@domain.tld",
+                    position="HR",
+                ),
+            ],
+        )
+    )
+
+    # Extra character after matching ID.
+    groups.append(
+        GoPhish_Group(
+            name="RVXXX12-G1",
+            targets=[
+                GoPhish_User(
+                    first_name="Jane",
+                    last_name="Smith",
+                    email="jane.smith@domain.tld",
+                    position="IT",
+                ),
+                GoPhish_User(
+                    first_name="John",
+                    last_name="Doe",
+                    email="john.doe@domain.tld",
+                    position="HR",
+                ),
+            ],
+        )
+    )
 
     return groups
 
@@ -304,6 +384,40 @@ def email_target_json():
         )
 
     return targets
+
+
+@pytest.fixture
+def multiple_gophish_campaign_object(template_object, smtp_object):
+    """Return list of campaign objects."""
+    campaigns = list()
+
+    for x in range(1, 10):
+        campaigns.append(
+            GoPhish_Campaign(
+                name=f"RVXXX1-C{x}",
+                launch_date=f"01/0{x}/2025 13:00",
+                completed_date=f"01/0{x}/2025 14:00",
+                url=f"http://bad.domain/camp{x}",
+                group_name="RVXXX1-G1",
+                template=template_object,
+                smtp=smtp_object,
+            )
+        )
+
+        # Set id for campaign as this is not done automatically.
+        campaigns[x - 1].id = x
+
+    # Make a campaign from a different assessment.
+    campaigns[6].name = "RVXXX2-C7"
+
+    # Below support test that do not find matching ID.
+    # Make campaign with extra character on after failing test id.
+    campaigns[7].name = "RVXXX32-C7"
+
+    # Make campaign with extra character on before failing test id.
+    campaigns[8].name = "ERVXXX3-C7"
+
+    return campaigns
 
 
 def pytest_addoption(parser):

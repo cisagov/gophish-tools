@@ -7,7 +7,12 @@ import pytest
 
 # cisagov Libraries
 from tools.gophish_complete import get_campaign_id
-from tools.gophish_export import assessment_exists, export_targets
+from tools.gophish_export import (
+    assessment_exists,
+    export_targets,
+    get_campaign_ids,
+    get_group_ids,
+)
 
 
 class TestComplete:
@@ -45,6 +50,20 @@ class TestExport:
         mock_api.campaigns.get.return_value = multiple_campaign_object
 
         assert assessment_exists(mock_api, "RVXXX3") is False
+
+    @patch("tools.connect")
+    def test_get_group_ids(self, mock_api, multiple_gophish_group_object_mismatch):
+        """Verify the appropriate groups are returned."""
+        mock_api.groups.get.return_value = multiple_gophish_group_object_mismatch
+
+        assert get_group_ids(mock_api, "RVXXX1") == [1, 2]
+
+    @patch("tools.connect")
+    def test_get_campaign_ids(self, mock_api, multiple_gophish_campaign_object):
+        """Verify the appropriate campaigns are returned."""
+        mock_api.campaigns.get.return_value = multiple_gophish_campaign_object
+
+        assert get_campaign_ids(mock_api, "RVXXX1") == [1, 2, 3, 4, 5, 6]
 
     def mock_get_group_ids(self, s, group_object):
         """Return a mock list of GoPhish group objects."""
