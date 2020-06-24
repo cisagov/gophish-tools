@@ -23,6 +23,7 @@ from datetime import datetime
 import hashlib
 import json
 import logging
+from re import match
 import sys
 from typing import Dict
 
@@ -54,7 +55,7 @@ def assessment_exists(api, assessment_id):
     """
     allCampaigns = api.campaigns.get()
     for campaign in allCampaigns:
-        if campaign.name.startswith(assessment_id):
+        if match(rf"^{assessment_id}+[-]", campaign.name):
             return True
 
     return False
@@ -111,7 +112,7 @@ def get_group_ids(api, assessment_id):
 
     for group in rawGroup:
         group = group.as_dict()
-        if group["name"].startswith(assessment_id):
+        if match(rf"^{assessment_id}+[-]", group["name"]):
             groups.append(group["id"])
 
     return groups
