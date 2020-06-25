@@ -35,6 +35,7 @@ import requests
 # cisagov Libraries
 from tools.connect import connect_api
 from util.input import get_input
+from util.utils import match_assessment_id
 from util.validate import validate_email
 
 from ._version import __version__
@@ -52,7 +53,7 @@ def get_campaigns(api, assessment_id):
     assessmentCampaigns = list()
 
     for campaign in allCampaigns:
-        if campaign.name.startswith(assessment_id):
+        if match_assessment_id(assessment_id, campaign.name):
             assessmentCampaigns.append(campaign)
 
     # Sets err to true if assessmentCampaigns has 0 length.
@@ -69,7 +70,7 @@ def add_group(api, assessment_id):
 
     newGroup = Group()
 
-    newGroup.name = "Test-" + assessment_id
+    newGroup.name = f"Test-{assessment_id}-G1"
 
     # Holds list of Users to be added to group.
     targets = list()

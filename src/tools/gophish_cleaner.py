@@ -38,6 +38,7 @@ import requests
 
 # cisagov Libraries
 from tools.connect import connect_api
+from util.utils import match_assessment_id
 
 from ._version import __version__
 
@@ -100,7 +101,7 @@ def remove_campaigns(api, assessment_id):
     allCampaigns = api.campaigns.get()
 
     for campaign in allCampaigns:
-        if campaign.name.startswith(assessment_id):
+        if match_assessment_id(assessment_id, campaign.name):
             api.campaigns.delete(campaign.id)
 
     return True
@@ -111,7 +112,7 @@ def remove_smtp(api, assessment_id):
     allSMTP = api.smtp.get()
 
     for smtp in allSMTP:
-        if smtp.name.startswith(assessment_id):
+        if match_assessment_id(assessment_id, smtp.name):
             api.smtp.delete(smtp.id)
 
     return True
@@ -122,7 +123,7 @@ def remove_page(api, assessment_id):
     allPages = api.pages.get()
 
     for page in allPages:
-        if page.name.startswith(assessment_id):
+        if match_assessment_id(assessment_id, page.name):
             api.pages.delete(page.id)
 
     return True
@@ -133,7 +134,7 @@ def remove_group(api, assessment_id):
     allGroups = api.groups.get()
 
     for group in allGroups:
-        if group.name.startswith(assessment_id):
+        if match_assessment_id(assessment_id, group.name):
             api.groups.delete(group.id)
 
     return True
@@ -144,7 +145,7 @@ def remove_template(api, assessment_id):
     allTemplates = api.templates.get()
 
     for template in allTemplates:
-        if template.name.startswith(assessment_id):
+        if match_assessment_id(assessment_id, template.name):
             api.templates.delete(template.id)
 
     return True
