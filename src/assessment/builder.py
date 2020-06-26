@@ -154,9 +154,18 @@ def build_assessment(assessment_id):
 
 
 def build_campaigns(assessment, campaign_number, template_smtp):
-    """Build a campaign."""
+    """Build a single campaign.
+
+    Args:
+        assessment (Assessment): Assessment object.
+        campaign_number (int): Campaign number show position in assessment.
+        template_smtp (SMTP): SMTP object holding items that are the same throughout the assessment.
+
+    Returns:
+        Campaign: A single campaign object.
+    """
     # Set up component holders
-    logging.info(f"Building Campaign {assessment.id}-C{campaign_number}")
+    logging.info(f"Building campaign {assessment.id}-C{campaign_number}")
     campaign = Campaign(name=f"{assessment.id}-C{campaign_number}")
     # Get Launch Time
     campaign.launch_date = get_time_input("start", assessment.timezone)
@@ -167,7 +176,7 @@ def build_campaigns(assessment, campaign_number, template_smtp):
         if campaign.complete_date > campaign.launch_date:
             break
         else:
-            logging.error("Complete Date is not after Launch Date.")
+            logging.error("End date is not after launch date.")
 
     campaign.smtp, campaign.template = import_email(
         assessment, campaign_number, template_smtp
@@ -181,22 +190,30 @@ def build_campaigns(assessment, campaign_number, template_smtp):
 
     campaign.url = prompt(
         "    Campaign URL: ",
-        default="http://" + assessment.domain,
+        default=f"http://{assessment.domain}",
         validator=BlankInputValidator(),
     )
 
-    campaign = review_campaign(campaign)
+    campaign = review_campaign(assessment, campaign)
 
-    logging.info("Successfully Added Campaign {}".format(campaign.name))
+    logging.info(f"Successfully added campaign {campaign.name}")
 
     return campaign
 
 
-def review_campaign(campaign):
-    """Review a campaign."""
+def review_campaign(assessment, campaign):
+    """Review a campaign.
+
+    Args:
+        assessment (Assessment): Assessment object the campaign belongs to.
+        campaign (Campaign): Campaign object being reviewed.
+
+    Returns:
+        Campaign: Campaign object after any needed changes.
+    """
     # TODO Review group name and page name.
-    campaign_dict = campaign.as_dict()
     while True:
+        campaign_dict = campaign.as_dict()
         print("\n")
 
         # Outputs relevent fields except Email Template.
@@ -209,20 +226,17 @@ def review_campaign(campaign):
                 "group_name",
                 "page_name",
             ]:
-                print("{}: {}".format(field.replace("_", " ").title(), value))
+                print(f'{field.replace("_", " ").title()}: {value}')
             elif field == "smtp":
                 print("SMTP: ")
                 for smtp_key, smtp_value in campaign_dict["smtp"].items():
-                    print(
-                        "\t{}: {}".format(
-                            smtp_key.replace("_", " ").title(), smtp_value
-                        )
-                    )
+                    print(f'\t{smtp_key.replace("_", " ").title()}: {smtp_value}')
+
+        campaign_keys = list(campaign_dict.keys())
+        campaign_keys.remove("template")
 
         if yes_no_prompt("\nChanges Required") == "yes":
-            completer = WordCompleter(
-                campaign_dict.keys().remove("template"), ignore_case=True
-            )
+            completer = WordCompleter(campaign_keys, ignore_case=True)
             # Loops to get valid Field name form user.
             while True:
                 update_key = prompt(
@@ -230,10 +244,38 @@ def review_campaign(campaign):
                     completer=completer,
                     validator=BlankInputValidator(),
                 ).lower()
-                if update_key != "smtp":
+
+                if update_key == "group_name":
+                    campaign.group_name = select_group(assessment)
+                    break
+                elif update_key == "page_name":
+                    campaign.page_name = select_page(assessment)
+                    break
+                elif update_key == "smtp":
+                    # Builds a word completion list with each word of the option being capitalized.
+                    sub_completer = WordCompleter(
+                        list(campaign_dict["smtp"].keys()), ignore_case=True,
+                    )
+                    update_sub = prompt(
+                        "Which SMTP field: ",
+                        completer=sub_completer,
+                        validator=BlankInputValidator(),
+                    ).lower()
                     try:
                         update_value = prompt(
-                            "{}: ".format(update_key),
+                            f"{update_sub}: ",
+                            default=campaign_dict["smtp"][update_sub],
+                            validator=BlankInputValidator(),
+                        )
+                    except KeyError:
+                        logging.error("Incorrect Field!")
+                    else:
+                        setattr(campaign.smtp, update_sub, update_value)
+                        break
+                else:
+                    try:
+                        update_value = prompt(
+                            f"{update_key}: ",
                             default=campaign_dict[update_key],
                             validator=BlankInputValidator(),
                         )
@@ -242,33 +284,7 @@ def review_campaign(campaign):
                     else:
                         setattr(campaign, update_key, update_value)
                         break
-                else:
-                    # Builds a word completion list with each word of the option being capitalized.
-                    sub_completer = WordCompleter(
-                        list(
-                            map(
-                                lambda sub_field: sub_field.replace("_", " ").title(),
-                                campaign_dict[update_key].as_dict().keys(),
-                            )
-                        ),
-                        ignore_case=True,
-                    )
-                    update_sub = prompt(
-                        "Which Indicator: ",
-                        completer=sub_completer,
-                        validator=BlankInputValidator(),
-                    ).lower()
-                    try:
-                        update_value = prompt(
-                            "{}: ".format(update_sub),
-                            default=campaign_dict[update_key].as_dict()[update_sub],
-                            validator=BlankInputValidator(),
-                        )
-                    except KeyError:
-                        logging.error("Incorrect Field!")
-                    else:
-                        setattr(campaign_dict[update_key], update_sub, update_value)
-                        break
+
         else:
             break
 
@@ -276,17 +292,24 @@ def review_campaign(campaign):
 
 
 def select_group(assessment):
-    """Select a group."""
+    """Select a group from the assessment.
+
+    Args:
+        assessment (Assessment): Assessment object.
+
+    Returns:
+        string: Name of the chosen group.
+    """
     # Select Group:
     if len(assessment.groups) == 1:  # If only one auto sets.
-        logging.info("Group auto set to {}".format(assessment.groups[0].name))
+        logging.info(f"Group auto set to {assessment.groups[0].name}")
         group_name = assessment.groups[0].name
     else:  # Allows user to choose from multiple groups;
         while True:
             try:
                 display_list_groups(assessment)
                 group_name = assessment.groups[
-                    get_number("    Select Group for this Campaign?") - 1
+                    get_number("    Select group ID for this campaign?") - 1
                 ].name
                 break
             except IndexError:
@@ -296,9 +319,16 @@ def select_group(assessment):
 
 
 def select_page(assessment):
-    """Select a page."""
+    """Select a page from the assessment.
+
+    Args:
+        assessment (Assessment): Assessment object.
+
+    Returns:
+        string: Name of the chosen page.
+    """
     if len(assessment.pages) == 1:  # If only one auto sets.
-        logging.info("Page auto set to {}".format(assessment.pages[0].name))
+        logging.info(f"Page auto set to {assessment.pages[0].name}")
         page_name = assessment.pages[0].name
     else:  # Allows user to choose from multiple pages
         while True:
@@ -306,7 +336,7 @@ def select_page(assessment):
                 print("\n")
                 display_list_pages(assessment)
                 page_name = assessment.pages[
-                    get_number("    Select the Page for this Campaign?") - 1
+                    get_number("    Select the page ID for this campaign?") - 1
                 ].name
                 break
             except IndexError:
