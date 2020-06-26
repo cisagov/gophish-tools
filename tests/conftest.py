@@ -254,11 +254,11 @@ def multiple_campaign_object(template_object, smtp_object):
     # Make a campaign from a different assessment.
     campaigns[6].name = "RVXXX2-C7"
 
-    # Below support test that do not find matching ID.
-    # Make campaign with extra character on after failing test id.
+    # Below supports tests that do not find a matching id.
+    # Make a campaign with extra character after the provided id which should fail.
     campaigns[7].name = "RVXXX32-C7"
 
-    # Make campaign with extra character on before failing test id.
+    # Make campaign with an extra character before the provided id which should fail.
     campaigns[8].name = "ERVXXX3-C7"
 
     return campaigns
@@ -410,11 +410,11 @@ def multiple_gophish_campaign_object(template_object, smtp_object):
     # Make a campaign from a different assessment.
     campaigns[6].name = "RVXXX2-C7"
 
-    # Below support test that do not find matching ID.
-    # Make campaign with extra character on after failing test id.
+    # Below supports tests that do not find a matching id.
+    # Make a campaign with extra character after the provided id which should fail.
     campaigns[7].name = "RVXXX32-C7"
 
-    # Make campaign with extra character on before failing test id.
+    # Make campaign with an extra character before the provided id which should fail.
     campaigns[8].name = "ERVXXX3-C7"
 
     return campaigns
