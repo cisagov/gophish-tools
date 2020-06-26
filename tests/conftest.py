@@ -306,6 +306,43 @@ def email_target_json():
     return targets
 
 
+@pytest.fixture
+def html_page():
+    """Return html text for landing page."""
+    return """
+        <!DOCTYPE html>
+        <html>
+        <body>
+
+            <h1>A landing page</h1>
+            <p>More of that page.</p>
+
+        </body>
+        </html>
+        """
+
+
+@pytest.fixture
+def page_object_list(html_page):
+    """Return a list of two page objects."""
+    return [
+        Page(
+            name="RVXXX1-1-404Page",
+            capture_credentials=True,
+            capture_passwords=False,
+            redirect_url="http://bad.tld/404",
+            html=AUTO_FORWARD,
+        ),
+        Page(
+            name="RVXXX1-2-CustomerPage",
+            capture_credentials=True,
+            capture_passwords=False,
+            redirect_url="http://bad.tld/landing",
+            html=html_page,
+        ),
+    ]
+
+
 def pytest_addoption(parser):
     """Add new commandline options to pytest."""
     parser.addoption(

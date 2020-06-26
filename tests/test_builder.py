@@ -2,10 +2,10 @@
 """Tests for builder script."""
 
 # Standard Python Libraries
-from unittest.mock import patch
+from unittest.mock import mock_open, patch
 
 # cisagov Libraries
-from assessment.builder import review_campaign
+from assessment.builder import build_pages, review_campaign
 
 
 class TestReviewCampaign:
@@ -118,3 +118,42 @@ class TestReviewCampaign:
         campaign_object.smtp.host = "server"
 
         assert reviewed_object.smtp.host == campaign_object.smtp.host
+
+
+class TestBuildPages:
+    """Build page function test class."""
+
+    html_content = """
+        <!DOCTYPE html>
+        <html>
+        <body>
+
+            <h1>A landing page</h1>
+            <p>More of that page.</p>
+
+        </body>
+        </html>
+        """
+
+    @patch("assessment.builder.get_number", return_value=2)
+    @patch(
+        "assessment.builder.get_input",
+        side_effect=[
+            "404Page",
+            "http://bad.tld/404",
+            "CustomerPage",
+            "http://bad.tld/landing",
+            "landing.html",
+        ],
+    )
+    @patch(
+        "assessment.builder.yes_no_prompt",
+        side_effect=["yes", "no", "no", "yes", "no"],
+    )
+    @patch("assessment.builder.open", mock_open(read_data=html_content))
+    def test_build_page(self, mock_open, mock_yes_no, mock_get_input, page_object_list):
+        """Validate build page autoforward and load page works."""
+        new_pages = build_pages("RVXXX1")
+
+        for x in range(2):
+            assert new_pages[x].as_dict() == page_object_list[x].as_dict()
