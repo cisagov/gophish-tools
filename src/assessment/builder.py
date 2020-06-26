@@ -597,31 +597,32 @@ def build_pages(id_):
     :return a page object
     """
     pages = list()
-    logging.info("Getting Page Metadata")
+    logging.info("Getting page metadata.")
 
     # Looks through to get the number of pages as a number with error checking
-    num_pages = get_number("    How many pages do you need?")
+    num_pages = get_number("    How many pages do you need")
 
     for page_num in range(int(num_pages)):
         logging.info(f"Building Page {page_num + 1}")
         temp_page = Page()
+        name = get_input("    Page name")
         auto_forward = yes_no_prompt("    Will this page auto forward")
 
         if auto_forward == "yes":
 
-            setattr(temp_page, "name", f"{id_}-{page_num+1}-AutoForward")
+            setattr(temp_page, "name", f"{id_}-{page_num+1}-{name}")
             temp_page.capture_credentials = True
             temp_page.capture_passwords = False
             temp_page.html = AUTO_FORWARD
-            temp_page.redirect_url = get_input("    URL to Redirect to:")
+            temp_page.redirect_url = get_input("    URL to forward to:")
 
         else:
-            temp_page.name = f"{id_}-{page_num+1}-Landing"
+            temp_page.name = f"{id_}-{page_num+1}-{name}"
 
             forward = yes_no_prompt("    Will this page forward after action")
             if forward == "yes":
                 temp_page.capture_credentials = True
-                temp_page.redirect_url = get_input("    URL to Redirect to:")
+                temp_page.redirect_url = get_input("    URL to forward to:")
             else:
                 temp_page.capture_credentials = False
 
@@ -630,17 +631,15 @@ def build_pages(id_):
             # Receives the file name and checks if it exists.
             while True:
                 try:
-                    landing_file_name = get_input("Landing Page File name:")
-                    # Drops .html if included so it can always be added as fail safe.
-                    landing_file_name = landing_file_name.split(".", 1)[0]
+                    landing_file_name = get_input("Landing page html file name:")
 
-                    with open(landing_file_name + ".html") as landingFile:
+                    with open(landing_file_name, "r") as landingFile:
                         temp_page.html = landingFile.read()
 
                     break
                 except EnvironmentError:
                     logging.critical(
-                        f"ERROR- Landing Page File not found: {landing_file_name}.html"
+                        f"ERROR- Landing page file not found: {landing_file_name}"
                     )
                     print("Please try again...")
 
@@ -705,9 +704,7 @@ def main():
         )
     except ValueError:
         logging.critical(
-            '"{}"is not a valid logging level.  Possible values are debug, info, warning, and error.'.format(
-                log_level
-            )
+            f'"{log_level}"is not a valid logging level.  Possible values are debug, info, warning, and error.'
         )
         return 1
 
