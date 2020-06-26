@@ -1,0 +1,120 @@
+#!/usr/bin/env pytest -vs
+"""Tests for builder script."""
+
+# Standard Python Libraries
+from unittest.mock import patch
+
+# cisagov Libraries
+from assessment.builder import review_campaign
+
+
+class TestReviewCampaign:
+    """Review camaping function test class."""
+
+    @patch("assessment.builder.yes_no_prompt", return_value="no")
+    def test_no_review(self, mock_yes_no, campaign_object, assessment_object):
+        """Validate no changes made when review is no."""
+        reviewed_object = review_campaign(assessment_object, campaign_object)
+
+        assert reviewed_object.as_dict() == campaign_object.as_dict()
+
+    @patch("assessment.builder.yes_no_prompt", return_value=["yes", "no"])
+    @patch("assessment.builder.prompt", return_value=["url", "change"])
+    def test_change_url(
+        self, mock_prompt, mock_yes_no, campaign_object, assessment_object
+    ):
+        """Validate url successfully changes."""
+        reviewed_object = review_campaign(assessment_object, campaign_object)
+        campaign_object.url = "change"
+
+        assert reviewed_object.as_dict() == campaign_object.as_dict()
+
+    @patch("assessment.builder.yes_no_prompt", return_value=["yes", "no"])
+    @patch(
+        "assessment.builder.prompt",
+        return_value=["launch_date", "2020-06-20T13:00:00-04:00"],
+    )
+    def test_change_launch_date(
+        self, mock_prompt, mock_yes_no, campaign_object, assessment_object
+    ):
+        """Validate launch date successfully changes."""
+        reviewed_object = review_campaign(assessment_object, campaign_object)
+        campaign_object.launch_date = "2020-06-20T13:00:00-04:00"
+
+        assert reviewed_object.as_dict() == campaign_object.as_dict()
+
+    @patch("assessment.builder.yes_no_prompt", return_value=["yes", "no"])
+    @patch(
+        "assessment.builder.prompt",
+        return_value=["completed_date", "2020-06-20T13:00:00-04:00"],
+    )
+    def test_change_completed_date(
+        self, mock_prompt, mock_yes_no, campaign_object, assessment_object
+    ):
+        """Validate end date successfully changes."""
+        reviewed_object = review_campaign(assessment_object, campaign_object)
+        campaign_object.completed_date = "2020-06-20T13:00:00-04:00"
+
+        assert reviewed_object.as_dict() == campaign_object.as_dict()
+
+    @patch("assessment.builder.yes_no_prompt", return_value=["yes", "no"])
+    @patch("assessment.builder.prompt", return_value="group_name")
+    @patch("assessment.builder.get_number", return_value=1)
+    def test_change_group_name(
+        self,
+        mock_get_number,
+        mock_prompt,
+        mock_yes_no,
+        campaign_object,
+        assessment_object,
+        group_object,
+    ):
+        """Validate group name successfully changes."""
+        group_object.name = "RVXXX1-G2"
+        assessment_object.groups.append(group_object)
+        reviewed_object = review_campaign(assessment_object, campaign_object)
+        campaign_object.group_name = "RVXXX1-G2"
+
+        assert reviewed_object.as_dict() == campaign_object.as_dict()
+
+    @patch("assessment.builder.yes_no_prompt", return_value=["yes", "no"])
+    @patch("assessment.builder.prompt", return_value="page_name")
+    @patch("assessment.builder.get_number", return_value=1)
+    def test_change_page_name(
+        self,
+        mock_get_number,
+        mock_prompt,
+        mock_yes_no,
+        campaign_object,
+        assessment_object,
+        page_object,
+    ):
+        """Validate page name successfully changes."""
+        page_object.name = "RVXXX1-2-AutoForward"
+        assessment_object.pages.append(page_object)
+        reviewed_object = review_campaign(assessment_object, campaign_object)
+        campaign_object.page_name = "RVXXX1-2-AutoForward"
+
+        assert reviewed_object.page_name == campaign_object.page_name
+
+    @patch("assessment.builder.yes_no_prompt", return_value=["yes", "no"])
+    @patch("assessment.builder.prompt", return_value=["smtp", "from_address", "sender"])
+    def test_change_smtp_from_address(
+        self, mock_prompt, mock_yes_no, campaign_object, assessment_object
+    ):
+        """Validate smtp from address successfully changes."""
+        reviewed_object = review_campaign(assessment_object, campaign_object)
+        campaign_object.smtp.from_address = "sender"
+
+        assert reviewed_object.smtp.from_address == campaign_object.smtp.from_address
+
+    @patch("assessment.builder.yes_no_prompt", return_value=["yes", "no"])
+    @patch("assessment.builder.prompt", return_value=["smtp", "host", "server"])
+    def test_change_smtp_host(
+        self, mock_prompt, mock_yes_no, campaign_object, assessment_object
+    ):
+        """Validate smtp host successfully changes."""
+        reviewed_object = review_campaign(assessment_object, campaign_object)
+        campaign_object.smtp.host = "server"
+
+        assert reviewed_object.smtp.host == campaign_object.smtp.host
