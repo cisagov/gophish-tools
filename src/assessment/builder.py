@@ -39,7 +39,7 @@ from models.models import (
     Template,
 )
 from util.input import get_input, get_number, get_time_input, yes_no_prompt
-from util.set_date import set_date
+from util.utils import set_date
 from util.validate import (
     BlankInputValidator,
     EmailValidator,

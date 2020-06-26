@@ -12,14 +12,14 @@ def match_assessment_id(assessment_id, name):
     always start with the assessment id followed by a hyphen which
     will result in match. The regular expression looks for the
     assessment id to start the string and be followed immediately
-    by a hypthen(-)
+    by a hypthen(-).
 
     Args:
         assessment_id (string): Assessment identifier to get campaigns from.
         name (string): Name of element to be checked.
 
     Returns:
-        boolean: Indicates if match is found.
+        boolean: Indicates if a match is found.
     """
     if match(rf"^{assessment_id}+[-]", name):
         return True
@@ -28,7 +28,13 @@ def match_assessment_id(assessment_id, name):
 
 
 def set_date(type_, assessment, campaign_date):
-    """Set a date for a campaign."""
+    """Set the start/end date for a campaign.
+
+    Args:
+        type_ (string): Date to set within assessment object ("start_date" or "end_date").
+        assessment (Assessment): Assessment object.
+        campaign_date ([type]): [description]
+    """
     if getattr(assessment, type_):
         assessment_time = datetime.strptime(
             "".join(getattr(assessment, type_).rsplit(":", 1)), "%Y-%m-%dT%H:%M:%S%z"

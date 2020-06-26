@@ -25,7 +25,7 @@ from docopt import docopt
 # cisagov Libraries
 from models import Assessment
 from util.input import get_number, get_time_input
-from util.set_date import set_date
+from util.utils import set_date
 
 from ._version import __version__
 
