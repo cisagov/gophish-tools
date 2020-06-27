@@ -5,7 +5,12 @@
 from unittest.mock import mock_open, patch
 
 # cisagov Libraries
-from assessment.builder import build_pages, review_campaign, review_page
+from assessment.builder import (
+    build_assessment,
+    build_pages,
+    review_campaign,
+    review_page,
+)
 
 
 class TestReviewCampaign:
@@ -166,3 +171,43 @@ class TestBuildPages:
         page_object.redirect_url = "new.domain.tld"
 
         assert reviewed_object.redirect_url == page_object.redirect_url
+
+
+class TestBuildAssessment:
+    """Build assessment function test class."""
+
+    @patch("assessment.builder.radiolist_dialog", return_value="US/Eastern")
+    @patch(
+        "assessment.builder.get_input",
+        side_effect=["bad.domain", "target.1.Domain target.2.domain"],
+    )
+    @patch("assessment.builder.build_pages")
+    @patch("assessment.builder.build_groups")
+    @patch("assessment.builder.prompt", return_value="postfix:587")
+    @patch("assessment.builder.input", return_value=["", ""])
+    @patch("assessment.builder.get_number", return_value=1)
+    @patch("assessment.builder.build_campaigns")
+    def test_build_assessment(
+        self,
+        mock_campaign,
+        mock_get_number,
+        mock_input,
+        mock_prompt,
+        mock_group,
+        mock_page,
+        mock_get_input,
+        mock_radio,
+        assessment_object,
+        campaign_object,
+        group_object,
+        page_object,
+    ):
+        """Validate build assessment returns an assessment object."""
+        mock_campaign.return_value = campaign_object
+        mock_group.return_value = [group_object]
+        mock_page.return_value = [page_object]
+
+        assessment_object.target_domains = ["target.1.domain", "target.2.domain"]
+
+        new_assessment = build_assessment("RVXXX1")
+        assert new_assessment.as_dict() == assessment_object.as_dict()

@@ -45,7 +45,8 @@ def assessment_json(group_json, page_json, campaign_json):
             "domain": "bad.domain",
             "target_domains": ["target.domain"],
             "start_date": "01/01/2025 13:00",
-            "end_date": "01/06/2025 19:00",
+            "reschedule": False,
+            "end_date": "01/01/2025 14:00",
             "groups": [group_json],
             "page": page_json,
             "campaigns": [campaign_json],
@@ -104,7 +105,7 @@ def campaign_json(template_json, smtp_json):
         {
             "name": "RVXXX1-C1",
             "launch_date": "01/01/2025 13:00",
-            "completed_date": "01/01/2025 14:00",
+            "complete_date": "01/01/2025 14:00",
             "url": "http://bad.domain/camp1",
             "group_name": "RVXXX1-G1",
             "template": template_json,
@@ -190,7 +191,7 @@ def template_object():
     )
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def page_object():
     """Return a Page object."""
     return Page(
@@ -208,7 +209,7 @@ def campaign_object(template_object, smtp_object):
     return Campaign(
         name="RVXXX1-C1",
         launch_date="01/01/2025 13:00",
-        completed_date="01/01/2025 14:00",
+        complete_date="01/01/2025 14:00",
         url="http://bad.domain/camp1",
         group_name="RVXXX1-G1",
         template=template_object,
@@ -225,9 +226,10 @@ def assessment_object(group_object, page_object, campaign_object):
         domain="bad.domain",
         target_domains=["target.domain"],
         start_date="01/01/2025 13:00",
-        end_date="01/06/2025 19:00",
+        end_date="01/01/2025 14:00",
+        reschedule=False,
         groups=[group_object],
-        page=page_object,
+        page=[page_object],
         campaigns=[campaign_object],
     )
 
@@ -242,7 +244,7 @@ def multiple_campaign_object(template_object, smtp_object):
             Campaign(
                 name=f"RVXXX1-C{x}",
                 launch_date=f"01/0{x}/2025 13:00",
-                completed_date=f"01/0{x}/2025 14:00",
+                complete_date=f"01/0{x}/2025 14:00",
                 url=f"http://bad.domain/camp{x}",
                 group_name="RVXXX1-G1",
                 template=template_object,
