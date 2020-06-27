@@ -5,7 +5,7 @@
 from unittest.mock import mock_open, patch
 
 # cisagov Libraries
-from assessment.builder import build_pages, review_campaign
+from assessment.builder import build_pages, review_campaign, review_page
 
 
 class TestReviewCampaign:
@@ -157,3 +157,12 @@ class TestBuildPages:
 
         for x in range(2):
             assert new_pages[x].as_dict() == page_object_list[x].as_dict()
+
+    @patch("assessment.builder.yes_no_prompt", return_value=["yes", "no"])
+    @patch("assessment.builder.prompt", return_value=["redirect_url", "new.domain.tld"])
+    def test_change_redirect_url(self, mock_prompt, mock_yes_no, page_object):
+        """Validate redirect url successfully changes."""
+        reviewed_object = review_page(page_object)
+        page_object.redirect_url = "new.domain.tld"
+
+        assert reviewed_object.redirect_url == page_object.redirect_url
