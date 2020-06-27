@@ -113,12 +113,12 @@ def build_assessment(assessment_id):
 
     :return an assessment object
     """
-    logging.info("Building Assessment")
+    logging.info("Building assessment.")
     # Initializes assessment object with ID and timezone
     assessment = Assessment(id=assessment_id, timezone=set_time_zone())
 
     # Uses prompt to set Assessment and target domains while not allowing blank input
-    assessment.domain = get_input("    Assessment Domain (subdomain.domain.tld):")
+    assessment.domain = get_input("    Assessment domain (subdomain.domain.tld):")
     assessment.target_domains = (
         get_input("    Targeted domain(s) separated by spaces:").lower().split(" ")
     )
@@ -132,7 +132,7 @@ def build_assessment(assessment_id):
 
     # Sets up smtp host info to be pre-populated.
     template_smtp.host = prompt(
-        "Enter SMTP Host: ", default=template_smtp.host, validator=BlankInputValidator()
+        "Enter SMTP host: ", default=template_smtp.host, validator=BlankInputValidator()
     )
 
     # Bandit complains about the input() function, but it is safe to
@@ -142,7 +142,7 @@ def build_assessment(assessment_id):
 
     assessment.campaigns = list()
     logging.info("Building Campaigns")
-    num_campaigns = get_number("    How many Campaigns?")
+    num_campaigns = get_number("    How many campaigns?")
     for campaign_number in range(0, num_campaigns):
         campaign_data = build_campaigns(assessment, campaign_number + 1, template_smtp)
         assessment.campaigns.append(campaign_data)
