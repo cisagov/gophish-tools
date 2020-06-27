@@ -605,7 +605,7 @@ def build_pages(id_):
     for page_num in range(int(num_pages)):
         logging.info(f"Building Page {page_num + 1}")
         temp_page = Page()
-        name = get_input("    Page name")
+        name = get_input("    Page name:")
         auto_forward = yes_no_prompt("    Will this page auto forward")
 
         if auto_forward == "yes":
@@ -656,34 +656,34 @@ def build_pages(id_):
 
 
 def review_page(page):
-    """Review page."""
+    """Review a page object."""
     # Loops until not changes are required.
     while True:
         print("\n")
         page_keys = list()
         for key, value in page.as_dict().items():
             if key != "html":
-                print("{}: {}".format(key, value))
+                print(f"{key}: {value}")
                 page_keys.append(key)
-        if yes_no_prompt("Changes Required") == "yes":
+        if yes_no_prompt("Changes required") == "yes":
             completer = WordCompleter(page_keys, ignore_case=True)
 
-            # Loops to get valid Field name form user.
+            # Loops to get a valid field name from user.
             while True:
                 update_key = prompt(
-                    "Which Field: ",
+                    "Which field: ",
                     completer=completer,
                     validator=BlankInputValidator(),
                 ).lower()
 
                 try:
                     update_value = prompt(
-                        "{}: ".format(update_key),
+                        f"{update_key}: ",
                         default=page.as_dict()[update_key],
                         validator=BlankInputValidator(),
                     )
                 except KeyError:
-                    logging.error("Incorrect Field!")
+                    logging.error(f'"{update_key}" is an incorrect field!')
                 else:
                     setattr(page, update_key, update_value)
                     break
