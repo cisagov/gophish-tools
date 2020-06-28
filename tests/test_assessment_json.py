@@ -1,12 +1,17 @@
 #!/usr/bin/env pytest -vs
 """Tests for assessment JSON."""
 
-# # Standard Python Libraries
-# import sys
-# from unittest.mock import patch
-#
-# # cisagov Libraries
-# import assessment.builder as assessment_builder
+# Standard Python Libraries
+import csv
+from io import StringIO
+import sys
+from unittest.mock import MagicMock, patch
+
+# Third-Party Libraries
+import mock
+
+# cisagov Libraries
+import assessment.builder as assessment_builder
 
 # TODO Make test_emails csv
 
@@ -71,6 +76,30 @@ class TestPlainAssessment:
 
     radio_dialog_values = [["1. Time Zone - 63", "US/Eastern"]]
 
+    csv_data = StringIO(
+        """First Name,Last Name,Email,Position\n
+        classroom,pattern,classroom.pattern@target.tld,HR\n
+        rice,bent,rice.bent@target.tld,IT\n
+        center,sort,center.sort@target.tld,HR\n
+        decide,health,decide.health@target.tld,IT"""
+    )
+
+    def json_content_data(self=""):
+        """Return a list of dictionaries mocking email template json files."""
+        data = list()
+        for x in range(1, 7):
+            data.append(
+                {
+                    "id": f"a1b2c3{x}",
+                    "from_address": f"Test{x} <test{x}@domain.tld>",
+                    "subject": f"Test {x}",
+                    "html": f'<div><div id="body"><p>Test {x} {{.URL}}</p></div></div>',
+                    "text": f"Test {x}\n {{.URL}}",
+                }
+            )
+
+        return data
+
     def mock_get_input(self, s):
         """Return a mock input value."""
         return self.get_input_values.pop(0)[1]
@@ -99,22 +128,28 @@ class TestPlainAssessment:
         """Return a mock radio dialog value."""
         return self.radio_dialog_values.pop(0)[1]
 
-    def mock_id_arg(self, s):
-        """Return a mock assessment ID value."""
-        return "RVXXX1"
-
     # TODO: Replace with a useful, functioning test
 
-    # def test_assessment(self, monkeypatch):
-    #     """Construct a test assessment from mock data."""
-    #     with patch.object(sys, "argv", ["pca-wizard", "RVXXX1"]):
-    #         assessment_builder.get_input = self.mock_get_input
-    #         assessment_builder.input = self.mock_input
-    #         assessment_builder.yes_no_prompt = self.mock_yes_no
-    #         assessment_builder.get_number = self.mock_get_number
-    #         assessment_builder.get_time_input = self.mock_get_time_input
-    #         assessment_builder.prompt = self.mock_prompt
-    #         assessment_builder.radiolist_dialog = self.mock_radio
-    #         # assessment_builder.args["ASSESSMENT_ID"] = "RVXXX1"  # self.mock_id_arg
-    #         assessment_builder.main()
-    #     assert True
+    @mock.patch("docopt.docopt")
+    @mock.patch("assessment.builder.open", MagicMock())
+    @mock.patch("json.load", MagicMock(side_effect=json_content_data()))
+    @mock.patch(
+        "csv.DictReader", return_value=csv.DictReader(csv_data, delimiter=","),
+    )
+    def test_assessment(self, mock_docopt, monkeypatch):
+        """Construct a test assessment from mock data."""
+        with patch.object(sys, "argv", ["pca-wizard", "RVXXX1"]):
+            assessment_builder.get_input = self.mock_get_input
+            assessment_builder.input = self.mock_input
+            assessment_builder.yes_no_prompt = self.mock_yes_no
+            assessment_builder.get_number = self.mock_get_number
+            assessment_builder.get_time_input = self.mock_get_time_input
+            assessment_builder.prompt = self.mock_prompt
+            assessment_builder.radiolist_dialog = self.mock_radio
+
+            # mock_docopt is used within the called function
+            # Ignoring Flake8 F841 for this line.
+            mock_docopt = {"ASSESSMENT_ID": "RVXXX1"}  # noqa
+
+            assessment_builder.main()
+        assert True
