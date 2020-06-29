@@ -374,18 +374,27 @@ def import_email(assessment_id, campaign_number, template_smtp):
     temp_smtp.name = f"{assessment_id}-SP-{campaign_number}"
 
     # Receives the file name and checks if it exists.
+    import_file_name = ""
     while True:
         try:
-            import_file_name = get_input("    Import File name?")
+            import_file_name = get_input(
+                "    Import File name?", default_value=import_file_name
+            )
 
             with open(import_file_name) as importFile:
                 import_temp = json.load(importFile)
-
             # Validates that all fields are present or raise MissingKey Error.
             email_import_validation(import_temp)
             break
         except EnvironmentError:
             logging.critical(f"Import File not found: {import_file_name}")
+            print("Please try again...")
+
+        except json.decoder.JSONDecodeError as e:
+            message_dialog(
+                title="JSON Format Error",
+                text=f"There is a JSON formatting error, please correct before clicking Ok.\nDetails:\n    {e}",
+            )
             print("Please try again...")
 
         except MissingKey as e:
@@ -396,6 +405,7 @@ def import_email(assessment_id, campaign_number, template_smtp):
                 title="Missing Field",
                 text=f'Email import is missing the "{e.key}" field, please correct before clicking Ok.\n {e.key}: {e.description}',
             )
+            print("Please try again...")
 
             continue
 
