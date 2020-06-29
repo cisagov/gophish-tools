@@ -87,7 +87,7 @@ def display_list_groups(assessment):
     # Prints groups or No Groups message
     if assessment.groups:
         for index, temp_group in enumerate(assessment.groups):
-            print("\t{}\t{}".format(index + 1, temp_group.name))
+            print(f"\t{index + 1}\t{temp_group.name}")
     else:
         print("\t--NO GROUPS--")
 
@@ -102,7 +102,7 @@ def display_list_pages(assessment):
     # Prints pages or No pages message
     if assessment.pages:
         for index, temp_page in enumerate(assessment.pages):
-            print("\t{}\t{}".format(index + 1, temp_page.name))
+            print(f"\t{index + 1}\t{temp_page.name}")
     else:
         print("\t--NO PAGES--")
 
@@ -142,7 +142,7 @@ def build_assessment(assessment_id):
     template_smtp.password = input("SMTP Password: ")  # nosec
 
     assessment.campaigns = list()
-    logging.info("Building Campaigns")
+    logging.info("Building campaigns")
     num_campaigns = get_number("    How many campaigns?")
     for campaign_number in range(0, num_campaigns):
         campaign_data = build_campaigns(assessment, campaign_number + 1, template_smtp)
@@ -159,7 +159,7 @@ def build_campaigns(assessment, campaign_number, template_smtp):
 
     Args:
         assessment (Assessment): Assessment object.
-        campaign_number (int): Campaign number show position in assessment.
+        campaign_number (int): Campaign number showing position in assessment.
         template_smtp (SMTP): SMTP object holding items that are the same throughout the assessment.
 
     Returns:
@@ -220,9 +220,8 @@ def review_campaign(assessment, campaign):
         campaign (Campaign): Campaign object being reviewed.
 
     Returns:
-        Campaign: Campaign object after any needed changes.
+        Campaign: Campaign object after any changes.
     """
-    # TODO Review group name and page name.
     while True:
         campaign_dict = campaign.as_dict()
         print("\n")
@@ -366,22 +365,21 @@ def import_email(assessment_id, campaign_number, template_smtp):
     while True:
         try:
             import_file_name = get_input("    Import File name?")
-            # Drops .json if included so it can always be added as fail safe.
-            import_file_name = import_file_name.split(".", 1)[0]
 
-            with open(import_file_name + ".json") as importFile:
+            with open(import_file_name) as importFile:
                 import_temp = json.load(importFile)
 
             # Validates that all fields are present or raise MissingKey Error.
             email_import_validation(import_temp)
             break
         except EnvironmentError:
-            logging.critical("Import File not found: {}.json".format(import_file_name))
+            logging.critical(f"Import File not found: {import_file_name}")
             print("Please try again...")
 
         except MissingKey as e:
             # Logs and indicates the user should correct before clicking ok which will re-run the import.
-            logging.critical("Missing Field from import: {}".format(e.key))
+            logging.critical(f"Missing Field from import: {e.key}")
+            # Ok prompt which allows the user to correct the file before the script attempts to import it again.
             message_dialog(
                 title="Missing Field",
                 text=f'Email import is missing the "{e.key}" field, please correct before clicking Ok.\n {e.key}: {e.description}',
@@ -389,8 +387,8 @@ def import_email(assessment_id, campaign_number, template_smtp):
 
             continue
 
-    # Finalize SMTP profile, push to GoPhish for check.
-    # TODO Need to valid this formatting.
+    # Finalize SMTP profile\.
+    # TODO Need to valid the formatting of email address to be "Display Name<address.tld>".
     temp_smtp.from_address = import_temp["from_address"]
 
     # Load
@@ -410,37 +408,36 @@ def create_email(assessment_id, campaign_number, template_smtp):
     db_id = get_input("    Template database id:")
     temp_template = Template(name=f"{assessment_id}-T{campaign_number}-{db_id}")
 
-    dispaly_name = get_input("    From Address dispaly name:")
-    email_address = prompt("    From email address: ", validator=EmailValidator(),)
+    dispaly_name = get_input("    Sender dispaly name:")
+    email_address = prompt("    Sender email address: ", validator=EmailValidator(),)
+    temp_smtp.from_address = f"{dispaly_name}<{email_address}>"
 
     temp_template.subject = get_input("    Subject:")
-
-    temp_smtp.from_address = f"{dispaly_name}<{email_address}>"
 
     # Receives the file name and checks if it exists.
     while True:
         try:
-            html_file_name = get_input("    HTML Template File name:")
+            html_file_name = get_input("    HTML file containing the email body:")
 
             with open(html_file_name) as htmlFile:
                 temp_template.html = htmlFile.read()
 
             break
         except EnvironmentError:
-            logging.error(f"HTML Template File not found: {html_file_name}")
+            logging.error(f"HTML file not found: {html_file_name}")
             print("Please try again...")
 
-        # Receives the file name and checks if it exists.
+    # Receives the file name and checks if it exists.
     while True:
         try:
-            text_file_name = get_input("    Text Template File name:")
+            text_file_name = get_input("    Text file containing the email body:")
 
             with open(text_file_name) as textFile:
                 temp_template.text = textFile.read()
 
             break
         except EnvironmentError:
-            logging.critical(f"Text Template File not found: {text_file_name}")
+            logging.critical(f"Text file not found: {text_file_name}")
             print("Please try again...")
 
     return temp_smtp, temp_template
@@ -472,11 +469,11 @@ def build_groups(id, target_domains):
 
 
 def build_emails(domains, labels):
-    """Build target object for a group.
+    """Build target objects for a group.
 
     Args:
-        domains (list): Valid domains for assessment.
-        labels (string): Emails include a label.
+        domains (list): Valid target domains for assessment.
+        labels (string): Indicates if emails include a label.
 
     Returns:
         List of all valid targets.
@@ -521,7 +518,7 @@ def build_emails(domains, labels):
                         targets.append(target)
 
             # Address email formatting errors:
-            # If less than 2 errors, automatically loop through each to correct
+            # If less than 2 errors, automatically loop through each to correct.
             # Else, allow user to choose to loop through or exclude erroneous emails.
             print("\n")
             if len(format_error) < 2:
@@ -546,7 +543,7 @@ def build_emails(domains, labels):
                 if yes_no_prompt("Would you like to correct each here") == "yes":
                     for error_target in format_error:
                         error_target["Email"] = prompt(
-                            "Correct Email Formatting: ",
+                            "Correct email formatting: ",
                             default=error_target["Email"],
                             validator=EmailValidator(),
                         )
@@ -566,7 +563,7 @@ def build_emails(domains, labels):
                     )
 
             # Address email domains that do not match:
-            # If less than 2 errors, automatically loop through each to correct
+            # If less than 2 errors, automatically loop through each to correct.
             # Else, allow user to choose to loop through or exclude erroneous emails.
             if len(domain_mismatch) < 2:
                 for error_target in domain_mismatch:
@@ -605,7 +602,7 @@ def build_emails(domains, labels):
                 break
 
             except UserWarning:
-                # Logs and indicates the user should correct before clicking ok which will re-run the import.
+                # Logs and indicates the user should correct before clicking ok which will try importing again.
                 logging.critical("No targets loaded, please try again...")
                 message_dialog(
                     title="Missing Targets",
@@ -621,7 +618,7 @@ def target_add_label(labels, raw_target, target):
 
     Args:
         labels (string): A value of "yes" indicates a label is required.
-        raw_target (dict): Raw target dictionary loaded from CSV.
+        raw_target (dict): Raw target dictionary loaded from the CSV.
         target (Target): Target object to be included in assessment.
 
     Returns:
@@ -647,7 +644,7 @@ def build_pages(id_):
     num_pages = get_number("    How many pages do you need")
 
     for page_num in range(int(num_pages)):
-        logging.info(f"Building Page {page_num + 1}")
+        logging.info(f"Building page {page_num + 1}")
         temp_page = Page()
         name = get_input("    Page name:")
         auto_forward = yes_no_prompt("    Will this page auto forward")
@@ -663,8 +660,7 @@ def build_pages(id_):
         else:
             temp_page.name = f"{id_}-{page_num+1}-{name}"
 
-            forward = yes_no_prompt("    Will this page forward after action")
-            if forward == "yes":
+            if yes_no_prompt("    Will this page forward after an action") == "yes":
                 temp_page.capture_credentials = True
                 temp_page.redirect_url = get_input("    URL to forward to:")
             else:
@@ -675,7 +671,7 @@ def build_pages(id_):
             # Receives the file name and checks if it exists.
             while True:
                 try:
-                    landing_file_name = get_input("Landing page html file name:")
+                    landing_file_name = get_input("    Landing page HTML file name:")
 
                     with open(landing_file_name, "r") as landingFile:
                         temp_page.html = landingFile.read()
