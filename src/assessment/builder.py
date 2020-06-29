@@ -356,7 +356,20 @@ def select_page(assessment):
 
 
 def import_email(assessment_id, campaign_number, template_smtp):
-    """Import email from file."""
+    """Import email from file.
+
+    Utilize a json template to build the template and smtp
+    objects for an assessment.
+
+    Args:
+        assessment_id (string): Assessment identifier.
+        campaign_number (int): Campaign number showing position in assessment.
+        template_smtp (SMTP): SMTP object with assessment wide settings.
+
+    Returns:
+        Template: Template object containing the email.
+        SMTP: SMTP object with the send profile settings.
+    """
     temp_template = Template(name=f"{assessment_id}-T{str(campaign_number)}")
     temp_smtp = copy.deepcopy(template_smtp)
     temp_smtp.name = f"{assessment_id}-SP-{campaign_number}"
@@ -401,7 +414,21 @@ def import_email(assessment_id, campaign_number, template_smtp):
 
 
 def create_email(assessment_id, campaign_number, template_smtp):
-    """Create email."""
+    """Create email from file.
+
+    Allow a user to load an email from two files, HTML and text, to build
+    the email. Other items, such as from_address, name, and subject,
+    are entered by the user.
+
+    Args:
+        assessment_id (string): Assessment identifier.
+        campaign_number (int): Campaign number showing position in assessment.
+        template_smtp (SMTP): SMTP object with assessment wide settings.
+
+    Returns:
+        Template: Template object containing the email.
+        SMTP: SMTP object with the send profile settings.
+    """
     temp_smtp = copy.deepcopy(template_smtp)
     temp_smtp = SMTP(name=f"{assessment_id}-SP-{campaign_number}")
 
