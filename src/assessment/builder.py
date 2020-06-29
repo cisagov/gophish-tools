@@ -91,7 +91,7 @@ def display_list_groups(assessment):
     else:
         print("\t--NO GROUPS--")
 
-    print("\n")
+    print()
 
 
 def display_list_pages(assessment):
@@ -106,7 +106,7 @@ def display_list_pages(assessment):
     else:
         print("\t--NO PAGES--")
 
-    print("\n")
+    print()
 
 
 def build_assessment(assessment_id):
@@ -178,14 +178,13 @@ def build_campaigns(assessment, campaign_number, template_smtp):
             break
         else:
             logging.error("End date is not after launch date.")
+    print()
+    load_method = prompt(
+        "    Import or create email? ",
+        completer=WordCompleter(["import", "create"], ignore_case=True),
+    ).lower()
 
-    if (
-        prompt(
-            "Import or create email?",
-            completer=WordCompleter(["import", "create"], ignore_case=True),
-        ).lower()
-        == "import"
-    ):
+    if load_method == "import":
         campaign.smtp, campaign.template = import_email(
             assessment.id, campaign_number, template_smtp
         )
@@ -224,7 +223,7 @@ def review_campaign(assessment, campaign):
     """
     while True:
         campaign_dict = campaign.as_dict()
-        print("\n")
+        print()
 
         # Outputs relevent fields except Email Template.
         for field, value in campaign_dict.items():
@@ -343,7 +342,7 @@ def select_page(assessment):
     else:  # Allows user to choose from multiple pages
         while True:
             try:
-                print("\n")
+                print()
                 display_list_pages(assessment)
                 page_name = assessment.pages[
                     get_number("    Select the page ID for this campaign?") - 1
@@ -436,7 +435,10 @@ def create_email(assessment_id, campaign_number, template_smtp):
     temp_template = Template(name=f"{assessment_id}-T{campaign_number}-{db_id}")
 
     dispaly_name = get_input("    Sender dispaly name:")
-    email_address = prompt("    Sender email address: ", validator=EmailValidator(),)
+
+    email_address = prompt(
+        "    Sender email address: ", default="", validator=EmailValidator(),
+    )
     temp_smtp.from_address = f"{dispaly_name}<{email_address}>"
 
     temp_template.subject = get_input("    Subject:")
@@ -490,6 +492,7 @@ def build_groups(id, target_domains):
         new_group.targets = build_emails(target_domains, labels)
 
         logging.info(f"Group ready: {new_group.name}")
+        print()
         groups.append(new_group)
 
     return groups
@@ -547,8 +550,8 @@ def build_emails(domains, labels):
             # Address email formatting errors:
             # If less than 2 errors, automatically loop through each to correct.
             # Else, allow user to choose to loop through or exclude erroneous emails.
-            print("\n")
             if len(format_error) < 2:
+                print()
                 for error_target in format_error:
                     error_target["Email"] = prompt(
                         "Correct email formatting: ",
@@ -668,7 +671,7 @@ def build_pages(id_):
     logging.info("Getting page metadata.")
 
     # Looks through to get the number of pages as a number with error checking
-    num_pages = get_number("    How many pages do you need")
+    num_pages = get_number("    How many pages do you need? ")
 
     for page_num in range(int(num_pages)):
         logging.info(f"Building page {page_num + 1}")
@@ -726,12 +729,14 @@ def review_page(page):
     """Review a page object."""
     # Loops until not changes are required.
     while True:
-        print("\n")
+        print()
         page_keys = list()
         for key, value in page.as_dict().items():
             if key != "html":
                 print(f"{key}: {value}")
                 page_keys.append(key)
+
+        print()
         if yes_no_prompt("Changes required") == "yes":
             completer = WordCompleter(page_keys, ignore_case=True)
 

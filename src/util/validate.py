@@ -85,7 +85,9 @@ class EmailValidator(Validator):
     def validate(self, document):
         """Validate if input text is a valid email address."""
         email = document.text
-        if not validate_email(email):
+        try:
+            validate_email(email)
+        except FormatError:
             raise ValidationError(message="Invalid Email Address")
 
 
