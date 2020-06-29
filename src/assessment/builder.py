@@ -439,7 +439,7 @@ def create_email(assessment_id, campaign_number, template_smtp):
         SMTP: SMTP object with the send profile settings.
     """
     temp_smtp = copy.deepcopy(template_smtp)
-    temp_smtp = SMTP(name=f"{assessment_id}-SP-{campaign_number}")
+    temp_smtp.name = f"{assessment_id}-SP-{campaign_number}"
 
     db_id = get_input("    Template database id:")
     temp_template = Template(name=f"{assessment_id}-T{campaign_number}-{db_id}")
