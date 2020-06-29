@@ -80,7 +80,8 @@ class Assessment(Model):
                 campaigns = [Campaign.parse(campaign) for campaign in val]
                 setattr(assessment, key, campaigns)
             elif key == "page":
-                setattr(assessment, key, Page.parse(val))
+                pages = [Page.parse(page) for page in val]
+                setattr(assessment, key, pages)
             elif key == "groups":
                 groups = [Group.parse(group) for group in val]
                 setattr(assessment, key, groups)

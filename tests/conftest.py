@@ -48,7 +48,7 @@ def assessment_json(group_json, page_json, campaign_json):
             "reschedule": False,
             "end_date": "01/01/2025 14:00",
             "groups": [group_json],
-            "page": page_json,
+            "pages": [page_json],
             "campaigns": [campaign_json],
         }
     )
@@ -108,6 +108,7 @@ def campaign_json(template_json, smtp_json):
             "complete_date": "01/01/2025 14:00",
             "url": "http://bad.domain/camp1",
             "group_name": "RVXXX1-G1",
+            "page_name": "RVXXX1-AutoForward",
             "template": template_json,
             "smtp": smtp_json,
         }
@@ -133,7 +134,7 @@ def smtp_json():
     """Return an SMTP JSON."""
     return json.loads(
         """{
-        "name": "RVXXX1-SP",
+        "name": "RVXXX1-SP-1",
         "from_address": "Camp1 Phish<camp1.phish@bad.domain>",
         "host": "postfix:587",
         "interface_type": "SMTP",
@@ -172,7 +173,7 @@ def group_object(target_object):
 def smtp_object():
     """Return an SMTP object."""
     return SMTP(
-        name="RVXXX1-SP",
+        name="RVXXX1-SP-1",
         from_address="Camp1 Phish<camp1.phish@bad.domain>",
         host="postfix:587",
         interface_type="SMTP",
@@ -212,6 +213,7 @@ def campaign_object(template_object, smtp_object):
         complete_date="01/01/2025 14:00",
         url="http://bad.domain/camp1",
         group_name="RVXXX1-G1",
+        page_name="RVXXX1-AutoForward",
         template=template_object,
         smtp=smtp_object,
     )
@@ -229,7 +231,7 @@ def assessment_object(group_object, page_object, campaign_object):
         end_date="01/01/2025 14:00",
         reschedule=False,
         groups=[group_object],
-        page=[page_object],
+        pages=[page_object],
         campaigns=[campaign_object],
     )
 
