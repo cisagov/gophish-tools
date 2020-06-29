@@ -179,10 +179,20 @@ def build_campaigns(assessment, campaign_number, template_smtp):
         else:
             logging.error("End date is not after launch date.")
 
-    campaign.smtp, campaign.template = import_email(
-        assessment, campaign_number, template_smtp
-    )
-
+    if (
+        prompt(
+            "Import or create email?",
+            completer=WordCompleter(["import", "create"], ignore_case=True),
+        ).lower()
+        == "import"
+    ):
+        campaign.smtp, campaign.template = import_email(
+            assessment.id, campaign_number, template_smtp
+        )
+    else:
+        campaign.smtp, campaign.template = create_email(
+            assessment.id, campaign_number, template_smtp
+        )
     # Select Group:
     campaign.group_name = select_group(assessment)
 
@@ -346,11 +356,11 @@ def select_page(assessment):
     return page_name
 
 
-def import_email(assessment, campaign_number, template_smtp):
+def import_email(assessment_id, campaign_number, template_smtp):
     """Import email from file."""
-    temp_template = Template(name=f"{assessment.id}-T{str(campaign_number)}")
+    temp_template = Template(name=f"{assessment_id}-T{str(campaign_number)}")
     temp_smtp = copy.deepcopy(template_smtp)
-    temp_smtp.name = f"{assessment.id}-SP-{campaign_number}"
+    temp_smtp.name = f"{assessment_id}-SP-{campaign_number}"
 
     # Receives the file name and checks if it exists.
     while True:
@@ -387,46 +397,50 @@ def import_email(assessment, campaign_number, template_smtp):
     temp_template.subject = import_temp["subject"]
     temp_template.html = import_temp["html"]
     temp_template.text = import_temp["text"]
-    temp_template.name = f"{assessment.id}-T{str(campaign_number)}-{import_temp['id']}"
+    temp_template.name = f"{assessment_id}-T{str(campaign_number)}-{import_temp['id']}"
 
     return temp_smtp, temp_template
 
 
-def create_email(assessment, campaign_number=""):
+def create_email(assessment_id, campaign_number, template_smtp):
     """Create email."""
-    temp_template = Template(name=assessment.id + "-T" + str(campaign_number))
-    temp_smtp = SMTP(name=f"{assessment.id}-SP-{campaign_number}")
+    temp_smtp = copy.deepcopy(template_smtp)
+    temp_smtp = SMTP(name=f"{assessment_id}-SP-{campaign_number}")
+
+    db_id = get_input("    Template database id:")
+    temp_template = Template(name=f"{assessment_id}-T{campaign_number}-{db_id}")
+
+    dispaly_name = get_input("    From Address dispaly name:")
+    email_address = prompt("    From email address: ", validator=EmailValidator(),)
+
+    temp_template.subject = get_input("    Subject:")
+
+    temp_smtp.from_address = f"{dispaly_name}<{email_address}>"
 
     # Receives the file name and checks if it exists.
     while True:
         try:
-            html_file_name = get_input("HTML Template File name:")
-            # Drops .html if included so it can always be added as fail safe.
-            html_file_name = html_file_name.split(".", 1)[0]
+            html_file_name = get_input("    HTML Template File name:")
 
-            with open(html_file_name + ".html") as htmlFile:
+            with open(html_file_name) as htmlFile:
                 temp_template.html = htmlFile.read()
 
             break
         except EnvironmentError:
-            logging.error(f"HTML Template File not found: {html_file_name}.html")
+            logging.error(f"HTML Template File not found: {html_file_name}")
             print("Please try again...")
 
         # Receives the file name and checks if it exists.
     while True:
         try:
             text_file_name = get_input("    Text Template File name:")
-            # Drops .txt if included so it can always be added as fail safe.
-            text_file_name = text_file_name.split(".", 1)[0]
 
-            with open(text_file_name + ".txt") as textFile:
+            with open(text_file_name) as textFile:
                 temp_template.text = textFile.read()
 
             break
         except EnvironmentError:
-            logging.critical(
-                "Text Template File not found: {}.txt".format(text_file_name)
-            )
+            logging.critical(f"Text Template File not found: {text_file_name}")
             print("Please try again...")
 
     return temp_smtp, temp_template
