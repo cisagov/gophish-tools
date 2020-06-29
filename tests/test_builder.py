@@ -2,7 +2,7 @@
 """Tests for builder script."""
 
 # Standard Python Libraries
-from unittest.mock import mock_open, patch
+from unittest.mock import MagicMock, mock_open, patch
 
 # Third-Party Libraries
 import pytest
@@ -10,12 +10,98 @@ import pytest
 # cisagov Libraries
 from assessment.builder import (
     build_assessment,
+    build_campaigns,
     build_emails,
     build_pages,
     review_campaign,
     review_page,
     target_add_label,
 )
+
+
+class TestBuildCampaign:
+    """Build campaign function test class."""
+
+    email_content_holder = "Email body in correct format would be read here."
+
+    def json_content_data(self=""):
+        """Return a list with a dict to mock the email template json file."""
+        return [
+            {
+                "id": "ID",
+                "from_address": "Camp1 Phish<camp1.phish@bad.domain>",
+                "subject": "Campaign 1",
+                "html": "<html>Body Test</html>",
+                "text": "Body Test",
+            }
+        ]
+
+    @patch(
+        "assessment.builder.get_time_input",
+        side_effect=["01/01/2025 13:00", "01/01/2025 14:00"],
+    )
+    @patch(
+        "assessment.builder.prompt", side_effect=["import", "http://bad.domain/camp1"]
+    )
+    @patch("assessment.builder.open", MagicMock())
+    @patch("assessment.builder.get_input", return_value="template.json")
+    @patch("json.load", MagicMock(side_effect=json_content_data()))
+    @patch("assessment.builder.yes_no_prompt", return_value="no")
+    def test_build_campaigns_import(
+        self,
+        mock_yes_no_prompt,
+        mock_get_input,
+        mock_prompt,
+        mock_get_time_input,
+        assessment_object,
+        smtp_object,
+        campaign_object,
+    ):
+        """Validate successful campaign build using import template."""
+        new_campaign = build_campaigns(assessment_object, "1", smtp_object)
+
+        assert new_campaign.as_dict() == campaign_object.as_dict()
+
+    @patch(
+        "assessment.builder.get_time_input",
+        side_effect=["01/01/2025 13:00", "01/01/2025 14:00"],
+    )
+    @patch(
+        "assessment.builder.prompt",
+        side_effect=["create", "camp1.phish@bad.domain", "http://bad.domain/camp1"],
+    )
+    @patch(
+        "assessment.builder.get_input",
+        side_effect=[
+            "ID",
+            "Camp1 Phish",
+            "Campaign 1",
+            "template.html",
+            "template.txt",
+        ],
+    )
+    @patch(
+        "assessment.builder.open", mock_open(read_data=email_content_holder),
+    )
+    @patch("assessment.builder.yes_no_prompt", return_value="no")
+    def test_build_campaigns_create(
+        self,
+        mock_yes_no_prompt,
+        mock_get_input,
+        mock_prompt,
+        mock_get_time_input,
+        assessment_object,
+        smtp_object,
+        campaign_object,
+    ):
+        """Validate successful campaign build using create template."""
+        new_campaign = build_campaigns(assessment_object, "1", smtp_object)
+
+        # Set body of template to holder text for single mock_open.
+        campaign_object.template.html = self.email_content_holder
+        campaign_object.template.text = self.email_content_holder
+
+        assert new_campaign.as_dict() == campaign_object.as_dict()
 
 
 class TestReviewCampaign:
