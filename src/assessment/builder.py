@@ -458,14 +458,22 @@ def build_groups(id, target_domains):
 
 
 def build_emails(domains, labels):
-    """Build targets for a group."""
+    """Build target object for a group.
+
+    Args:
+        domains (list): Valid domains for assessment.
+        labels (string): Emails include a label.
+
+    Returns:
+        List of all valid targets.
+    """
     targets = list()
     domain_mismatch = list()
     format_error = list()
 
     # Loop to allow file not found and 0 targets loaded to be addressed immediately.
     while True:
-        email_file_name = get_input("    E-mail CSV name:")
+        email_file_name = get_input("    E-mail CSV file name:")
 
         # Receives the file name and checks if it exists.
         try:
@@ -520,7 +528,7 @@ def build_emails(domains, labels):
                         target = target_add_label(labels, error_target, target)
                         targets.append(target)
             else:
-                logging.error(f"{len(format_error)} formatting errors")
+                logging.error(f"{len(format_error)} formatting errors.")
                 if yes_no_prompt("Would you like to correct each here") == "yes":
                     for error_target in format_error:
                         error_target["Email"] = prompt(
@@ -554,7 +562,7 @@ def build_emails(domains, labels):
                         validator=EmailValidator(),
                     )
             else:
-                logging.error(f"{len(domain_mismatch)} domain mismatch errors")
+                logging.error(f"{len(domain_mismatch)} domain mismatch errors.")
                 if yes_no_prompt("Would you like to correct each here") == "yes":
                     for error_target in domain_mismatch:
                         while True:
@@ -579,10 +587,10 @@ def build_emails(domains, labels):
 
             try:
                 if len(targets) == 0:
-                    raise Exception("No targets loaded")
+                    raise UserWarning("No targets loaded")
                 break
 
-            except Exception:
+            except UserWarning:
                 # Logs and indicates the user should correct before clicking ok which will re-run the import.
                 logging.critical("No targets loaded, please try again...")
                 message_dialog(
@@ -595,9 +603,18 @@ def build_emails(domains, labels):
 
 
 def target_add_label(labels, raw_target, target):
-    """Add a label to a target."""
+    """Add a label to a target if required.
+
+    Args:
+        labels (string): A value of "yes" indicates a label is required.
+        raw_target (dict): Raw target dictionary loaded from CSV.
+        target (Target): Target object to be included in assessment.
+
+    Returns:
+        Target: Final target object with postion.
+    """
     if labels == "yes" and not raw_target["Position"]:
-        logging.error(f"Missing label for {target.email}")
+        logging.error(f'Missing label for "{target.email}".')
         target.position = get_input("Please enter a label:")
     else:
         target.position = raw_target["Position"]
