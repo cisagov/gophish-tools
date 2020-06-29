@@ -4,12 +4,17 @@
 # Standard Python Libraries
 from unittest.mock import mock_open, patch
 
+# Third-Party Libraries
+import pytest
+
 # cisagov Libraries
 from assessment.builder import (
     build_assessment,
+    build_emails,
     build_pages,
     review_campaign,
     review_page,
+    target_add_label,
 )
 
 
@@ -211,3 +216,30 @@ class TestBuildAssessment:
 
         new_assessment = build_assessment("RVXXX1")
         assert new_assessment.as_dict() == assessment_object.as_dict()
+
+
+class TestBuildEmails:
+    """Build email function test class."""
+
+    csv_content = """First Name,Last Name,Email,Position\nJohn,Doe,john.doe@domain.test,IT\nJane,Smith,jane.smith@domain.test,HR"""
+
+    @patch("assessment.builder.get_input", return_value="file.csv")
+    @patch("assessment.builder.open", mock_open(read_data=csv_content))
+    def test_build_emails_valid(self, mock_get_input, target_json):
+        """Validate build emails returns an accurate target list."""
+        new_target = build_emails(["domain.test"], "yes")
+
+        for x in range(2):
+            assert new_target[x].as_dict() == target_json[x]
+
+    @pytest.mark.parametrize("position", [None, "IT"])
+    @patch("assessment.builder.get_input", return_value="HR")
+    def test_target_add_label(self, mock_get_input, target_object, position):
+        """Validate requests a postions if blank or sets if provided."""
+        new_target = target_object
+        new_target.postion = position
+        raw_target = {"Position": "IT"}
+
+        new_target = target_add_label("yes", raw_target, new_target)
+
+        assert new_target.as_dict() == target_object.as_dict()
