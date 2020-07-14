@@ -13,15 +13,7 @@ from gophish.models import User as GoPhish_User
 import pytest
 
 # cisagov Libraries
-from models.models import (
-    SMTP,
-    Assessment,
-    Campaign,
-    Group,
-    Page,
-    Target,
-    Template,
-)
+from models.models import SMTP, Assessment, Campaign, Group, Page, Target, Template
 
 """Support items for test_modules.py """
 

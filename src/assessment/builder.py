@@ -29,15 +29,7 @@ from prompt_toolkit.shortcuts import message_dialog, radiolist_dialog
 import pytz
 
 # cisagov Libraries
-from models.models import (
-    SMTP,
-    Assessment,
-    Campaign,
-    Group,
-    Page,
-    Target,
-    Template,
-)
+from models.models import SMTP, Assessment, Campaign, Group, Page, Target, Template
 from util.input import get_input, get_number, get_time_input, yes_no_prompt
 from util.set_date import set_date
 from util.validate import (

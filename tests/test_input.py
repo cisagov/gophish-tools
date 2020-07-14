@@ -5,7 +5,7 @@
 import pytest
 
 # cisagov Libraries
-import util.input as _input
+from util import input as _input
 
 
 class TestInput:
