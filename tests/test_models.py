@@ -2,15 +2,7 @@
 """Test for Models."""
 
 # cisagov Libraries
-from models.models import (
-    SMTP,
-    Assessment,
-    Campaign,
-    Group,
-    Page,
-    Target,
-    Template,
-)
+from models.models import SMTP, Assessment, Campaign, Group, Page, Target, Template
 
 
 class TestParse:
