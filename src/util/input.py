@@ -27,7 +27,9 @@ def yes_no_prompt(message):
 def get_input(message, default_value=""):
     """Record user input."""
     return prompt(
-        f"{message} ", default=default_value, validator=BlankInputValidator(),
+        f"{message} ",
+        default=default_value,
+        validator=BlankInputValidator(),
     )
 
 
