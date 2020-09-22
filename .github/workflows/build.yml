@@ -32,6 +32,7 @@ jobs:
             ${{ env.PRE_COMMIT_CACHE_DIR }}
           key: "lint-${{ runner.os }}-py${{ env.PY_VERSION }}-\
             ${{ hashFiles('**/requirements-test.txt') }}-\
+            ${{ hashFiles('**/requirements.txt') }}-\
             ${{ hashFiles('**/.pre-commit-config.yaml') }}"
           restore-keys: |
             lint-${{ runner.os }}-py${{ env.PY_VERSION }}-
@@ -59,7 +60,8 @@ jobs:
         with:
           path: ${{ env.PIP_CACHE_DIR }}
           key: "test-${{ runner.os }}-py${{ matrix.python-version }}-\
-            ${{ hashFiles('**/requirements-test.txt') }}"
+            ${{ hashFiles('**/requirements-test.txt') }}-\
+            ${{ hashFiles('**/requirements.txt') }}"
           restore-keys: |
             test-${{ runner.os }}-py${{ matrix.python-version }}-
             test-${{ runner.os }}-
@@ -120,7 +122,7 @@ jobs:
           version=$(./bump_version.sh project show)
           docker save $IMAGE_NAME:latest | gzip > dist/image.tar.gz
       - name: Upload artifacts
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: dist-${{ matrix.python-version }}
           path: dist
