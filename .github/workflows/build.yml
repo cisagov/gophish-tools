@@ -76,7 +76,7 @@ jobs:
       - name: Upload coverage report
         run: coveralls
         env:
-          COVERALLS_SERVICE_NAME: github-actions
+          COVERALLS_SERVICE_NAME: github
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: success()
   build:
