@@ -76,11 +76,8 @@ jobs:
       - name: Upload coverage report
         run: coveralls
         env:
-<<<<<<< HEAD
-=======
           COVERALLS_FLAG_NAME: "py${{ matrix.python-version }}"
           COVERALLS_PARALLEL: true
->>>>>>> b85e1b85ce7816b8961c0afb2fb9b843ba6e96a5
           COVERALLS_SERVICE_NAME: github
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: success()
