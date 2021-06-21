@@ -263,8 +263,8 @@ def export_user_reports(api, assessment_id):
         campaign = get_campaign_data(api, campaign_id)
 
         for click in campaign["clicks"]:
-            if click["time"] < first_report or first_report is None:
-                first_report = click["time"]
+            if first_report is None or datetime(click["time"]) < first_report:
+                first_report = datetime(click["time"])
 
         user_report_doc["customer"] = None
         user_report_doc["assessment"] = assessment_id
