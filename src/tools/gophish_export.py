@@ -253,6 +253,31 @@ def get_application(rawEvent):
     return application
 
 
+def export_user_reports(api, assessment_id):
+    """Build and export a user_report JSON object for each campaign in an assessment."""
+    campaign_ids = get_campaign_ids(api, assessment_id)
+
+    for campaign_id in campaign_ids:
+        first_report = None
+        total_num_reports = 0
+        user_report_doc = dict()
+        campaign = get_campaign_data(api, campaign_id)
+
+        for click in campaign["clicks"]:
+            if click["time"] < first_report or first_report is None:
+                first_report = click["time"]
+
+        total_num_reports = api.campaigns.summary(campaign_id=campaign_id).stats.clicked
+        user_report_doc["customer"] = None
+        user_report_doc["assessment"] = assessment_id
+        user_report_doc["campaign"] = campaign_id
+        user_report_doc["first_report"] = first_report
+        user_report_doc["total_num_reports"] = total_num_reports
+
+        with open(f"{assessment_id}_{campaign_id}_user_report_doc.json", "w") as fp:
+            json.dump(user_report_doc, fp, indent=4)
+
+
 def main():
     """Set up logging, connect to API, export all assessment data."""
     args: Dict[str, str] = docopt(__doc__, version=__version__)
@@ -292,6 +317,10 @@ def main():
 
         logging.info(f'Data written to data_{args["ASSESSMENT_ID"]}.json')
 
+        export_user_reports(api, args["ASSESSMENT_ID"])
+        logging.info(
+            f"Writing out user reports for all campaigns in assessment: {args['ASSESSMENT_ID']}"
+        )
     else:
         logging.error(
             f'Assessment "{args["ASSESSMENT_ID"]}" does not exist in GoPhish.'
