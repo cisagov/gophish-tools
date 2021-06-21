@@ -259,7 +259,6 @@ def export_user_reports(api, assessment_id):
 
     for campaign_id in campaign_ids:
         first_report = None
-        total_num_reports = 0
         user_report_doc = dict()
         campaign = get_campaign_data(api, campaign_id)
 
@@ -267,12 +266,13 @@ def export_user_reports(api, assessment_id):
             if click["time"] < first_report or first_report is None:
                 first_report = click["time"]
 
-        total_num_reports = api.campaigns.summary(campaign_id=campaign_id).stats.clicked
         user_report_doc["customer"] = None
         user_report_doc["assessment"] = assessment_id
         user_report_doc["campaign"] = campaign_id
         user_report_doc["first_report"] = first_report
-        user_report_doc["total_num_reports"] = total_num_reports
+        user_report_doc["total_num_reports"] = api.campaigns.summary(
+            campaign_id=campaign_id
+        ).stats.clicked
 
         with open(f"{assessment_id}_{campaign_id}_user_report_doc.json", "w") as fp:
             json.dump(user_report_doc, fp, indent=4)
