@@ -258,29 +258,32 @@ def export_user_reports(api, assessment_id):
     campaign_ids = get_campaign_ids(api, assessment_id)
 
     for campaign_id in campaign_ids:
-        first_report = None
+        first_report_str = None
+        first_report_dt = None  # for datetime comparison
         user_report_doc = dict()
         campaign = get_campaign_data(api, campaign_id)
 
+        # iterate over clicks and find the earliest click
         for click in campaign["clicks"]:
             if (
-                first_report is None
+                first_report_dt is None
                 or datetime.strptime(click["time"].split(".")[0], "%Y-%m-%dT%H:%M:%S")
-                < first_report
+                < first_report_dt
             ):
-                first_report = click["time"]
+                first_report_str = click["time"]
+                first_report_dt = datetime.strptime(
+                    click["time"].split(".")[0], "%Y-%m-%dT%H:%M:%S"
+                )
 
         user_report_doc["customer"] = None
         user_report_doc["assessment"] = assessment_id
         user_report_doc["campaign"] = campaign_id
-        user_report_doc["first_report"] = first_report
+        user_report_doc["first_report"] = first_report_str
         user_report_doc["total_num_reports"] = api.campaigns.summary(
             campaign_id=campaign_id
         ).stats.clicked
 
-        with open(
-            f"/home/vnc/Desktop/{assessment_id}_{campaign_id}_user_report_doc.json", "w"
-        ) as fp:
+        with open(f"{assessment_id}_{campaign_id}_user_report_doc.json", "w") as fp:
             json.dump(user_report_doc, fp, indent=4)
 
 
