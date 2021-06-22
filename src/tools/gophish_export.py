@@ -265,9 +265,12 @@ def export_user_reports(api, assessment_id):
         for click in campaign["clicks"]:
             if (
                 first_report is None
-                or datetime.strptime(click["time"], "%Y-%m-%dT%H:%M:%S") < first_report
+                or datetime.strptime(click["time"].split(".")[0], "%Y-%m-%dT%H:%M:%S")
+                < first_report
             ):
-                first_report = datetime.strptime(click["time"], "%Y-%m-%dT%H:%M:%S")
+                first_report = datetime.strptime(
+                    click["time"].split(".")[0], "%Y-%m-%dT%H:%M:%S"
+                )
 
         user_report_doc["customer"] = None
         user_report_doc["assessment"] = assessment_id
