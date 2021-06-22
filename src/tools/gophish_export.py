@@ -283,6 +283,10 @@ def export_user_reports(api, assessment_id):
             campaign_id=campaign_id
         ).stats.clicked
 
+        logging.info(
+            f"Writing out user reports for all campaigns in assessment: {assessment_id}"
+        )
+
         with open(f"{assessment_id}_{campaign_id}_user_report_doc.json", "w") as fp:
             json.dump(user_report_doc, fp, indent=4)
 
@@ -327,9 +331,7 @@ def main():
         logging.info(f'Data written to data_{args["ASSESSMENT_ID"]}.json')
 
         export_user_reports(api, args["ASSESSMENT_ID"])
-        logging.info(
-            f"Writing out user reports for all campaigns in assessment: {args['ASSESSMENT_ID']}"
-        )
+
     else:
         logging.error(
             f'Assessment "{args["ASSESSMENT_ID"]}" does not exist in GoPhish.'
