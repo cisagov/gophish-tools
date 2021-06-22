@@ -268,9 +268,7 @@ def export_user_reports(api, assessment_id):
                 or datetime.strptime(click["time"].split(".")[0], "%Y-%m-%dT%H:%M:%S")
                 < first_report
             ):
-                first_report = datetime.strptime(
-                    click["time"].split(".")[0], "%Y-%m-%dT%H:%M:%S"
-                )
+                first_report = click["time"]
 
         user_report_doc["customer"] = None
         user_report_doc["assessment"] = assessment_id
@@ -280,7 +278,9 @@ def export_user_reports(api, assessment_id):
             campaign_id=campaign_id
         ).stats.clicked
 
-        with open(f"{assessment_id}_{campaign_id}_user_report_doc.json", "w") as fp:
+        with open(
+            f"/home/vnc/Desktop/{assessment_id}_{campaign_id}_user_report_doc.json", "w"
+        ) as fp:
             json.dump(user_report_doc, fp, indent=4)
 
 
