@@ -277,7 +277,7 @@ def export_user_reports(api, assessment_id):
 
         user_report_doc["customer"] = None
         user_report_doc["assessment"] = assessment_id
-        user_report_doc["campaign"] = campaign_id
+        user_report_doc["campaign"] = campaign["id"]
         user_report_doc["first_report"] = first_report_str
         user_report_doc["total_num_reports"] = api.campaigns.summary(
             campaign_id=campaign_id
