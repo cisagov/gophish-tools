@@ -258,27 +258,27 @@ def export_user_reports(api, assessment_id):
     campaign_ids = get_campaign_ids(api, assessment_id)
 
     for campaign_id in campaign_ids:
-        first_report_str = None
-        first_report_dt = None  # for datetime comparison
+        first_report = None
         user_report_doc = dict()
         campaign = get_campaign_data(api, campaign_id)
 
         # iterate over clicks and find the earliest click
         for click in campaign["clicks"]:
             if (
-                first_report_dt is None
+                first_report is None
                 or datetime.strptime(click["time"].split(".")[0], "%Y-%m-%dT%H:%M:%S")
-                < first_report_dt
+                < first_report
             ):
-                first_report_str = click["time"]
-                first_report_dt = datetime.strptime(
+                first_report = datetime.strptime(
                     click["time"].split(".")[0], "%Y-%m-%dT%H:%M:%S"
                 )
 
         user_report_doc["customer"] = None
         user_report_doc["assessment"] = assessment_id
         user_report_doc["campaign"] = campaign["id"]
-        user_report_doc["first_report"] = first_report_str
+        user_report_doc["first_report"] = datetime.strftime(
+            first_report, "%Y-%m-%dT%H:%M:%S"
+        )
         user_report_doc["total_num_reports"] = api.campaigns.summary(
             campaign_id=campaign_id
         ).stats.clicked
