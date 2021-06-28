@@ -264,18 +264,17 @@ def export_user_reports(api, assessment_id):
 
         # iterate over clicks and find the earliest click
         for click in campaign["clicks"]:
-            if (
-                first_report is None
-                or datetime.strptime(click["time"].split(".")[0], "%Y-%m-%dT%H:%M:%S")
-                < first_report
-            ):
-                first_report = datetime.strptime(
-                    click["time"].split(".")[0], "%Y-%m-%dT%H:%M:%S"
-                )
+            click_time = datetime.strptime(
+                click["time"].split(".")[0], "%Y-%m-%dT%H:%M:%S"
+            )
+            if first_report is None or click_time < first_report:
+                first_report = click_time
 
         user_report_doc["customer"] = None
         user_report_doc["assessment"] = assessment_id
-        user_report_doc["campaign"] = campaign["id"]
+        # get_campaign_ids() returns integers, but user_report_doc["campaign"]
+        # expects a string
+        user_report_doc["campaign"] = str(campaign_id)
         user_report_doc["first_report"] = datetime.strftime(
             first_report, "%Y-%m-%dT%H:%M:%S"
         )
