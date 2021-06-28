@@ -283,7 +283,7 @@ def export_user_reports(api, assessment_id):
         ).stats.clicked
 
         logging.info(
-            f"Writing out user reports for all campaigns in assessment: {assessment_id}"
+            f"Writing out user report for campaign {campaign_id} in assessment {assessment_id}"
         )
 
         with open(f"{assessment_id}_{campaign_id}_user_report_doc.json", "w") as fp:
