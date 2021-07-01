@@ -254,7 +254,7 @@ def get_application(rawEvent):
 
 
 def export_user_reports(api, assessment_id):
-    """Build and export a user_report JSON object for each campaign in an assessment."""
+    """Build and export a user_report JSON file for each campaign in an assessment."""
     campaign_ids = get_campaign_ids(api, assessment_id)
 
     for campaign_id in campaign_ids:
@@ -270,7 +270,9 @@ def export_user_reports(api, assessment_id):
             if first_report is None or click_time < first_report:
                 first_report = click_time
 
-        user_report_doc["customer"] = None
+        # The "customer" field is a placeholder added for operator convenience when
+        # working with the JSON file created.
+        user_report_doc["customer"] = ""
         user_report_doc["assessment"] = assessment_id
         # get_campaign_ids() returns integers, but user_report_doc["campaign"]
         # expects a string
