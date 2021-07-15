@@ -33,6 +33,7 @@ import requests
 
 # cisagov Libraries
 from tools.connect import connect_api
+from util.double_print import double_print
 
 from ._version import __version__
 
@@ -251,6 +252,68 @@ def get_application(rawEvent):
     application["version"] = httpagentparser.detect(userAgent)["platform"]["version"]
 
     return application
+
+
+def find_unique_target_clicks_count(clicks):
+    """Return the number of unique clicks in a click dict."""
+    uniq_dict = dict()
+    for click in clicks:
+        if click["user"] not in uniq_dict:
+            uniq_dict.append(click["user"])
+    return len(uniq_dict)
+
+
+def write_campaign_click_summary(api, assessment_id):
+    """Output a click summary report to JSON, console, and a text file."""
+    click_summary = dict()
+    click_campaign_summary = dict()
+    campaign_ids = get_campaign_ids(api, assessment_id)
+    num_campaigns = len(campaign_ids)
+    summary_json = assessment_id + "_click_summary.json"
+    summary_outfile = assessment_id + "_click_sumamry.txt"
+    summary_outfile = open(summary_outfile, "w")
+    double_print(summary_outfile, "-" * 50)
+    double_print(summary_outfile, "Number of campaigns: %i" % num_campaigns)
+    click_summary["Number of campaigns"] = num_campaigns
+
+    for campaign_id in campaign_ids:
+        clicks = get_click_data(api, campaign_id)
+        click_campaign_summary["campaign_id"] = campaign_id
+        click_campaign_summary["total_emails_sent"] = api.campaigns.summary.stats.sent(
+            campaign_id=campaign_id
+        )
+        click_campaign_summary["unique_user_count"] = find_unique_target_clicks_count(
+            clicks
+        )
+        click_campaign_summary["click_rate"] = float(
+            click_summary["unique_user_count"]
+        ) / float(click_summary["total_emails_sent"])
+        click_campaign_summary["total_clicks"] = api.campaigns.summary.stats.clicked(
+            campaign_id=campaign_id
+        )
+        click_summary.append(click_campaign_summary)
+
+        double_print(summary_outfile, "-" * 50)
+        double_print(summary_outfile, "Campaign '%i' " % campaign_id)
+        double_print(
+            summary_outfile,
+            "Total emails sent: %i" % click_summary["total_emails_sent"],
+        )
+        double_print(
+            summary_outfile,
+            "Unique targets who clicked: %i" % click_summary["unique_user_count"],
+        )
+        double_print(
+            summary_outfile, "Unique click rate: %5.2f%%" % click_summary["click_rate"]
+        )
+        double_print(
+            summary_outfile, "Total clicks: %i" % click_summary["total_clicks"]
+        )
+
+    summary_outfile.close()
+    print("Writing out summary JSON to %s_" % summary_json)
+    with open(summary_json, "w") as fp:
+        json.dump(click_summary, fp, indent=4)
 
 
 def main():
