@@ -67,7 +67,7 @@ def set_time_zone():
     # Ask user to select time zone from list.
     return radiolist_dialog(
         values=time_zone, title="Time Zone", text="Please select assessment time zone:"
-    )
+    ).run()
 
 
 def display_list_groups(assessment):
