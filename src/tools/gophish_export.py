@@ -286,8 +286,8 @@ def write_campaign_click_summary(api, assessment_id):
             clicks
         )
         click_campaign_summary["click_rate"] = float(
-            click_summary["unique_user_count"]
-        ) / float(click_summary["total_emails_sent"])
+            click_campaign_summary["unique_user_count"]
+        ) / float(click_campaign_summary["total_emails_sent"])
         click_campaign_summary["total_clicks"] = api.campaigns.summary(
             campaign_id=campaign_id
         ).stats.clicked
@@ -297,17 +297,19 @@ def write_campaign_click_summary(api, assessment_id):
         double_print(summary_outfile, "Campaign '%i' " % campaign_id)
         double_print(
             summary_outfile,
-            "Total emails sent: %i" % click_summary["total_emails_sent"],
+            "Total emails sent: %i" % click_campaign_summary["total_emails_sent"],
         )
         double_print(
             summary_outfile,
-            "Unique targets who clicked: %i" % click_summary["unique_user_count"],
+            "Unique targets who clicked: %i"
+            % click_campaign_summary["unique_user_count"],
         )
         double_print(
-            summary_outfile, "Unique click rate: %5.2f%%" % click_summary["click_rate"]
+            summary_outfile,
+            "Unique click rate: %5.2f%%" % click_campaign_summary["click_rate"],
         )
         double_print(
-            summary_outfile, "Total clicks: %i" % click_summary["total_clicks"]
+            summary_outfile, "Total clicks: %i" % click_campaign_summary["total_clicks"]
         )
 
     summary_outfile.close()
