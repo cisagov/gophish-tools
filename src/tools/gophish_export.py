@@ -340,9 +340,13 @@ def export_user_reports(api, assessment_id):
         # get_campaign_ids() returns integers, but user_report_doc["campaign"]
         # expects a string
         user_report_doc["campaign"] = str(campaign_id)
-        user_report_doc["first_report"] = datetime.strftime(
-            first_report, "%Y-%m-%dT%H:%M:%S"
-        )
+        if first_report is not None:
+            user_report_doc["first_report"] = datetime.strftime(
+                first_report, "%Y-%m-%dT%H:%M:%S"
+            )
+        else:
+            user_report_doc["first_report"] = "No clicks reported"
+
         user_report_doc["total_num_reports"] = api.campaigns.summary(
             campaign_id=campaign_id
         ).stats.clicked
