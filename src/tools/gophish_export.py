@@ -279,18 +279,18 @@ def write_campaign_click_summary(api, assessment_id):
     for campaign_id in campaign_ids:
         clicks = get_click_data(api, campaign_id)
         click_campaign_summary["campaign_id"] = campaign_id
-        click_campaign_summary["total_emails_sent"] = api.campaigns.summary.stats.sent(
+        click_campaign_summary["total_emails_sent"] = api.campaigns.summary(
             campaign_id=campaign_id
-        )
+        ).stats.sent
         click_campaign_summary["unique_user_count"] = find_unique_target_clicks_count(
             clicks
         )
         click_campaign_summary["click_rate"] = float(
             click_summary["unique_user_count"]
         ) / float(click_summary["total_emails_sent"])
-        click_campaign_summary["total_clicks"] = api.campaigns.summary.stats.clicked(
+        click_campaign_summary["total_clicks"] = api.campaigns.summary(
             campaign_id=campaign_id
-        )
+        ).stats.clicked
         click_summary.append(click_campaign_summary)
 
         double_print(summary_outfile, "-" * 50)
