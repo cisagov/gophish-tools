@@ -1,2 +1,2 @@
 """This file defines the version of this project."""
-__version__ = "0.0.6-rc.2"
+__version__ = "0.0.6-rc.3"
