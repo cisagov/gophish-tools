@@ -256,67 +256,70 @@ def get_application(rawEvent):
 
 def find_unique_target_clicks_count(clicks):
     """Return the number of unique clicks in a click dict."""
-    uniq_dict = dict()
+    uniq_list = list()
     for click in clicks:
-        if click["user"] not in uniq_dict:
-            uniq_dict.append(click["user"])
-    return len(uniq_dict)
+        if click["user"] not in uniq_list:
+            uniq_list.append(click["user"])
+    return len(uniq_list)
 
 
-def write_campaign_click_summary(api, assessment_id):
+def write_assessment_click_summary(api, assessment_id):
     """Output a click summary report to JSON, console, and a text file."""
-    click_summary = dict()
-    click_campaign_summary = dict()
+    assessment_click_summary = dict()
+    campaign_click_stats = dict()
     campaigns = list()
     campaign_ids = get_campaign_ids(api, assessment_id)
     num_campaigns = len(campaign_ids)
     summary_json = assessment_id + "_click_summary.json"
-    summary_outfile = assessment_id + "_click_sumamry.txt"
-    summary_outfile = open(summary_outfile, "w")
+    summary_outfile_name = assessment_id + "_click_summary.txt"
+    summary_outfile = open(summary_outfile_name, "w")
     double_print(summary_outfile, "-" * 50)
     double_print(summary_outfile, "Number of campaigns: %i" % num_campaigns)
-    click_summary["Number of campaigns"] = num_campaigns
+    assessment_click_summary["Number of campaigns"] = num_campaigns
 
     for campaign_id in campaign_ids:
         clicks = get_click_data(api, campaign_id)
-        click_campaign_summary["campaign_id"] = campaign_id
-        click_campaign_summary["total_emails_sent"] = api.campaigns.summary(
+        campaign_click_stats["campaign_id"] = campaign_id
+        campaign_click_stats["total_emails_sent"] = api.campaigns.summary(
             campaign_id=campaign_id
         ).stats.sent
-        click_campaign_summary["unique_user_count"] = find_unique_target_clicks_count(
+        campaign_click_stats["unique_user_count"] = find_unique_target_clicks_count(
             clicks
         )
-        click_campaign_summary["click_rate"] = float(
-            click_campaign_summary["unique_user_count"]
-        ) / float(click_campaign_summary["total_emails_sent"])
-        click_campaign_summary["total_clicks"] = api.campaigns.summary(
+        if campaign_click_stats["total_emails_sent"] > 0:
+            campaign_click_stats["click_rate"] = float(
+                campaign_click_stats["unique_user_count"]
+            ) / float(campaign_click_stats["total_emails_sent"])
+        else:
+            campaign_click_stats["click_rate"] = 0
+        campaign_click_stats["total_clicks"] = api.campaigns.summary(
             campaign_id=campaign_id
         ).stats.clicked
-        campaigns.append(click_campaign_summary)
+        campaigns.append(campaign_click_stats)
 
         double_print(summary_outfile, "-" * 50)
         double_print(summary_outfile, "Campaign '%i' " % campaign_id)
         double_print(
             summary_outfile,
-            "Total emails sent: %i" % click_campaign_summary["total_emails_sent"],
+            "Total emails sent: %i" % campaign_click_stats["total_emails_sent"],
         )
         double_print(
             summary_outfile,
             "Unique targets who clicked: %i"
-            % click_campaign_summary["unique_user_count"],
+            % campaign_click_stats["unique_user_count"],
         )
         double_print(
             summary_outfile,
-            "Unique click rate: %5.2f%%" % click_campaign_summary["click_rate"],
+            "Unique click rate: %5.2f%%" % campaign_click_stats["click_rate"],
         )
         double_print(
-            summary_outfile, "Total clicks: %i" % click_campaign_summary["total_clicks"]
+            summary_outfile, "Total clicks: %i" % campaign_click_stats["total_clicks"]
         )
-    click_summary["campaigns"] = campaigns
+    assessment_click_summary["campaigns"] = campaigns
     summary_outfile.close()
     print("Writing out summary JSON to %s_" % summary_json)
     with open(summary_json, "w") as fp:
-        json.dump(click_summary, fp, indent=4)
+        json.dump(assessment_click_summary, fp, indent=4)
 
 
 def export_user_reports(api, assessment_id):
@@ -402,7 +405,7 @@ def main():
         logging.info(f'Data written to data_{args["ASSESSMENT_ID"]}.json')
 
         export_user_reports(api, args["ASSESSMENT_ID"])
-        write_campaign_click_summary(api, args["ASSESSMENT_ID"])
+        write_assessment_click_summary(api, args["ASSESSMENT_ID"])
     else:
         logging.error(
             f'Assessment "{args["ASSESSMENT_ID"]}" does not exist in GoPhish.'
