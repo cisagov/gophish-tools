@@ -291,7 +291,7 @@ def write_campaign_click_summary(api, assessment_id):
         click_campaign_summary["total_clicks"] = api.campaigns.summary(
             campaign_id=campaign_id
         ).stats.clicked
-        click_summary.append(click_campaign_summary)
+        click_summary["campaigns"].append(click_campaign_summary)
 
         double_print(summary_outfile, "-" * 50)
         double_print(summary_outfile, "Campaign '%i' " % campaign_id)
