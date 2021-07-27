@@ -267,6 +267,7 @@ def write_campaign_click_summary(api, assessment_id):
     """Output a click summary report to JSON, console, and a text file."""
     click_summary = dict()
     click_campaign_summary = dict()
+    campaigns = list()
     campaign_ids = get_campaign_ids(api, assessment_id)
     num_campaigns = len(campaign_ids)
     summary_json = assessment_id + "_click_summary.json"
@@ -275,7 +276,6 @@ def write_campaign_click_summary(api, assessment_id):
     double_print(summary_outfile, "-" * 50)
     double_print(summary_outfile, "Number of campaigns: %i" % num_campaigns)
     click_summary["Number of campaigns"] = num_campaigns
-    click_summary["campaigns"] = None
 
     for campaign_id in campaign_ids:
         clicks = get_click_data(api, campaign_id)
@@ -292,7 +292,7 @@ def write_campaign_click_summary(api, assessment_id):
         click_campaign_summary["total_clicks"] = api.campaigns.summary(
             campaign_id=campaign_id
         ).stats.clicked
-        click_summary["campaigns"].append(click_campaign_summary)
+        campaigns.append(click_campaign_summary)
 
         double_print(summary_outfile, "-" * 50)
         double_print(summary_outfile, "Campaign '%i' " % campaign_id)
@@ -312,7 +312,7 @@ def write_campaign_click_summary(api, assessment_id):
         double_print(
             summary_outfile, "Total clicks: %i" % click_campaign_summary["total_clicks"]
         )
-
+    click_summary["campaigns"] = campaigns
     summary_outfile.close()
     print("Writing out summary JSON to %s_" % summary_json)
     with open(summary_json, "w") as fp:
