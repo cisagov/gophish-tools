@@ -317,7 +317,7 @@ def write_assessment_click_summary(api, assessment_id):
         )
     assessment_click_summary["campaigns"] = campaigns
     summary_outfile.close()
-    print("Writing out summary JSON to %s_" % summary_json)
+    print("Writing out summary JSON to %s" % summary_json)
     with open(summary_json, "w") as fp:
         json.dump(assessment_click_summary, fp, indent=4)
 
