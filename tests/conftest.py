@@ -13,7 +13,16 @@ from gophish.models import User as GoPhish_User
 import pytest
 
 # cisagov Libraries
-from models.models import SMTP, Assessment, Campaign, Group, Page, Target, Template
+from models.models import (
+    SMTP,
+    Assessment,
+    Campaign,
+    Click,
+    Group,
+    Page,
+    Target,
+    Template,
+)
 
 """Support items for test_modules.py """
 
@@ -296,6 +305,50 @@ def email_target_json():
         )
 
     return targets
+
+
+@pytest.fixture
+def multiple_click_object():
+    """Return a list of clicks to match the correct number of unique users."""
+    clicks = list()
+    for x in range(1, 2):
+        clicks.append(
+            Click(
+                message="Testing",
+                user="jane.smith1@domain.tld",
+                source_ip="8.8.8.8",
+                time="01/01/2025 13:00",
+                application="NA",
+            )
+        )
+        clicks.append(
+            Click(
+                message="Testing",
+                user="john.doe1@domain.tld",
+                source_ip="8.8.8.8",
+                time="01/01/2025 13:00",
+                application="NA",
+            )
+        )
+        clicks.append(
+            Click(
+                message="Testing",
+                user="jane.smith2@domain.tld",
+                source_ip="8.8.8.8",
+                time="01/01/2025 13:00",
+                application="NA",
+            )
+        )
+        clicks.append(
+            Click(
+                message="Testing",
+                user="john.doe2@domain.tld",
+                source_ip="8.8.8.8",
+                time="01/01/2025 13:00",
+                application="NA",
+            )
+        )
+    return clicks
 
 
 def pytest_addoption(parser):
