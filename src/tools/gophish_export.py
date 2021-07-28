@@ -275,7 +275,7 @@ def write_assessment_click_summary(api, assessment_id):
     summary_outfile = open(summary_outfile_name, "w")
     double_print(summary_outfile, "-" * 50)
     double_print(summary_outfile, "Number of campaigns: %i" % num_campaigns)
-    assessment_click_summary["Number of campaigns"] = num_campaigns
+    assessment_click_summary["num_campaigns"] = num_campaigns
 
     for campaign_id in campaign_ids:
         clicks = get_click_data(api, campaign_id)
