@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """Import an assessment JSON file into GoPhish.
 
 Usage:
@@ -312,7 +310,3 @@ def main() -> None:
         # Stop logging and clean up
         logging.shutdown()
         sys.exit(1)
-
-
-if __name__ == "__main__":
-    main()

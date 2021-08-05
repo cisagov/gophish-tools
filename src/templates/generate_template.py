@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """Generate templates for import into an assessment JSON with the PCA Wizard.
 
 Usage:
@@ -55,7 +53,3 @@ def main() -> None:
         email_output()
     elif args["--targets"]:
         targets_output()
-
-
-if __name__ == "__main__":
-    main()

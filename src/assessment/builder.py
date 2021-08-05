@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Create an assessment JSON file.
 
 Usage:
@@ -682,7 +681,3 @@ def main() -> None:
     logging.info(f"Assessment JSON ready: {assessment.id}.json")
     # Stop logging and clean up
     logging.shutdown()
-
-
-if __name__ == "__main__":
-    main()

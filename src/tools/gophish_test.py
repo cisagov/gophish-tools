@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """Send a duplicate assessment from GoPhish to custom targets as a test.
 
 Usage:
@@ -163,7 +161,3 @@ def main() -> None:
 
     # Stop logging and clean up
     logging.shutdown()
-
-
-if __name__ == "__main__":
-    sys.exit(main())

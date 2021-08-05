@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """The prompter module."""
 
 # Third-Party Libraries
@@ -13,7 +12,3 @@ def main():
     url = prompt("Campaign URL: ", default="domain", validator=BlankInputValidator())
 
     return url
-
-
-if __name__ == "__main__":
-    main()

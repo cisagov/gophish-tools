@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Modify campaign start/end dates in an assessment JSON file.
 
 Usage:
@@ -128,7 +127,3 @@ def main() -> None:
     logging.info(f"Assessment JSON ready: {assessment.id}-reschedule.json")
     # Stop logging and clean up
     logging.shutdown()
-
-
-if __name__ == "__main__":
-    main()

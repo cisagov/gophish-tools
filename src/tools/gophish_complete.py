@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """Complete a campaign in GoPhish and/or output a GoPhish campaign summary.
 
 Usage:
@@ -209,7 +207,3 @@ def main() -> None:
             sys.exit(1)
 
         print_summary(api, campaign_id)
-
-
-if __name__ == "__main__":
-    main()

@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """Export all the data from an assessment within GoPhish into a single JSON file.
 
 Usage:
@@ -297,7 +295,3 @@ def main() -> None:
             f'Assessment "{args["ASSESSMENT_ID"]}" does not exist in GoPhish.'
         )
         sys.exit(1)
-
-
-if __name__ == "__main__":
-    main()

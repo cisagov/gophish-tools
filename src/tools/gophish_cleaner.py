@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """Remove an assessment or elements of an assessment in GoPhish.
 
 Usage:
@@ -202,7 +200,3 @@ def main() -> None:
 
     if not success:
         sys.exit(-1)
-
-
-if __name__ == "__main__":
-    main()
