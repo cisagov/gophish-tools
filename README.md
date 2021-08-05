@@ -16,17 +16,17 @@ campaign assessors to simplify the process of managing GoPhish campaigns.
 
 ## Scripts ##
 
-* `gophish-cleaner` - Removes an assessment or elements of an assessment
+- `gophish-cleaner` - Removes an assessment or elements of an assessment
   in GoPhish.
-* `gophish-complete` - Completes a campaign in GoPhish and/or outputs a
+- `gophish-complete` - Completes a campaign in GoPhish and/or outputs a
   GoPhish campaign summary.
-* `gophish-export` - Exports all the data from an assessment within GoPhish
+- `gophish-export` - Exports all the data from an assessment within GoPhish
   into a single JSON file.
-* `gophish-import` - Imports an assessment JSON file into GoPhish.
-* `gophish-test` - Sends a duplicate assessment from GoPhish to custom
+- `gophish-import` - Imports an assessment JSON file into GoPhish.
+- `gophish-test` - Sends a duplicate assessment from GoPhish to custom
   targets as a test.
-* `pca-wizard` - Creates an assessment JSON file via an interactive "wizard".
-* `pca-wizard-templates` - Generates templates for files needed when creating
+- `pca-wizard` - Creates an assessment JSON file via an interactive "wizard".
+- `pca-wizard-templates` - Generates templates for files needed when creating
   an assessment JSON with `pca-wizard`.
 
 ## Usage ##
