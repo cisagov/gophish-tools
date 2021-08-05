@@ -130,7 +130,7 @@ def campaign_test(api, assessmentCampaigns, assessment_id):
     return True
 
 
-def main():
+def main() -> None:
     """Set up logging, connect to API, load all test data."""
     args: Dict[str, str] = docopt(__doc__, version=__version__)
 
@@ -146,7 +146,7 @@ def main():
                 log_level
             )
         )
-        return 1
+        sys.exit(1)
 
     # Connect to API
     try:
@@ -163,7 +163,6 @@ def main():
 
     # Stop logging and clean up
     logging.shutdown()
-    return 0
 
 
 if __name__ == "__main__":

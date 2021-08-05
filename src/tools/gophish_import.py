@@ -22,6 +22,7 @@ Options:
 # Standard Python Libraries
 import json
 import logging
+import sys
 from typing import Dict
 
 # Third-Party Libraries
@@ -250,7 +251,7 @@ def build_campaigns(api, assessment):
         logging.info(f"Campaign {campaign['name']} successfully loaded.\n")
 
 
-def main():
+def main() -> None:
     """Set up logging, connect to API, import all assessment data."""
     args: Dict[str, str] = docopt(__doc__, version=__version__)
 
@@ -266,7 +267,7 @@ def main():
                 log_level
             )
         )
-        return 1
+        sys.exit(1)
 
     try:
         api = connect_api(args["API_KEY"], args["SERVER"])
@@ -275,7 +276,7 @@ def main():
         logging.critical(print(e.args[0]))
         # Stop logging and clean up
         logging.shutdown()
-        return 1
+        sys.exit(1)
 
     # Load assessment JSON from file
     try:
@@ -285,12 +286,12 @@ def main():
         logging.error(f"{e}\n")
         # Stop logging and clean up
         logging.shutdown()
-        return 1
+        sys.exit(1)
     except PermissionError as e:
         logging.error(f"{e}\n")
         # Stop logging and clean up
         logging.shutdown()
-        return 1
+        sys.exit(1)
 
     try:
         # Load Landing page
@@ -304,14 +305,13 @@ def main():
 
         # Stop logging and clean up
         logging.shutdown()
-        return 0
 
     except Exception as e:
         logging.debug(f"{type(e)}: {e}")
         logging.critical("Closing with an error. Assessment not successfully loaded.\n")
         # Stop logging and clean up
         logging.shutdown()
-        return 1
+        sys.exit(1)
 
 
 if __name__ == "__main__":

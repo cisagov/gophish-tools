@@ -253,7 +253,7 @@ def get_application(rawEvent):
     return application
 
 
-def main():
+def main() -> None:
     """Set up logging, connect to API, export all assessment data."""
     args: Dict[str, str] = docopt(__doc__, version=__version__)
 
@@ -267,7 +267,7 @@ def main():
         logging.critical(
             f'"{log_level}"is not a valid logging level. Possible values are debug, info, warning, and error.'
         )
-        return 1
+        sys.exit(1)
 
     else:
         # Connect to API

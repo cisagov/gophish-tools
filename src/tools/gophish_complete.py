@@ -157,7 +157,7 @@ def print_summary(api, campaign_id):
     return True
 
 
-def main():
+def main() -> None:
     """Set up logging, connect to API, call requested function(s)."""
     args: Dict[str, str] = docopt(__doc__, version=__version__)
 
@@ -171,7 +171,7 @@ def main():
         logging.critical(
             f'"{log_level}"is not a valid logging level. Possible values are debug, info, warning, and error.'
         )
-        return 1
+        sys.exit(1)
 
     # Connect to API
     try:

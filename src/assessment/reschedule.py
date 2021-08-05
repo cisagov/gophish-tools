@@ -17,6 +17,7 @@ Options:
 # Standard Python Libraries
 import json
 import logging
+import sys
 from typing import Dict
 
 # Third-Party Libraries
@@ -88,7 +89,7 @@ def reschedule(assessment):
     return assessment
 
 
-def main():
+def main() -> None:
     """Set up logging and call the reschedule function."""
     args: Dict[str, str] = docopt(__doc__, version=__version__)
 
@@ -104,7 +105,7 @@ def main():
                 log_level
             )
         )
-        return 1
+        sys.exit(1)
 
     try:
         with open(args["ASSESSMENT_FILE"]) as json_file:

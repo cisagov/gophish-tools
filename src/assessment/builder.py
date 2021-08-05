@@ -19,6 +19,7 @@ import copy
 import csv
 import json
 import logging
+import sys
 from typing import Dict
 
 # Third-Party Libraries
@@ -655,7 +656,7 @@ def review_page(page):
     return page
 
 
-def main():
+def main() -> None:
     """Set up logging and call the build_assessments function."""
     args: Dict[str, str] = docopt(__doc__, version=__version__)
 
@@ -671,7 +672,7 @@ def main():
                 log_level
             )
         )
-        return 1
+        sys.exit(1)
 
     assessment = build_assessment(args["ASSESSMENT_ID"])
 

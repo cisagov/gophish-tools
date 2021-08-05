@@ -150,7 +150,7 @@ def remove_template(api, assessment_id):
     return True
 
 
-def main():
+def main() -> None:
     """Set up logging, connect to API, remove assessment data."""
     args: Dict[str, str] = docopt(__doc__, version=__version__)
 
@@ -166,7 +166,7 @@ def main():
                 log_level
             )
         )
-        return 1
+        sys.exit(1)
 
     else:
         # Connect to API

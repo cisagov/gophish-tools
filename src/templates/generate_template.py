@@ -47,7 +47,7 @@ def targets_output():
         fp.write(TARGET_TEMPLATE)
 
 
-def main():
+def main() -> None:
     """Execute either email_output() or targets_output()."""
     args: Dict[str, str] = docopt(__doc__, version=__version__)
 
