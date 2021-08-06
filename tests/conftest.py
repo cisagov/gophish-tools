@@ -316,7 +316,7 @@ def multiple_click_object():
             Click(
                 message="Testing",
                 user="jane.smith1@domain.tld",
-                source_ip="8.8.8.8",
+                source_ip="10.0.0.0",
                 time="01/01/2025 13:00",
                 application="NA",
             )
@@ -325,7 +325,7 @@ def multiple_click_object():
             Click(
                 message="Testing",
                 user="john.doe1@domain.tld",
-                source_ip="8.8.8.8",
+                source_ip="10.0.0.1",
                 time="01/01/2025 13:00",
                 application="NA",
             )
@@ -334,7 +334,7 @@ def multiple_click_object():
             Click(
                 message="Testing",
                 user="jane.smith2@domain.tld",
-                source_ip="8.8.8.8",
+                source_ip="10.0.0.2",
                 time="01/01/2025 13:00",
                 application="NA",
             )
@@ -343,7 +343,7 @@ def multiple_click_object():
             Click(
                 message="Testing",
                 user="john.doe2@domain.tld",
-                source_ip="8.8.8.8",
+                source_ip="10.0.0.3",
                 time="01/01/2025 13:00",
                 application="NA",
             )
