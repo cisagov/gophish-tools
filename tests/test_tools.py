@@ -52,9 +52,7 @@ class TestExport:
     @patch("tools.connect")
     def test_find_unique_target_clicks_count(self, mock_api, multiple_click_object):
         """Verify that the correct number of unique users in a click list is found."""
-        clicks = multiple_click_object
-
-        assert find_unique_target_clicks_count(clicks) == 4
+        assert find_unique_target_clicks_count(multiple_click_object) == 4
 
     def mock_get_group_ids(self, s, group_object):
         """Return a mock list of GoPhish group objects."""
