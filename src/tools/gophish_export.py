@@ -33,7 +33,6 @@ import requests
 
 # cisagov Libraries
 from tools.connect import connect_api
-from util.double_print import double_print
 
 from ._version import __version__
 
@@ -270,11 +269,12 @@ def write_assessment_click_summary(api, assessment_id):
     campaigns = list()
     campaign_ids = get_campaign_ids(api, assessment_id)
     num_campaigns = len(campaign_ids)
-    summary_json = assessment_id + "_click_summary.json"
+    json_filename = assessment_id + "_click_summary.json"
     summary_outfile_name = assessment_id + "_click_summary.txt"
-    summary_outfile = open(summary_outfile_name, "w")
-    double_print(summary_outfile, "-" * 50)
-    double_print(summary_outfile, "Number of campaigns: %i" % num_campaigns)
+    fh = logging.FileHandler(summary_outfile_name)
+    logging.getLogger().addHandler(fh)
+    logging.info("-" * 50)
+    logging.info("Number of campaigns: %i" % num_campaigns)
     assessment_click_summary["num_campaigns"] = num_campaigns
 
     for campaign_id in campaign_ids:
@@ -291,34 +291,27 @@ def write_assessment_click_summary(api, assessment_id):
                 campaign_click_stats["unique_user_count"]
             ) / float(campaign_click_stats["total_emails_sent"])
         else:
-            campaign_click_stats["click_rate"] = 0
+            campaign_click_stats["click_rate"] = 0.0
         campaign_click_stats["total_clicks"] = api.campaigns.summary(
             campaign_id=campaign_id
         ).stats.clicked
         campaigns.append(campaign_click_stats)
 
-        double_print(summary_outfile, "-" * 50)
-        double_print(summary_outfile, "Campaign '%i' " % campaign_id)
-        double_print(
-            summary_outfile,
-            "Total emails sent: %i" % campaign_click_stats["total_emails_sent"],
+        logging.info("-" * 50)
+        logging.info("Campaign '%i' " % campaign_id)
+        logging.info(
+            "Total emails sent: %i" % campaign_click_stats["total_emails_sent"]
         )
-        double_print(
-            summary_outfile,
-            "Unique targets who clicked: %i"
-            % campaign_click_stats["unique_user_count"],
+        logging.info(
+            "Unique targets who clicked: %i" % campaign_click_stats["unique_user_count"]
         )
-        double_print(
-            summary_outfile,
-            "Unique click rate: %5.2f%%" % campaign_click_stats["click_rate"],
-        )
-        double_print(
-            summary_outfile, "Total clicks: %i" % campaign_click_stats["total_clicks"]
-        )
+        logging.info("Unique click rate: %5.2f%%" % campaign_click_stats["click_rate"])
+        logging.info("Total clicks: %i" % campaign_click_stats["total_clicks"])
     assessment_click_summary["campaigns"] = campaigns
-    summary_outfile.close()
-    print("Writing out summary JSON to %s" % summary_json)
-    with open(summary_json, "w") as fp:
+
+    logging.getLogger().removeHandler(fh)
+    logging.info("Writing out summary JSON to %s" % json_filename)
+    with open(json_filename, "w") as fp:
         json.dump(assessment_click_summary, fp, indent=4)
 
 
