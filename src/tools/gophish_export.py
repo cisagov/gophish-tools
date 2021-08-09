@@ -251,6 +251,45 @@ def get_application(rawEvent):
     return application
 
 
+def export_user_reports(api, assessment_id):
+    """Build and export a user_report JSON file for each campaign in an assessment."""
+    campaign_ids = get_campaign_ids(api, assessment_id)
+
+    for campaign_id in campaign_ids:
+        first_report = None
+        user_report_doc = dict()
+        campaign = get_campaign_data(api, campaign_id)
+
+        # iterate over clicks and find the earliest click
+        for click in campaign["clicks"]:
+            click_time = datetime.strptime(
+                click["time"].split(".")[0], "%Y-%m-%dT%H:%M:%S"
+            )
+            if first_report is None or click_time < first_report:
+                first_report = click_time
+
+        # The "customer" field is a placeholder added for operator convenience when
+        # working with the JSON file created.
+        user_report_doc["customer"] = ""
+        user_report_doc["assessment"] = assessment_id
+        # get_campaign_ids() returns integers, but user_report_doc["campaign"]
+        # expects a string
+        user_report_doc["campaign"] = str(campaign_id)
+        user_report_doc["first_report"] = datetime.strftime(
+            first_report, "%Y-%m-%dT%H:%M:%S"
+        )
+        user_report_doc["total_num_reports"] = api.campaigns.summary(
+            campaign_id=campaign_id
+        ).stats.clicked
+
+        logging.info(
+            f"Writing out user report for campaign {campaign_id} in assessment {assessment_id}"
+        )
+
+        with open(f"{assessment_id}_{campaign_id}_user_report_doc.json", "w") as fp:
+            json.dump(user_report_doc, fp, indent=4)
+
+
 def main() -> None:
     """Set up logging, connect to API, export all assessment data."""
     args: Dict[str, str] = docopt(__doc__, version=__version__)
@@ -289,6 +328,8 @@ def main() -> None:
             json.dump(assessment_dict, fp, indent=4)
 
         logging.info(f'Data written to data_{args["ASSESSMENT_ID"]}.json')
+
+        export_user_reports(api, args["ASSESSMENT_ID"])
 
     else:
         logging.error(
