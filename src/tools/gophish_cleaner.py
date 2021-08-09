@@ -172,7 +172,7 @@ def main() -> None:
             api = connect_api(args["API_KEY"], args["SERVER"])
             logging.debug("Connected to: {}".format(args["SERVER"]))
         except Exception as e:
-            logging.critical(print(e.args[0]))
+            logging.critical(e.args[0])
             sys.exit(1)
 
     assessment_id = args["ASSESSMENT_ID"]

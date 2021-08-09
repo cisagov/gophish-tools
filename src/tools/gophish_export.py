@@ -273,7 +273,7 @@ def main() -> None:
             api = connect_api(args["API_KEY"], args["SERVER"])
             logging.debug(f'Connected to: {args["SERVER"]}')
         except Exception as e:
-            logging.critical(print(e.args[0]))
+            logging.critical(e.args[0])
             sys.exit(1)
 
     if assessment_exists(api, args["ASSESSMENT_ID"]):
