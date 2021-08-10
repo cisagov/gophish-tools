@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """Send a duplicate assessment from GoPhish to custom targets as a test.
 
 Usage:
@@ -130,7 +128,7 @@ def campaign_test(api, assessmentCampaigns, assessment_id):
     return True
 
 
-def main():
+def main() -> None:
     """Set up logging, connect to API, load all test data."""
     args: Dict[str, str] = docopt(__doc__, version=__version__)
 
@@ -146,14 +144,14 @@ def main():
                 log_level
             )
         )
-        return 1
+        sys.exit(1)
 
     # Connect to API
     try:
         api = connect_api(args["API_KEY"], args["SERVER"])
         logging.debug("Connected to: {}".format(args["SERVER"]))
     except Exception as e:
-        logging.critical(print(e.args[0]))
+        logging.critical(e.args[0])
         sys.exit(1)
 
     assessmentCampaigns = get_campaigns(api, args["ASSESSMENT_ID"])
@@ -163,8 +161,3 @@ def main():
 
     # Stop logging and clean up
     logging.shutdown()
-    return 0
-
-
-if __name__ == "__main__":
-    sys.exit(main())

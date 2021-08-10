@@ -8,8 +8,7 @@ set -o pipefail
 
 HELP_INFORMATION="bump_version.sh (assessment|project|templates|tools) (show|major|minor|patch|prerelease|build|finalize)"
 
-if [ $# -ne 2 ]
-then
+if [ $# -ne 2 ]; then
   echo "$HELP_INFORMATION"
 else
   case $1 in
@@ -17,7 +16,7 @@ else
       VERSION_FILE=src/_version.py
       old_version=$(sed -n "s/^__version__ = \"\(.*\)\"$/\1/p" "$VERSION_FILE")
       ;;
-    assessment|templates|tools)
+    assessment | templates | tools)
       VERSION_FILE=src/$1/_version.py
       old_version=$(sed -n "s/^__version__ = \"\(.*\)\"$/\1/p" "$VERSION_FILE")
       ;;
@@ -27,7 +26,7 @@ else
       ;;
   esac
   case $2 in
-    major|minor|patch|prerelease|build)
+    major | minor | patch | prerelease | build)
       new_version=$(python -c "import semver; print(semver.bump_$2('$old_version'))")
       echo Changing "$1" version from "$old_version" to "$new_version"
       # A temp file is used to provide compatability with macOS development

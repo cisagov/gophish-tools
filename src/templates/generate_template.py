@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """Generate templates for import into an assessment JSON with the PCA Wizard.
 
 Usage:
@@ -47,7 +45,7 @@ def targets_output():
         fp.write(TARGET_TEMPLATE)
 
 
-def main():
+def main() -> None:
     """Execute either email_output() or targets_output()."""
     args: Dict[str, str] = docopt(__doc__, version=__version__)
 
@@ -55,7 +53,3 @@ def main():
         email_output()
     elif args["--targets"]:
         targets_output()
-
-
-if __name__ == "__main__":
-    main()
