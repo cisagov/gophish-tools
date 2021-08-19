@@ -309,6 +309,7 @@ def write_assessment_click_summary(api, assessment_id):
         logging.info("Total clicks: %i" % campaign_click_stats["total_clicks"])
     assessment_click_summary["campaigns"] = campaigns
 
+    fh.close()
     logging.getLogger().removeHandler(fh)
     logging.info("Writing out summary JSON to %s" % json_filename)
     with open(json_filename, "w") as fp:
