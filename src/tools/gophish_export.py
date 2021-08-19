@@ -271,7 +271,7 @@ def write_assessment_click_summary(api, assessment_id):
     num_campaigns = len(campaign_ids)
     json_filename = assessment_id + "_click_summary.json"
     summary_outfile_name = assessment_id + "_click_summary.txt"
-    fh = logging.FileHandler(summary_outfile_name)
+    fh = logging.FileHandler(summary_outfile_name, "w+")
     logging.getLogger().addHandler(fh)
     logging.info("-" * 50)
     logging.info("Number of campaigns: %i" % num_campaigns)
