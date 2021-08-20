@@ -23,6 +23,7 @@ from datetime import datetime
 import hashlib
 import json
 import logging
+import os
 import sys
 from typing import Dict
 
@@ -271,6 +272,8 @@ def write_assessment_click_summary(api, assessment_id):
     num_campaigns = len(campaign_ids)
     json_filename = assessment_id + "_click_summary.json"
     summary_outfile_name = assessment_id + "_click_summary.txt"
+    if os.path.exists(summary_outfile_name):
+        os.remove(summary_outfile_name)
     fh = logging.FileHandler(summary_outfile_name, "w+")
     logging.getLogger().addHandler(fh)
     logging.info("-" * 50)
