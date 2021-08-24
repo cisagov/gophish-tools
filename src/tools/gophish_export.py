@@ -23,7 +23,6 @@ from datetime import datetime
 import hashlib
 import json
 import logging
-import os
 import sys
 from typing import Dict
 
@@ -263,60 +262,78 @@ def find_unique_target_clicks_count(clicks):
     return len(uniq_list)
 
 
-def write_assessment_click_summary(api, assessment_id):
-    """Output a click summary report to JSON, console, and a text file."""
-    assessment_click_summary = dict()
-    campaign_click_stats = dict()
-    campaigns = list()
+def write_campaign_summary(api, assessment_id):
+    """Output a campaign summary report to JSON, console, and a text file."""
+    campaign_data = list()
     campaign_ids = get_campaign_ids(api, assessment_id)
-    num_campaigns = len(campaign_ids)
-    json_filename = assessment_id + "_click_summary.json"
-    summary_outfile_name = assessment_id + "_click_summary.txt"
-    if os.path.exists(summary_outfile_name):
-        os.remove(summary_outfile_name)
-    fh = logging.FileHandler(summary_outfile_name, "w+")
+    campaign_data_template = "campaign_data.json"
+    campaign_summary_json = assessment_id + "_campaign_data.json"
+    campaign_summary_textfile = assessment_id + "_summary_" + datetime.now() + ".txt"
+
+    logging.info("Writing campaign summary report to %s" % campaign_summary_textfile)
+    with open(campaign_data_template) as f:
+        campaign_data = json.load(f)
+
+    fh = logging.FileHandler(campaign_summary_textfile, "w+")
     logging.getLogger().addHandler(fh)
-    logging.info("-" * 50)
-    logging.info("Number of campaigns: %i" % num_campaigns)
-    assessment_click_summary["num_campaigns"] = num_campaigns
+    logging.info("Campaign summaries for Assessment: %s " % assessment_id)
 
     for campaign_id in campaign_ids:
-        clicks = get_click_data(api, campaign_id)
-        campaign_click_stats["campaign_id"] = campaign_id
-        campaign_click_stats["total_emails_sent"] = api.campaigns.summary(
-            campaign_id=campaign_id
-        ).stats.sent
-        campaign_click_stats["unique_user_count"] = find_unique_target_clicks_count(
-            clicks
-        )
-        if campaign_click_stats["total_emails_sent"] > 0:
-            campaign_click_stats["click_rate"] = float(
-                campaign_click_stats["unique_user_count"]
-            ) / float(campaign_click_stats["total_emails_sent"])
-        else:
-            campaign_click_stats["click_rate"] = 0.0
-        campaign_click_stats["total_clicks"] = api.campaigns.summary(
-            campaign_id=campaign_id
-        ).stats.clicked
-        campaigns.append(campaign_click_stats)
-
         logging.info("-" * 50)
-        logging.info("Campaign '%i' " % campaign_id)
-        logging.info(
-            "Total emails sent: %i" % campaign_click_stats["total_emails_sent"]
+        campaign_name = api.campaigns.name(campaign_id=campaign_id)
+        if campaign_name.endswith("_level-1"):
+            level = "level-1"
+        elif campaign_name.endswith("_level-2"):
+            level = "level-2"
+        elif campaign_name.endswith("_level-3"):
+            level = "level-3"
+        elif campaign_name.endswith("_level-4"):
+            level = "level-4"
+        elif campaign_name.endswith("_level-5"):
+            level = "level-5"
+        elif campaign_name.endswith("_level-6"):
+            level = "level-6"
+        else:
+            return
+
+        logging.info("/t" + level)
+        clicks = get_click_data(api, campaign_id)
+
+        total_clicks = api.campaigns.summary(campaign_id=campaign_id).stats.clicked
+        unique_clicks = find_unique_target_clicks_count(clicks)
+        if total_clicks > 0:
+            percent_clicks = unique_clicks / float(total_clicks)
+        else:
+            percent_clicks = 0
+        campaign_data[level]["subject"] = api.campaigns(id=campaign_id).template.subject
+        campaign_data[level]["sender"] = api.campaigns(id=campaign_id).smtp.from_address
+        campaign_data[level]["start_date"] = datetime.strftime(
+            api.campaigns(id=campaign_id).launch_date, "%Y-%m-%dT%H:%M:%S"
         )
-        logging.info(
-            "Unique targets who clicked: %i" % campaign_click_stats["unique_user_count"]
+        campaign_data[level]["end_date"] = datetime.strftime(
+            api.campaigns(id=campaign_id).completed_date, "%Y-%m-%dT%H:%M:%S"
         )
-        logging.info("Unique click rate: %5.2f%%" % campaign_click_stats["click_rate"])
-        logging.info("Total clicks: %i" % campaign_click_stats["total_clicks"])
-    assessment_click_summary["campaigns"] = campaigns
+        campaign_data[level]["redirect"] = api.campaigns(id=campaign_id).url
+        campaign_data[level]["clicks"] = total_clicks
+        campaign_data[level]["unique_clicks"] = unique_clicks
+        campaign_data[level]["percent_clicks"] = percent_clicks
+
+        logging.info("/t/tSubject: %s" % campaign_data[level]["subject"])
+        logging.info("/t/tSender: %s" % campaign_data[level]["sender"])
+        logging.info("/t/tStart Date: %s" % campaign_data[level]["start_date"])
+        logging.info("/t/tEnd Date: %s" % campaign_data[level]["end_date"])
+        logging.info("/t/tRedirect: %s" % campaign_data[level]["redirect"])
+        logging.info("/t/tClicks: %i" % campaign_data[level]["clicks"])
+        logging.info("/t/tUnique Clicks: %i" % campaign_data[level]["unique_clicks"])
+        logging.info(
+            "/t/tPercentage Clicks: %f" % campaign_data[level]["percent_clicks"]
+        )
 
     fh.close()
     logging.getLogger().removeHandler(fh)
-    logging.info("Writing out summary JSON to %s" % json_filename)
-    with open(json_filename, "w") as fp:
-        json.dump(assessment_click_summary, fp, indent=4)
+    logging.info("Writing out summary JSON to %s" % campaign_summary_json)
+    with open(campaign_summary_json, "w") as fp:
+        json.dump(campaign_summary_json, fp, indent=4)
 
 
 def export_user_reports(api, assessment_id):
@@ -402,7 +419,7 @@ def main():
         logging.info(f'Data written to data_{args["ASSESSMENT_ID"]}.json')
 
         export_user_reports(api, args["ASSESSMENT_ID"])
-        write_assessment_click_summary(api, args["ASSESSMENT_ID"])
+        write_campaign_summary(api, args["ASSESSMENT_ID"])
     else:
         logging.error(
             f'Assessment "{args["ASSESSMENT_ID"]}" does not exist in GoPhish.'
