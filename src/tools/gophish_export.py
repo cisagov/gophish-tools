@@ -280,7 +280,7 @@ def write_campaign_summary(api, assessment_id):
 
     for campaign_id in campaign_ids:
         logging.info("-" * 50)
-        campaign_name = api.campaigns.name(campaign_id=campaign_id)
+        campaign_name = api.campaigns(id=campaign_id).name
         if campaign_name.endswith("_level-1"):
             level = "level-1"
         elif campaign_name.endswith("_level-2"):
@@ -299,7 +299,7 @@ def write_campaign_summary(api, assessment_id):
         logging.info("/t" + level)
         clicks = get_click_data(api, campaign_id)
 
-        total_clicks = api.campaigns.summary(campaign_id=campaign_id).stats.clicked
+        total_clicks = api.campaigns(id=campaign_id).summary.stats.clicked
         unique_clicks = find_unique_target_clicks_count(clicks)
         if total_clicks > 0:
             percent_clicks = unique_clicks / float(total_clicks)
