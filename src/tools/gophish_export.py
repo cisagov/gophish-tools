@@ -280,7 +280,7 @@ def write_campaign_summary(api, assessment_id):
 
     for campaign_id in campaign_ids:
         logging.info("-" * 50)
-        campaign_name = api.campaigns(id=campaign_id).name
+        campaign_name = api.campaigns.get(campaign_id).as_dict()["name"]
         if campaign_name.endswith("_level-1"):
             level = "level-1"
         elif campaign_name.endswith("_level-2"):
@@ -305,15 +305,22 @@ def write_campaign_summary(api, assessment_id):
             percent_clicks = unique_clicks / float(total_clicks)
         else:
             percent_clicks = 0
-        campaign_data[level]["subject"] = api.campaigns(id=campaign_id).template.subject
-        campaign_data[level]["sender"] = api.campaigns(id=campaign_id).smtp.from_address
+        campaign_data[level]["subject"] = api.campaigns.get(campaign_id).as_dict()[
+            "template"
+        ]["subject"]
+        campaign_data[level]["sender"] = api.campaigns.get(campaign_id).as_dict()[
+            "smtp"
+        ]["from_address"]
         campaign_data[level]["start_date"] = datetime.strftime(
-            api.campaigns(id=campaign_id).launch_date, "%Y-%m-%dT%H:%M:%S"
+            api.campaigns.get(campaign_id).as_dict()["launch_date"], "%Y-%m-%dT%H:%M:%S"
         )
         campaign_data[level]["end_date"] = datetime.strftime(
-            api.campaigns(id=campaign_id).completed_date, "%Y-%m-%dT%H:%M:%S"
+            api.campaigns.get(campaign_id).as_dict()["completed_date"],
+            "%Y-%m-%dT%H:%M:%S",
         )
-        campaign_data[level]["redirect"] = api.campaigns(id=campaign_id).url
+        campaign_data[level]["redirect"] = api.campaigns.get(campaign_id).as_dict()[
+            "url"
+        ]
         campaign_data[level]["clicks"] = total_clicks
         campaign_data[level]["unique_clicks"] = unique_clicks
         campaign_data[level]["percent_clicks"] = percent_clicks
