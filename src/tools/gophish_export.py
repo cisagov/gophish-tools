@@ -269,10 +269,7 @@ def write_campaign_summary(api, assessment_id):
     campaign_data_template = "campaign_data.json"
     campaign_summary_json = assessment_id + "_campaign_data.json"
     campaign_summary_textfile = (
-        assessment_id
-        + "_summary_"
-        + datetime.strftime((datetime.now(), "%Y-%m-%dT%H:%M:%S"))
-        + ".txt"
+        assessment_id + "_summary_" + str(datetime.now()) + ".txt"
     )
 
     logging.info("Writing campaign summary report to %s" % campaign_summary_textfile)
