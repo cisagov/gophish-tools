@@ -264,19 +264,17 @@ def find_unique_target_clicks_count(clicks):
 
 def write_campaign_summary(api, assessment_id):
     """Output a campaign summary report to JSON, console, and a text file."""
-    campaign_data = list()
+    assessment_data = dict()
+    campaign_data = dict()
     campaign_ids = get_campaign_ids(api, assessment_id)
-    campaign_data_template = "campaign_data.json"
     campaign_summary_json = assessment_id + "_campaign_data.json"
-    campaign_summary_textfile = (
+    campaign_summary_text_file = (
         assessment_id + "_summary_" + str(datetime.now()) + ".txt"
     )
 
-    logging.info("Writing campaign summary report to %s" % campaign_summary_textfile)
-    with open(campaign_data_template) as f:
-        campaign_data = json.load(f)
+    logging.info("Writing campaign summary report to %s" % campaign_summary_text_file)
 
-    fh = logging.FileHandler(campaign_summary_textfile, "w+")
+    fh = logging.FileHandler(campaign_summary_text_file, "w+")
     logging.getLogger().addHandler(fh)
     logging.info("Campaign summaries for Assessment: %s " % assessment_id)
 
@@ -330,12 +328,12 @@ def write_campaign_summary(api, assessment_id):
         logging.info(
             "/t/tPercentage Clicks: %f" % campaign_data[level]["percent_clicks"]
         )
-
+        assessment_data[level] = campaign_data
     fh.close()
     logging.getLogger().removeHandler(fh)
     logging.info("Writing out summary JSON to %s" % campaign_summary_json)
     with open(campaign_summary_json, "w") as fp:
-        json.dump(campaign_summary_json, fp, indent=4)
+        json.dump(assessment_data, fp, indent=4)
 
 
 def export_user_reports(api, assessment_id):
