@@ -299,7 +299,7 @@ def write_campaign_summary(api, assessment_id):
         logging.info("/t" + level)
         clicks = get_click_data(api, campaign_id)
 
-        total_clicks = api.campaigns(id=campaign_id).summary.stats.clicked
+        total_clicks = api.campaigns.summary(campaign_id=campaign_id).stats.clicked
         unique_clicks = find_unique_target_clicks_count(clicks)
         if total_clicks > 0:
             percent_clicks = unique_clicks / float(total_clicks)
