@@ -268,13 +268,16 @@ def write_campaign_summary(api, assessment_id):
     campaign_data = dict()
     campaign_ids = get_campaign_ids(api, assessment_id)
     campaign_summary_json = assessment_id + "_campaign_data.json"
-    campaign_summary_text_file = (
-        assessment_id + "_summary_" + str(datetime.now()) + ".txt"
+    campaign_summary_textfile = (
+        assessment_id
+        + "_summary_"
+        + datetime.strftime((datetime.now(), "%Y-%m-%dT%H:%M:%S"))
+        + ".txt"
     )
 
-    logging.info("Writing campaign summary report to %s" % campaign_summary_text_file)
+    logging.info("Writing campaign summary report to %s" % campaign_summary_textfile)
 
-    fh = logging.FileHandler(campaign_summary_text_file, "w+")
+    fh = logging.FileHandler(campaign_summary_textfile, "w+")
     logging.getLogger().addHandler(fh)
     logging.info("Campaign summaries for Assessment: %s " % assessment_id)
 
