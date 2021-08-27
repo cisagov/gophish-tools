@@ -264,13 +264,16 @@ def find_unique_target_clicks_count(clicks):
 
 def write_campaign_summary(api, assessment_id):
     """Output a campaign summary report to JSON, console, and a text file."""
-    assessment_data = dict()
     campaign_data = dict()
     campaign_ids = get_campaign_ids(api, assessment_id)
+    campaign_data_template = "campaign_data.json"
     campaign_summary_json = assessment_id + "_campaign_data.json"
     campaign_summary_textfile = (
         assessment_id + "_summary_" + str(datetime.now()) + ".txt"
     )
+
+    with open(campaign_data_template) as template:
+        campaign_data = json.load(template)
 
     logging.info("Writing campaign summary report to %s" % campaign_summary_textfile)
 
@@ -296,7 +299,7 @@ def write_campaign_summary(api, assessment_id):
         else:
             continue
 
-        logging.info("/t" + level)
+        logging.info(level)
         clicks = get_click_data(api, campaign_id)
 
         total_clicks = api.campaigns.summary(campaign_id=campaign_id).stats.clicked
@@ -319,22 +322,22 @@ def write_campaign_summary(api, assessment_id):
         campaign_data[level]["unique_clicks"] = unique_clicks
         campaign_data[level]["percent_clicks"] = percent_clicks
 
-        logging.info("/t/tSubject: %s" % campaign_data[level]["subject"])
-        logging.info("/t/tSender: %s" % campaign_data[level]["sender"])
-        logging.info("/t/tStart Date: %s" % campaign_data[level]["start_date"])
-        logging.info("/t/tEnd Date: %s" % campaign_data[level]["end_date"])
-        logging.info("/t/tRedirect: %s" % campaign_data[level]["redirect"])
-        logging.info("/t/tClicks: %i" % campaign_data[level]["clicks"])
-        logging.info("/t/tUnique Clicks: %i" % campaign_data[level]["unique_clicks"])
+        logging.info("Subject: %s" % campaign_data[level]["subject"])
+        logging.info("Sender: %s" % campaign_data[level]["sender"])
+        logging.info("Start Date: %s" % campaign_data[level]["start_date"])
+        logging.info("/End Date: %s" % campaign_data[level]["end_date"])
+        logging.info("Redirect: %s" % campaign_data[level]["redirect"])
+        logging.info("Clicks: %i" % campaign_data[level]["clicks"])
+        logging.info("Unique Clicks: %i" % campaign_data[level]["unique_clicks"])
         logging.info(
             "/t/tPercentage Clicks: %f" % campaign_data[level]["percent_clicks"]
         )
-        assessment_data[level] = campaign_data
+
     fh.close()
     logging.getLogger().removeHandler(fh)
     logging.info("Writing out summary JSON to %s" % campaign_summary_json)
     with open(campaign_summary_json, "w") as fp:
-        json.dump(assessment_data, fp, indent=4)
+        json.dump(campaign_data, fp, indent=4)
 
 
 def export_user_reports(api, assessment_id):
