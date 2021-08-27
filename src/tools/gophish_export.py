@@ -294,7 +294,7 @@ def write_campaign_summary(api, assessment_id):
         elif campaign.name.endswith("_level-6"):
             level = "level-6"
         else:
-            return
+            continue
 
         logging.info("/t" + level)
         clicks = get_click_data(api, campaign_id)
