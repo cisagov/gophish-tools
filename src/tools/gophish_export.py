@@ -280,18 +280,18 @@ def write_campaign_summary(api, assessment_id):
 
     for campaign_id in campaign_ids:
         logging.info("-" * 50)
-        campaign_name = api.campaigns.get(campaign_id).as_dict()["name"]
-        if campaign_name.endswith("_level-1"):
+        campaign = api.campaigns.get(campaign_id)
+        if campaign.name.endswith("_level-1"):
             level = "level-1"
-        elif campaign_name.endswith("_level-2"):
+        elif campaign.name.endswith("_level-2"):
             level = "level-2"
-        elif campaign_name.endswith("_level-3"):
+        elif campaign.name.endswith("_level-3"):
             level = "level-3"
-        elif campaign_name.endswith("_level-4"):
+        elif campaign.name.endswith("_level-4"):
             level = "level-4"
-        elif campaign_name.endswith("_level-5"):
+        elif campaign.name.endswith("_level-5"):
             level = "level-5"
-        elif campaign_name.endswith("_level-6"):
+        elif campaign.name.endswith("_level-6"):
             level = "level-6"
         else:
             return
@@ -305,22 +305,16 @@ def write_campaign_summary(api, assessment_id):
             percent_clicks = unique_clicks / float(total_clicks)
         else:
             percent_clicks = 0
-        campaign_data[level]["subject"] = api.campaigns.get(campaign_id).as_dict()[
-            "template"
-        ]["subject"]
-        campaign_data[level]["sender"] = api.campaigns.get(campaign_id).as_dict()[
-            "smtp"
-        ]["from_address"]
+        campaign_data[level]["subject"] = campaign.template.subject
+        campaign_data[level]["sender"] = campaign.smtp.from_address
         campaign_data[level]["start_date"] = datetime.strftime(
-            api.campaigns.get(campaign_id).as_dict()["launch_date"], "%Y-%m-%dT%H:%M:%S"
+            campaign.launch_date, "%Y-%m-%dT%H:%M:%S"
         )
         campaign_data[level]["end_date"] = datetime.strftime(
-            api.campaigns.get(campaign_id).as_dict()["completed_date"],
+            campaign.completed_date,
             "%Y-%m-%dT%H:%M:%S",
         )
-        campaign_data[level]["redirect"] = api.campaigns.get(campaign_id).as_dict()[
-            "url"
-        ]
+        campaign_data[level]["redirect"] = campaign.url
         campaign_data[level]["clicks"] = total_clicks
         campaign_data[level]["unique_clicks"] = unique_clicks
         campaign_data[level]["percent_clicks"] = percent_clicks
