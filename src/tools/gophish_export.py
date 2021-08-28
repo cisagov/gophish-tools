@@ -314,7 +314,7 @@ def write_campaign_summary(api, assessment_id):
         campaign_data[level]["unique_clicks"] = unique_clicks
         campaign_data[level]["percent_clicks"] = percent_clicks
 
-        file_out.write("\n-" * 50)
+        file_out.write("-" * 50 + "\n")
         file_out.write("\nCampaign: %s" % campaign.name)
         file_out.write("\nSubject: %s" % campaign_data[level]["subject"])
         file_out.write("\nSender: %s" % campaign_data[level]["sender"])
