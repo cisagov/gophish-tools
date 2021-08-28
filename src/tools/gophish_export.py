@@ -314,16 +314,18 @@ def write_campaign_summary(api, assessment_id):
         campaign_data[level]["unique_clicks"] = unique_clicks
         campaign_data[level]["percent_clicks"] = percent_clicks
 
-        file_out.write("-" * 50)
-        file_out.write("Campaign: %s" % campaign.name)
-        file_out.write("Subject: %s" % campaign_data[level]["subject"])
-        file_out.write("Sender: %s" % campaign_data[level]["sender"])
-        file_out.write("Start Date: %s" % campaign_data[level]["start_date"])
-        file_out.write("End Date: %s" % campaign_data[level]["end_date"])
-        file_out.write("Redirect: %s" % campaign_data[level]["redirect"])
-        file_out.write("Clicks: %i" % campaign_data[level]["clicks"])
-        file_out.write("Unique Clicks: %i" % campaign_data[level]["unique_clicks"])
-        file_out.write("Percentage Clicks: %f" % campaign_data[level]["percent_clicks"])
+        file_out.write("\n-" * 50)
+        file_out.write("\nCampaign: %s" % campaign.name)
+        file_out.write("\nSubject: %s" % campaign_data[level]["subject"])
+        file_out.write("\nSender: %s" % campaign_data[level]["sender"])
+        file_out.write("\nStart Date: %s" % campaign_data[level]["start_date"])
+        file_out.write("\nEnd Date: %s" % campaign_data[level]["end_date"])
+        file_out.write("\nRedirect: %s" % campaign_data[level]["redirect"])
+        file_out.write("\nClicks: %i" % campaign_data[level]["clicks"])
+        file_out.write("\nUnique Clicks: %i" % campaign_data[level]["unique_clicks"])
+        file_out.write(
+            "\nPercentage Clicks: %f" % campaign_data[level]["percent_clicks"]
+        )
 
     file_out.close()
     logging.info("Writing out summary JSON to %s" % campaign_summary_json)
