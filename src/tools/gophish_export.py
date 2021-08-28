@@ -276,13 +276,10 @@ def write_campaign_summary(api, assessment_id):
         campaign_data = json.load(template)
 
     logging.info("Writing campaign summary report to %s" % campaign_summary_textfile)
-
-    fh = logging.FileHandler(campaign_summary_textfile, "w+")
-    logging.getLogger().addHandler(fh)
-    logging.info("Campaign summaries for Assessment: %s " % assessment_id)
+    file_out = open(campaign_summary_textfile, "w+")
+    file_out.write("Campaigns for Assessment: " + assessment_id)
 
     for campaign_id in campaign_ids:
-        logging.info("-" * 50)
         campaign = api.campaigns.get(campaign_id)
         if campaign.name.endswith("_level-1"):
             level = "level-1"
@@ -317,19 +314,18 @@ def write_campaign_summary(api, assessment_id):
         campaign_data[level]["unique_clicks"] = unique_clicks
         campaign_data[level]["percent_clicks"] = percent_clicks
 
-        logging.info("Subject: %s" % campaign_data[level]["subject"])
-        logging.info("Sender: %s" % campaign_data[level]["sender"])
-        logging.info("Start Date: %s" % campaign_data[level]["start_date"])
-        logging.info("/End Date: %s" % campaign_data[level]["end_date"])
-        logging.info("Redirect: %s" % campaign_data[level]["redirect"])
-        logging.info("Clicks: %i" % campaign_data[level]["clicks"])
-        logging.info("Unique Clicks: %i" % campaign_data[level]["unique_clicks"])
-        logging.info(
-            "/t/tPercentage Clicks: %f" % campaign_data[level]["percent_clicks"]
-        )
+        file_out.write("-" * 50)
+        file_out.write("Campaign: %s" % campaign.name)
+        file_out.write("Subject: %s" % campaign_data[level]["subject"])
+        file_out.write("Sender: %s" % campaign_data[level]["sender"])
+        file_out.write("Start Date: %s" % campaign_data[level]["start_date"])
+        file_out.write("End Date: %s" % campaign_data[level]["end_date"])
+        file_out.write("Redirect: %s" % campaign_data[level]["redirect"])
+        file_out.write("Clicks: %i" % campaign_data[level]["clicks"])
+        file_out.write("Unique Clicks: %i" % campaign_data[level]["unique_clicks"])
+        file_out.write("Percentage Clicks: %f" % campaign_data[level]["percent_clicks"])
 
-    fh.close()
-    logging.getLogger().removeHandler(fh)
+    file_out.close()
     logging.info("Writing out summary JSON to %s" % campaign_summary_json)
     with open(campaign_summary_json, "w") as fp:
         json.dump(campaign_data, fp, indent=4)
