@@ -310,13 +310,8 @@ def write_campaign_summary(api, assessment_id):
             percent_clicks = 0
         campaign_data[level]["subject"] = campaign.template.subject
         campaign_data[level]["sender"] = campaign.smtp.from_address
-        campaign_data[level]["start_date"] = datetime.strftime(
-            campaign.launch_date, "%Y-%m-%dT%H:%M:%S"
-        )
-        campaign_data[level]["end_date"] = datetime.strftime(
-            campaign.completed_date,
-            "%Y-%m-%dT%H:%M:%S",
-        )
+        campaign_data[level]["start_date"] = campaign.launch_date
+        campaign_data[level]["end_date"] = campaign.completed_date
         campaign_data[level]["redirect"] = campaign.url
         campaign_data[level]["clicks"] = total_clicks
         campaign_data[level]["unique_clicks"] = unique_clicks
