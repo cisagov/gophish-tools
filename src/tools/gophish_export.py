@@ -264,7 +264,6 @@ def find_unique_target_clicks_count(clicks):
 
 def write_campaign_summary(api, assessment_id):
     """Output a campaign summary report to JSON, console, and a text file."""
-    campaign_data = dict()
     campaign_ids = get_campaign_ids(api, assessment_id)
     campaign_data_template = "campaign_data.json"
     campaign_summary_json = assessment_id + "_campaign_data.json"
