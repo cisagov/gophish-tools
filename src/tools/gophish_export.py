@@ -255,26 +255,23 @@ def get_application(rawEvent):
 
 def find_unique_target_clicks_count(clicks):
     """Return the number of unique clicks in a click dict."""
-    uniq_list = list()
+    uniq_users = set()
     for click in clicks:
-        if click["user"] not in uniq_list:
-            uniq_list.append(click["user"])
-    return len(uniq_list)
+        uniq_users.add(click["user"])
+    return len(uniq_users)
 
 
 def write_campaign_summary(api, assessment_id):
     """Output a campaign summary report to JSON, console, and a text file."""
     campaign_ids = get_campaign_ids(api, assessment_id)
     campaign_data_template = "campaign_data.json"
-    campaign_summary_json = assessment_id + "_campaign_data.json"
-    campaign_summary_textfile = (
-        assessment_id + "_summary_" + str(datetime.now()) + ".txt"
-    )
+    campaign_summary_json = f"{assessment_id}_campaign_data.json"
+    campaign_summary_textfile = f"{assessment_id}_summary_{datetime.strftime(datetime.now(), '%Y-%m-%dT%H:%M:%S')}.txt"
 
     with open(campaign_data_template) as template:
         campaign_data = json.load(template)
 
-    logging.info("Writing campaign summary report to %s" % campaign_summary_textfile)
+    logging.info("Writing campaign summary report to %s", campaign_summary_textfile)
     file_out = open(campaign_summary_textfile, "w+")
     file_out.write("Campaigns for Assessment: " + assessment_id)
 
@@ -293,6 +290,11 @@ def write_campaign_summary(api, assessment_id):
         elif campaign.name.endswith("_level-6"):
             level = "level-6"
         else:
+            logging.warn(
+                "Encountered campaign (%s) that is unable to be processed for campaign summary export. "
+                "Skipping campaign",
+                campaign.name,
+            )
             continue
 
         logging.info(level)
@@ -303,7 +305,7 @@ def write_campaign_summary(api, assessment_id):
         if total_clicks > 0:
             percent_clicks = unique_clicks / float(total_clicks)
         else:
-            percent_clicks = 0
+            percent_clicks = 0.0
         campaign_data[level]["subject"] = campaign.template.subject
         campaign_data[level]["sender"] = campaign.smtp.from_address
         campaign_data[level]["start_date"] = campaign.launch_date
@@ -328,7 +330,7 @@ def write_campaign_summary(api, assessment_id):
         )
 
     file_out.close()
-    logging.info("Writing out summary JSON to %s" % campaign_summary_json)
+    logging.info("Writing out summary JSON to %s", campaign_summary_json)
     with open(campaign_summary_json, "w") as fp:
         json.dump(campaign_data, fp, indent=4)
 
