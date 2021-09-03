@@ -23,6 +23,7 @@ from datetime import datetime
 import hashlib
 import json
 import logging
+import re
 import sys
 from typing import Dict
 
@@ -254,7 +255,7 @@ def get_application(rawEvent):
 
 
 def find_unique_target_clicks_count(clicks):
-    """Return the number of unique clicks in a click dict."""
+    """Return the number of unique clicks in a click set."""
     uniq_users = set()
     for click in clicks:
         uniq_users.add(click["user"])
@@ -275,23 +276,16 @@ def write_campaign_summary(api, assessment_id):
     file_out = open(campaign_summary_textfile, "w+")
     file_out.write("Campaigns for Assessment: " + assessment_id)
 
+    regex = re.compile(r"^.*_(?P<level>level-[1-6])$")
     for campaign_id in campaign_ids:
         campaign = api.campaigns.get(campaign_id)
-        if campaign.name.endswith("_level-1"):
-            level = "level-1"
-        elif campaign.name.endswith("_level-2"):
-            level = "level-2"
-        elif campaign.name.endswith("_level-3"):
-            level = "level-3"
-        elif campaign.name.endswith("_level-4"):
-            level = "level-4"
-        elif campaign.name.endswith("_level-5"):
-            level = "level-5"
-        elif campaign.name.endswith("_level-6"):
-            level = "level-6"
+        match = regex.fullmatch(campaign.name)
+        if match:
+            level = match.group("level")
         else:
             logging.warn(
-                "Encountered campaign (%s) that is unable to be processed for campaign summary export. "
+                "Encountered campaign (%s) that is unable to be processed for campaign summary export. \n"
+                "Campaign name is not properly suffixed with the campaign level number (e.g. '_level-1')\n"
                 "Skipping campaign",
                 campaign.name,
             )
