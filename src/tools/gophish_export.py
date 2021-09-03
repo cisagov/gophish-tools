@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """Export all the data from an assessment within GoPhish into a single JSON file.
 
 Usage:
@@ -372,7 +370,7 @@ def export_user_reports(api, assessment_id):
             json.dump(user_report_doc, fp, indent=4)
 
 
-def main():
+def main() -> None:
     """Set up logging, connect to API, export all assessment data."""
     args: Dict[str, str] = docopt(__doc__, version=__version__)
 
@@ -386,7 +384,7 @@ def main():
         logging.critical(
             f'"{log_level}"is not a valid logging level. Possible values are debug, info, warning, and error.'
         )
-        return 1
+        sys.exit(1)
 
     else:
         # Connect to API
@@ -394,7 +392,7 @@ def main():
             api = connect_api(args["API_KEY"], args["SERVER"])
             logging.debug(f'Connected to: {args["SERVER"]}')
         except Exception as e:
-            logging.critical(print(e.args[0]))
+            logging.critical(e.args[0])
             sys.exit(1)
 
     if assessment_exists(api, args["ASSESSMENT_ID"]):
@@ -418,7 +416,3 @@ def main():
             f'Assessment "{args["ASSESSMENT_ID"]}" does not exist in GoPhish.'
         )
         sys.exit(1)
-
-
-if __name__ == "__main__":
-    main()

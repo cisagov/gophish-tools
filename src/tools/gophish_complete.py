@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """Complete a campaign in GoPhish and/or output a GoPhish campaign summary.
 
 Usage:
@@ -157,7 +155,7 @@ def print_summary(api, campaign_id):
     return True
 
 
-def main():
+def main() -> None:
     """Set up logging, connect to API, call requested function(s)."""
     args: Dict[str, str] = docopt(__doc__, version=__version__)
 
@@ -171,14 +169,14 @@ def main():
         logging.critical(
             f'"{log_level}"is not a valid logging level. Possible values are debug, info, warning, and error.'
         )
-        return 1
+        sys.exit(1)
 
     # Connect to API
     try:
         api = connect_api(args["API_KEY"], args["SERVER"])
         logging.debug(f'Connected to: {args["SERVER"]}')
     except Exception as e:
-        logging.critical(print(e.args[0]))
+        logging.critical(e.args[0])
         sys.exit(1)
 
     try:
@@ -209,7 +207,3 @@ def main():
             sys.exit(1)
 
         print_summary(api, campaign_id)
-
-
-if __name__ == "__main__":
-    main()

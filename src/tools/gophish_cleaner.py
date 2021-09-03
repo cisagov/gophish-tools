@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """Remove an assessment or elements of an assessment in GoPhish.
 
 Usage:
@@ -150,7 +148,7 @@ def remove_template(api, assessment_id):
     return True
 
 
-def main():
+def main() -> None:
     """Set up logging, connect to API, remove assessment data."""
     args: Dict[str, str] = docopt(__doc__, version=__version__)
 
@@ -166,7 +164,7 @@ def main():
                 log_level
             )
         )
-        return 1
+        sys.exit(1)
 
     else:
         # Connect to API
@@ -174,7 +172,7 @@ def main():
             api = connect_api(args["API_KEY"], args["SERVER"])
             logging.debug("Connected to: {}".format(args["SERVER"]))
         except Exception as e:
-            logging.critical(print(e.args[0]))
+            logging.critical(e.args[0])
             sys.exit(1)
 
     assessment_id = args["ASSESSMENT_ID"]
@@ -202,7 +200,3 @@ def main():
 
     if not success:
         sys.exit(-1)
-
-
-if __name__ == "__main__":
-    main()
