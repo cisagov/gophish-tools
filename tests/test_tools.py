@@ -7,7 +7,11 @@ import pytest
 
 # cisagov Libraries
 from tools.gophish_complete import get_campaign_id
-from tools.gophish_export import assessment_exists, export_targets
+from tools.gophish_export import (
+    assessment_exists,
+    export_targets,
+    find_unique_target_clicks_count,
+)
 
 
 class TestComplete:
@@ -43,8 +47,12 @@ class TestExport:
     def test_assessment_exists_not_found(self, mock_api, multiple_campaign_object):
         """Verify False is returned when assessment is not in GoPhish."""
         mock_api.campaigns.get.return_value = multiple_campaign_object
-
         assert assessment_exists(mock_api, "RVXXX3") is False
+
+    @patch("tools.connect")
+    def test_find_unique_target_clicks_count(self, mock_api, multiple_click_object):
+        """Verify that the correct number of unique users in a click list is found."""
+        assert find_unique_target_clicks_count(multiple_click_object) == 4
 
     def mock_get_group_ids(self, s, group_object):
         """Return a mock list of GoPhish group objects."""
