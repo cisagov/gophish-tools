@@ -14,12 +14,12 @@ import pytest
 
 # cisagov Libraries
 from models.models import (
+    SMTP,
     Assessment,
     Campaign,
     Click,
     Group,
     Page,
-    SMTP,
     Target,
     Template,
 )
