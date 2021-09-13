@@ -167,14 +167,15 @@ def main() -> None:
         )
     except ValueError:
         logging.critical(
-            f'"{log_level}"is not a valid logging level. Possible values are debug, info, warning, and error.'
+            '"%s"is not a valid logging level. Possible values are debug, info, warning, and error.',
+            log_level,
         )
         sys.exit(1)
 
     # Connect to API
     try:
         api = connect_api(args["API_KEY"], args["SERVER"])
-        logging.debug(f'Connected to: {args["SERVER"]}')
+        logging.debug('Connected to: "%s"', args["SERVER"])
     except Exception as e:
         logging.critical(e.args[0])
         sys.exit(1)

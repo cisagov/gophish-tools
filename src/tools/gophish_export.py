@@ -98,7 +98,9 @@ def export_targets(api, assessment_id):
 
             targets.append(target)
 
-    logging.info(f"{len(targets)} email targets found for assessment {assessment_id}.")
+    logging.info(
+        "%i email targets found for assessment %s.", len(targets), assessment_id
+    )
 
     return targets
 
@@ -132,7 +134,7 @@ def export_campaigns(api, assessment_id):
     for campaign_id in campaignIDs:
         campaigns.append(get_campaign_data(api, campaign_id))
 
-    logging.info(f"{len(campaigns)} campaigns found for assessment {assessment_id}.")
+    logging.info("%i campaigns found for assessment %s.", len(campaigns), assessment_id)
 
     return campaigns
 
@@ -363,7 +365,9 @@ def export_user_reports(api, assessment_id):
         ).stats.clicked
 
         logging.info(
-            f"Writing out user report for campaign {campaign_id} in assessment {assessment_id}"
+            "Writing out user report for campaign %s in assessment %s",
+            campaign.name,
+            assessment_id,
         )
 
         with open(f"{assessment_id}_{campaign_id}_user_report_doc.json", "w") as fp:
@@ -382,7 +386,8 @@ def main() -> None:
         )
     except ValueError:
         logging.critical(
-            f'"{log_level}"is not a valid logging level. Possible values are debug, info, warning, and error.'
+            '"%s"is not a valid logging level. Possible values are debug, info, warning, and error.',
+            log_level,
         )
         sys.exit(1)
 
@@ -390,7 +395,7 @@ def main() -> None:
         # Connect to API
         try:
             api = connect_api(args["API_KEY"], args["SERVER"])
-            logging.debug(f'Connected to: {args["SERVER"]}')
+            logging.debug("Connected to: %s", args["SERVER"])
         except Exception as e:
             logging.critical(e.args[0])
             sys.exit(1)
@@ -407,12 +412,12 @@ def main() -> None:
         with open(f'data_{args["ASSESSMENT_ID"]}.json', "w") as fp:
             json.dump(assessment_dict, fp, indent=4)
 
-        logging.info(f'Data written to data_{args["ASSESSMENT_ID"]}.json')
+        logging.info("Data written to data_%s.json", args["ASSESSMENT_ID"])
 
         export_user_reports(api, args["ASSESSMENT_ID"])
         write_campaign_summary(api, args["ASSESSMENT_ID"])
     else:
         logging.error(
-            f'Assessment "{args["ASSESSMENT_ID"]}" does not exist in GoPhish.'
+            'Assessment "%s" does not exist in GoPhish.', args["ASSESSMENT_ID"]
         )
         sys.exit(1)
