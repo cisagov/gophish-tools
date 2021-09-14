@@ -366,7 +366,7 @@ def export_user_reports(api, assessment_id):
 
         logging.info(
             "Writing out user report for campaign %s in assessment %s",
-            campaign.name,
+            campaign["id"],
             assessment_id,
         )
 
