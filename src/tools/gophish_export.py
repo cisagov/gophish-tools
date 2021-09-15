@@ -21,6 +21,7 @@ from datetime import datetime
 import hashlib
 import json
 import logging
+import re
 import sys
 from typing import Dict
 
@@ -251,6 +252,81 @@ def get_application(rawEvent):
     return application
 
 
+def find_unique_target_clicks_count(clicks):
+    """Return the number of unique clicks in a click set."""
+    uniq_users = set()
+    for click in clicks:
+        uniq_users.add(click["user"])
+    return len(uniq_users)
+
+
+def write_campaign_summary(api, assessment_id):
+    """Output a campaign summary report to JSON, console, and a text file."""
+    campaign_ids = get_campaign_ids(api, assessment_id)
+    campaign_data_template = "campaign_data.json"
+    campaign_summary_json = f"{assessment_id}_campaign_data.json"
+    campaign_summary_textfile = f"{assessment_id}_summary_{datetime.strftime(datetime.now(), '%Y-%m-%dT%H:%M:%S')}.txt"
+
+    with open(campaign_data_template) as template:
+        campaign_data = json.load(template)
+
+    logging.info("Writing campaign summary report to %s", campaign_summary_textfile)
+    file_out = open(campaign_summary_textfile, "w+")
+    file_out.write("Campaigns for Assessment: " + assessment_id)
+
+    regex = re.compile(r"^.*_(?P<level>level-[1-6])$")
+    for campaign_id in campaign_ids:
+        campaign = api.campaigns.get(campaign_id)
+        match = regex.fullmatch(campaign.name)
+        if match:
+            level = match.group("level")
+        else:
+            logging.warn(
+                "Encountered campaign (%s) that is unable to be processed for campaign summary export. \n"
+                "Campaign name is not properly suffixed with the campaign level number (e.g. '_level-1')\n"
+                "Skipping campaign",
+                campaign.name,
+            )
+            continue
+
+        logging.info(level)
+        clicks = get_click_data(api, campaign_id)
+
+        total_clicks = api.campaigns.summary(campaign_id=campaign_id).stats.clicked
+        unique_clicks = find_unique_target_clicks_count(clicks)
+        if total_clicks > 0:
+            percent_clicks = unique_clicks / float(total_clicks)
+        else:
+            percent_clicks = 0.0
+        campaign_data[level]["subject"] = campaign.template.subject
+        campaign_data[level]["sender"] = campaign.smtp.from_address
+        campaign_data[level]["start_date"] = campaign.launch_date
+        campaign_data[level]["end_date"] = campaign.completed_date
+        campaign_data[level]["redirect"] = campaign.url
+        campaign_data[level]["clicks"] = total_clicks
+        campaign_data[level]["unique_clicks"] = unique_clicks
+        campaign_data[level]["percent_clicks"] = percent_clicks
+
+        file_out.write("\n")
+        file_out.write("-" * 50)
+        file_out.write("\nCampaign: %s" % campaign.name)
+        file_out.write("\nSubject: %s" % campaign_data[level]["subject"])
+        file_out.write("\nSender: %s" % campaign_data[level]["sender"])
+        file_out.write("\nStart Date: %s" % campaign_data[level]["start_date"])
+        file_out.write("\nEnd Date: %s" % campaign_data[level]["end_date"])
+        file_out.write("\nRedirect: %s" % campaign_data[level]["redirect"])
+        file_out.write("\nClicks: %i" % campaign_data[level]["clicks"])
+        file_out.write("\nUnique Clicks: %i" % campaign_data[level]["unique_clicks"])
+        file_out.write(
+            "\nPercentage Clicks: %f" % campaign_data[level]["percent_clicks"]
+        )
+
+    file_out.close()
+    logging.info("Writing out summary JSON to %s", campaign_summary_json)
+    with open(campaign_summary_json, "w") as fp:
+        json.dump(campaign_data, fp, indent=4)
+
+
 def export_user_reports(api, assessment_id):
     """Build and export a user_report JSON file for each campaign in an assessment."""
     campaign_ids = get_campaign_ids(api, assessment_id)
@@ -275,9 +351,13 @@ def export_user_reports(api, assessment_id):
         # get_campaign_ids() returns integers, but user_report_doc["campaign"]
         # expects a string
         user_report_doc["campaign"] = str(campaign_id)
-        user_report_doc["first_report"] = datetime.strftime(
-            first_report, "%Y-%m-%dT%H:%M:%S"
-        )
+        if first_report is not None:
+            user_report_doc["first_report"] = datetime.strftime(
+                first_report, "%Y-%m-%dT%H:%M:%S"
+            )
+        else:
+            user_report_doc["first_report"] = "No clicks reported"
+
         user_report_doc["total_num_reports"] = api.campaigns.summary(
             campaign_id=campaign_id
         ).stats.clicked
@@ -330,7 +410,7 @@ def main() -> None:
         logging.info(f'Data written to data_{args["ASSESSMENT_ID"]}.json')
 
         export_user_reports(api, args["ASSESSMENT_ID"])
-
+        write_campaign_summary(api, args["ASSESSMENT_ID"])
     else:
         logging.error(
             f'Assessment "{args["ASSESSMENT_ID"]}" does not exist in GoPhish.'
