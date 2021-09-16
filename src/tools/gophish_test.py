@@ -140,7 +140,7 @@ def main() -> None:
         )
     except ValueError:
         logging.critical(
-            '"%s"is not a valid logging level.  Possible values are debug, info, warning, and error.',
+            '"%s" is not a valid logging level.  Possible values are debug, info, warning, and error.',
             log_level,
         )
         sys.exit(1)

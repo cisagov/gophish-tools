@@ -81,7 +81,7 @@ def load_landings(api, assessment):
                     raise
 
         # Returns Landing Page ID
-        logging.info("Landing Page %s loaded.\n", new_page.name)
+        logging.info("Landing Page %s loaded.", new_page.name)
         page["id"] = new_page.id
 
     return pages
@@ -129,12 +129,12 @@ def load_groups(api, assessment):
                             api.groups.delete(old_group.id)
                             logging.info("Re-Loading new group.")
                 else:
-                    logging.error("%s\n", e)
+                    logging.error("%s", e)
                     raise
 
         group["id"] = new_group.id
 
-        logging.info("Group Ready: %s\n", new_group.name)
+        logging.info("Group Ready: %s", new_group.name)
 
     return groups
 
@@ -165,7 +165,7 @@ def build_campaigns(api, assessment):
             except Error as e:
                 if e.message == "Template name already in use":
                     logging.warning(
-                        "%s. Finding previously loaded template to delete.", e
+                        "%s. Finding previously loaded template to delete.", e.message
                     )
                     templates = api.templates.get()
                     logging.debug(
@@ -180,7 +180,7 @@ def build_campaigns(api, assessment):
                             api.templates.delete(old_template.id)
                             logging.info("Re-Loading new template.")
                 else:
-                    logging.error("%s\n", e.message)
+                    logging.error("%s", e.message)
                     raise
 
         # Build SMTP Object
@@ -216,7 +216,7 @@ def build_campaigns(api, assessment):
                             api.smtp.delete(old_smtp.id)
                             logging.info("Re-Loading new SMTP.")
                 else:
-                    logging.error("%s\n", e.message)
+                    logging.error("%s", e.message)
                     raise
 
         # Check to remove any campaigns with the same name
@@ -264,7 +264,7 @@ def main() -> None:
         )
     except ValueError:
         logging.critical(
-            '"%s"is not a valid logging level.  Possible values are debug, info, warning, and error.',
+            '"%s" is not a valid logging level.  Possible values are debug, info, warning, and error.',
             log_level,
         )
         sys.exit(1)
@@ -283,12 +283,12 @@ def main() -> None:
         with open(args["ASSESSMENT_FILE"]) as json_file:
             assessment = json.load(json_file)
     except FileNotFoundError as e:
-        logging.error("%s\n", e)
+        logging.error("%s", e)
         # Stop logging and clean up
         logging.shutdown()
         sys.exit(1)
     except PermissionError as e:
-        logging.error("%s\n", e)
+        logging.error("%s", e)
         # Stop logging and clean up
         logging.shutdown()
         sys.exit(1)
