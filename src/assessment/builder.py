@@ -148,8 +148,9 @@ def build_assessment(assessment_id):
 def build_campaigns(assessment, campaign_number, template_smtp):
     """Build a campaign."""
     # Set up component holders
-    logging.info(f"Building Campaign {assessment.id}-C{campaign_number}")
-    campaign = Campaign(name=f"{assessment.id}-C{campaign_number}")
+    logging.info("Building Campaign %s", assessment.id)
+    campaign = Campaign(name=assessment.id)
+
     # Get Launch Time
     campaign.launch_date = get_time_input("start", assessment.timezone)
 
