@@ -52,7 +52,8 @@ def load_landings(api, assessment):
         if page["redirect_url"]:
             new_page.redirect_url = page["redirect_url"]
 
-        # Debug page information
+        # Debug page information, editors may produce a false error or warning for lines 57 - 60
+
         logging.debug("Page Name: %s", new_page.name)
         logging.debug("Redirect ULR: %s", new_page.redirect_url)
         logging.debug("Capture Credentials: %s", new_page.capture_credentials)
