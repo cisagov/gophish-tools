@@ -128,7 +128,9 @@ def load_groups(api, assessment):
                             api.groups.delete(old_group.id)
                             logging.info("Re-Loading new group.")
                 else:
-                    logging.exception("%s", e)
+                    logging.exception(
+                        "Exception encountered when loading group in Gophish (%s)", e
+                    )
                     raise
 
         group["id"] = new_group.id
@@ -179,7 +181,10 @@ def build_campaigns(api, assessment):
                             api.templates.delete(old_template.id)
                             logging.info("Re-Loading new template.")
                 else:
-                    logging.exception("%s", e.message)
+                    logging.exception(
+                        "Exception encountered when loading template in Gophish (%s)",
+                        e.message,
+                    )
                     raise
 
         # Build SMTP Object
@@ -215,7 +220,10 @@ def build_campaigns(api, assessment):
                             api.smtp.delete(old_smtp.id)
                             logging.info("Re-Loading new SMTP.")
                 else:
-                    logging.exception("%s", e.message)
+                    logging.exception(
+                        "Exception encountered when loading SMTP in Gophish (%s)",
+                        e.message,
+                    )
                     raise
 
         # Check to remove any campaigns with the same name
@@ -245,7 +253,9 @@ def build_campaigns(api, assessment):
                 )
             )
         except Exception as e:
-            logging.exception(e)
+            logging.exception(
+                "Exception encountered when loading campaign in Gophish (%s)", e.message
+            )
             raise
 
         logging.info("Campaign %s successfully loaded.", campaign["name"])
@@ -282,12 +292,12 @@ def main() -> None:
         with open(args["ASSESSMENT_FILE"]) as json_file:
             assessment = json.load(json_file)
     except FileNotFoundError as e:
-        logging.exception("%s", e)
+        logging.exception("Unable to locate Assessment file (%s)", e)
         # Stop logging and clean up
         logging.shutdown()
         sys.exit(1)
     except PermissionError as e:
-        logging.exception("%s", e)
+        logging.exception("Permission denied for opening Assessment file (%s)", e)
         # Stop logging and clean up
         logging.shutdown()
         sys.exit(1)
@@ -306,7 +316,9 @@ def main() -> None:
         logging.shutdown()
 
     except Exception as e:
-        logging.exception("%s: %s", type(e), e)
+        logging.exception(
+            "Exception encountered while loading data from Gophish (%s: %s)", type(e), e
+        )
         logging.critical("Closing with an error. Assessment not successfully loaded.")
         # Stop logging and clean up
         logging.shutdown()
