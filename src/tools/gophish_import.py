@@ -128,7 +128,7 @@ def load_groups(api, assessment):
                             api.groups.delete(old_group.id)
                             logging.info("Re-Loading new group.")
                 else:
-                    logging.error("%s", e)
+                    logging.exception("%s", e)
                     raise
 
         group["id"] = new_group.id
@@ -179,7 +179,7 @@ def build_campaigns(api, assessment):
                             api.templates.delete(old_template.id)
                             logging.info("Re-Loading new template.")
                 else:
-                    logging.error("%s", e.message)
+                    logging.exception("%s", e.message)
                     raise
 
         # Build SMTP Object
@@ -215,7 +215,7 @@ def build_campaigns(api, assessment):
                             api.smtp.delete(old_smtp.id)
                             logging.info("Re-Loading new SMTP.")
                 else:
-                    logging.error("%s", e.message)
+                    logging.exception("%s", e.message)
                     raise
 
         # Check to remove any campaigns with the same name
@@ -245,10 +245,10 @@ def build_campaigns(api, assessment):
                 )
             )
         except Exception as e:
-            logging.error(e)
+            logging.exception(e)
             raise
 
-        logging.info("Campaign %s successfully loaded.\n", campaign["name"])
+        logging.info("Campaign %s successfully loaded.", campaign["name"])
 
 
 def main() -> None:
@@ -282,12 +282,12 @@ def main() -> None:
         with open(args["ASSESSMENT_FILE"]) as json_file:
             assessment = json.load(json_file)
     except FileNotFoundError as e:
-        logging.error("%s", e)
+        logging.exception("%s", e)
         # Stop logging and clean up
         logging.shutdown()
         sys.exit(1)
     except PermissionError as e:
-        logging.error("%s", e)
+        logging.exception("%s", e)
         # Stop logging and clean up
         logging.shutdown()
         sys.exit(1)
@@ -306,8 +306,8 @@ def main() -> None:
         logging.shutdown()
 
     except Exception as e:
-        logging.debug("%s: %s", type(e), e)
-        logging.critical("Closing with an error. Assessment not successfully loaded.\n")
+        logging.exception("%s: %s", type(e), e)
+        logging.critical("Closing with an error. Assessment not successfully loaded.")
         # Stop logging and clean up
         logging.shutdown()
         sys.exit(1)
