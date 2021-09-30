@@ -54,7 +54,7 @@ def get_campaigns(api, assessment_id):
             assessmentCampaigns.append(campaign)
 
     # Sets err to true if assessmentCampaigns has 0 length.
-    logging.debug("Num Campaigns: %i", len(assessmentCampaigns))
+    logging.debug("Num Campaigns: %d", len(assessmentCampaigns))
     if not len(assessmentCampaigns):
         logging.warning("No Campaigns found for %s", assessment_id)
 
