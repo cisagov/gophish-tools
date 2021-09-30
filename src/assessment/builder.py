@@ -56,7 +56,7 @@ CONFIRMATION_PROMPT = "\nDo you need to modify any of the values for this campai
 def set_time_zone():
     """Select a timezone from a list of US-based time zones.
 
-    : return Time zone name based on pytz.
+    Returns: Time zone name based on pytz.
     """
     # TODO Allow for a select more option to get access to full list of Time Zones
 
