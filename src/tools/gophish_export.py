@@ -99,7 +99,7 @@ def export_targets(api, assessment_id):
             targets.append(target)
 
     logging.info(
-        "%i email targets found for assessment %s.", len(targets), assessment_id
+        "%d email targets found for assessment %s.", len(targets), assessment_id
     )
 
     return targets
@@ -134,7 +134,7 @@ def export_campaigns(api, assessment_id):
     for campaign_id in campaignIDs:
         campaigns.append(get_campaign_data(api, campaign_id))
 
-    logging.info("%i campaigns found for assessment %s.", len(campaigns), assessment_id)
+    logging.info("%d campaigns found for assessment %s.", len(campaigns), assessment_id)
 
     return campaigns
 
@@ -311,15 +311,16 @@ def write_campaign_summary(api, assessment_id):
         file_out.write("\n")
         file_out.write("-" * 50)
         file_out.write("\nCampaign: %s" % campaign.name)
-        file_out.write("\nLevel: %s" % level)
-        file_out.write("\nSubject: %s" % campaign_data["subject"])
-        file_out.write("\nSender: %s" % campaign_data["sender"])
-        file_out.write("\nStart Date: %s" % campaign_data["start_date"])
-        file_out.write("\nEnd Date: %s" % campaign_data["end_date"])
-        file_out.write("\nRedirect: %s" % campaign_data["redirect"])
-        file_out.write("\nClicks: %i" % campaign_data["clicks"])
-        file_out.write("\nUnique Clicks: %i" % campaign_data["unique_clicks"])
-        file_out.write("\nPercentage Clicks: %f" % campaign_data["percent_clicks"])
+        file_out.write("\nSubject: %s" % campaign_data[level]["subject"])
+        file_out.write("\nSender: %s" % campaign_data[level]["sender"])
+        file_out.write("\nStart Date: %s" % campaign_data[level]["start_date"])
+        file_out.write("\nEnd Date: %s" % campaign_data[level]["end_date"])
+        file_out.write("\nRedirect: %s" % campaign_data[level]["redirect"])
+        file_out.write("\nClicks: %d" % campaign_data[level]["clicks"])
+        file_out.write("\nUnique Clicks: %d" % campaign_data[level]["unique_clicks"])
+        file_out.write(
+            "\nPercentage Clicks: %f" % campaign_data[level]["percent_clicks"]
+        )
 
     file_out.close()
     logging.info("Writing out summary JSON to %s", campaign_summary_json)
