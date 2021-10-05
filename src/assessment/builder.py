@@ -105,7 +105,7 @@ def display_list_pages(assessment):
 def build_assessment(assessment_id):
     """Walk user through building a new assessment document.
 
-    : return an assessment object
+    Returns: an assessment object
     """
     logging.info("Building Assessment")
     # Initializes assessment object with ID and timezone
@@ -506,9 +506,7 @@ def build_emails(domains, labels):
                             validator=EmailValidator(),
                         )
                 else:
-                    logging.error(
-                        "{} Domain Mismatch Errors".format(len(format_error))
-                    )
+                    logging.error("{} Domain Mismatch Errors".format(len(format_error)))
                     if (
                         yes_no_prompt("Would you like to correct each here? (yes/no)")
                         == "yes"
