@@ -54,9 +54,9 @@ def get_campaigns(api, assessment_id):
             assessmentCampaigns.append(campaign)
 
     # Sets err to true if assessmentCampaigns has 0 length.
-    logging.debug(f"Num Campaigns: {len(assessmentCampaigns)}")
+    logging.debug("Num Campaigns: %d", len(assessmentCampaigns))
     if not len(assessmentCampaigns):
-        logging.warning("No Campaigns found for {}".format(assessment_id))
+        logging.warning("No Campaigns found for %s", assessment_id)
 
     return assessmentCampaigns
 
@@ -121,7 +121,7 @@ def campaign_test(api, assessmentCampaigns, assessment_id):
         )
 
         postCampaign = api.campaigns.post(postCampaign)
-        logging.debug("Test Campaign added: {}".format(postCampaign.name))
+        logging.debug("Test Campaign added: %s", postCampaign.name)
 
     logging.info("All Test campaigns added.")
 
@@ -140,16 +140,15 @@ def main() -> None:
         )
     except ValueError:
         logging.critical(
-            '"{}"is not a valid logging level.  Possible values are debug, info, warning, and error.'.format(
-                log_level
-            )
+            '"%s" is not a valid logging level.  Possible values are debug, info, warning, and error.',
+            log_level,
         )
         sys.exit(1)
 
     # Connect to API
     try:
         api = connect_api(args["API_KEY"], args["SERVER"])
-        logging.debug("Connected to: {}".format(args["SERVER"]))
+        logging.debug("Connected to: %s", args["SERVER"])
     except Exception as e:
         logging.critical(e.args[0])
         sys.exit(1)

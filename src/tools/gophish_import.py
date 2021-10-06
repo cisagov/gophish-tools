@@ -53,10 +53,9 @@ def load_landings(api, assessment):
             new_page.redirect_url = page["redirect_url"]
 
         # Debug page information
-        logging.debug("Page Name: {}".format(new_page.name))
-        logging.debug("Redirect ULR: {}".format(new_page.redirect_url))
-        logging.debug("Capture Credentials: {}".format(new_page.capture_credentials))
-        logging.debug("Capture Passwords: {}".format(new_page.capture_passwords))
+
+        logging.debug("Page Name: %s", new_page.name)
+        logging.debug("Redirect URL: %s", new_page.redirect_url)
 
         """
          Catches when a page has already been loaded into GoPhish.
@@ -69,11 +68,11 @@ def load_landings(api, assessment):
                 break
             except Error as e:
                 if e.message == "Page name already in use":
-                    logging.warning(f"{e}. Finding with previously loaded page.")
+                    logging.warning("%s. Finding with previously loaded page.", e)
                     old_pages = api.pages.get()
                     for old_page in old_pages:
                         if old_page.name == new_page.name:
-                            logging.debug(f"Deleting Page with ID {old_page.id}")
+                            logging.debug("Deleting Page with ID %d", old_page.id)
                             api.pages.delete(old_page.id)
                             logging.info("Re-Loading new page.")
                 else:
@@ -81,7 +80,7 @@ def load_landings(api, assessment):
                     raise
 
         # Returns Landing Page ID
-        logging.info(f"Landing Page {new_page.name} loaded.\n")
+        logging.info("Landing Page %s loaded.", new_page.name)
         page["id"] = new_page.id
 
     return pages
@@ -92,7 +91,7 @@ def load_groups(api, assessment):
     groups = assessment["groups"]
 
     for group in groups:
-        logging.info(f"Loading Group {group['name']}")
+        logging.info("Loading Group %s", group["name"])
 
         new_group = Group()
         new_group.name = group["name"]
@@ -117,23 +116,26 @@ def load_groups(api, assessment):
                 break
             except Error as e:
                 if e.message == "Group name already in use":
-                    logging.warning(f"{e}. Finding previously loaded group to delete.")
+                    logging.warning("%s. Finding previously loaded group to delete.", e)
                     groups = api.groups.get()
                     logging.debug(
-                        f"Checking {len(groups)} for previously imported group to get ID"
+                        "Checking %d for previously imported group to get ID",
+                        len(groups),
                     )
                     for old_group in groups:
                         if old_group.name == new_group.name:
-                            logging.debug(f"Deleting Group with ID {old_group.id}")
+                            logging.debug("Deleting Group with ID %d", old_group.id)
                             api.groups.delete(old_group.id)
                             logging.info("Re-Loading new group.")
                 else:
-                    logging.error(f"{e}\n")
+                    logging.exception(
+                        "Exception encountered when loading group in Gophish (%s)", e
+                    )
                     raise
 
         group["id"] = new_group.id
 
-        logging.info("Group Ready: {}\n".format(new_group.name))
+        logging.info("Group Ready: %s", new_group.name)
 
     return groups
 
@@ -142,7 +144,7 @@ def build_campaigns(api, assessment):
     """Build campaigns."""
     logging.info("Building Campaigns.")
     for campaign in assessment["campaigns"]:
-        logging.info(f"Building Campaign: {campaign['name']}")
+        logging.info("Building Campaign: %s", campaign["name"])
 
         # Build Template object
         new_template = Template(
@@ -164,21 +166,25 @@ def build_campaigns(api, assessment):
             except Error as e:
                 if e.message == "Template name already in use":
                     logging.warning(
-                        f"{e}. Finding previously loaded template to delete."
+                        "%s. Finding previously loaded template to delete.", e.message
                     )
                     templates = api.templates.get()
                     logging.debug(
-                        f"Checking {len(templates)} for previously imported template to get ID"
+                        "Checking %d for previously imported template to get ID",
+                        len(templates),
                     )
                     for old_template in templates:
                         if old_template.name == new_template.name:
                             logging.debug(
-                                f"Deleting Template with ID {old_template.id}"
+                                "Deleting Template with ID %d", old_template.id
                             )
                             api.templates.delete(old_template.id)
                             logging.info("Re-Loading new template.")
                 else:
-                    logging.error(f"{e}\n")
+                    logging.exception(
+                        "Exception encountered when loading template in Gophish (%s)",
+                        e.message,
+                    )
                     raise
 
         # Build SMTP Object
@@ -202,18 +208,22 @@ def build_campaigns(api, assessment):
                 break
             except Error as e:
                 if e.message == "SMTP name already in use":
-                    logging.warning(f"{e}. Finding previously loaded smtp to delete.")
+                    logging.warning("%s. Finding previously loaded smtp to delete.", e)
                     smtps = api.smtp.get()
                     logging.debug(
-                        f"Checking {len(smtps)} for previously imported smtp profiles to get ID"
+                        "Checking %d for previously imported smtp profiles to get ID",
+                        len(smtps),
                     )
                     for old_smtp in smtps:
                         if old_smtp.name == new_smtp.name:
-                            logging.debug(f"Deleting SMTP with ID {old_smtp.id}")
+                            logging.debug("Deleting SMTP with ID %d", old_smtp.id)
                             api.smtp.delete(old_smtp.id)
                             logging.info("Re-Loading new SMTP.")
                 else:
-                    logging.error(f"{e}\n")
+                    logging.exception(
+                        "Exception encountered when loading SMTP in Gophish (%s)",
+                        e.message,
+                    )
                     raise
 
         # Check to remove any campaigns with the same name
@@ -221,10 +231,10 @@ def build_campaigns(api, assessment):
         for old_campaign in old_campaigns:
             if old_campaign.name == campaign["name"]:
                 logging.warning(
-                    f"Previous Campaign found with name {campaign['name']}."
+                    "Previous Campaign found with name %s.", campaign["name"]
                 )
                 logging.warning(
-                    f"Previous Campaign with id {old_campaign.id} being deleted."
+                    "Previous Campaign with id %d being deleted.", old_campaign.id
                 )
                 api.campaigns.delete(old_campaign.id)
 
@@ -243,10 +253,12 @@ def build_campaigns(api, assessment):
                 )
             )
         except Exception as e:
-            logging.error(e)
+            logging.exception(
+                "Exception encountered when loading campaign in Gophish (%s)", e.message
+            )
             raise
 
-        logging.info(f"Campaign {campaign['name']} successfully loaded.\n")
+        logging.info("Campaign %s successfully loaded.", campaign["name"])
 
 
 def main() -> None:
@@ -261,15 +273,14 @@ def main() -> None:
         )
     except ValueError:
         logging.critical(
-            '"{}"is not a valid logging level.  Possible values are debug, info, warning, and error.'.format(
-                log_level
-            )
+            '"%s" is not a valid logging level.  Possible values are debug, info, warning, and error.',
+            log_level,
         )
         sys.exit(1)
 
     try:
         api = connect_api(args["API_KEY"], args["SERVER"])
-        logging.debug("Connected to: {}".format(args["SERVER"]))
+        logging.debug("Connected to: %s", args["SERVER"])
     except Exception as e:
         logging.critical(e.args[0])
         # Stop logging and clean up
@@ -281,12 +292,12 @@ def main() -> None:
         with open(args["ASSESSMENT_FILE"]) as json_file:
             assessment = json.load(json_file)
     except FileNotFoundError as e:
-        logging.error(f"{e}\n")
+        logging.exception("Unable to locate Assessment file (%s)", e)
         # Stop logging and clean up
         logging.shutdown()
         sys.exit(1)
     except PermissionError as e:
-        logging.error(f"{e}\n")
+        logging.exception("Permission denied for opening Assessment file (%s)", e)
         # Stop logging and clean up
         logging.shutdown()
         sys.exit(1)
@@ -305,8 +316,10 @@ def main() -> None:
         logging.shutdown()
 
     except Exception as e:
-        logging.debug(f"{type(e)}: {e}")
-        logging.critical("Closing with an error. Assessment not successfully loaded.\n")
+        logging.exception(
+            "Exception encountered while loading data from Gophish (%s: %s)", type(e), e
+        )
+        logging.critical("Closing with an error. Assessment not successfully loaded.")
         # Stop logging and clean up
         logging.shutdown()
         sys.exit(1)

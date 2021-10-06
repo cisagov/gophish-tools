@@ -75,7 +75,7 @@ def get_time_input(type_, time_zone, default=""):
             input_time = datetime.strptime(input_time, "%m/%d/%Y %H:%M")
             break
         except ValueError:
-            logging.error("Invalid time input: {}".format(input_time))
+            logging.error("Invalid time input: %s", input_time)
 
     # Convert time to ISO format to be returned.
     return pytz.timezone(time_zone).localize(input_time).isoformat()
