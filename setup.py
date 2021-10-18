@@ -45,7 +45,7 @@ setup(
     name="gophish-tools",
     # Versions should comply with PEP440
     version=get_version("src/_version.py"),
-    description="Helpful tools for interacting with GoPhish",
+    description="Helpful tools for interacting with Gophish",
     long_description=readme(),
     long_description_content_type="text/markdown",
     # Landing page for CISA's cybersecurity mission
