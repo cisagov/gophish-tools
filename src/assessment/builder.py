@@ -59,6 +59,7 @@ def set_time_zone():
     Returns: Time zone name based on pytz.
     """
     # TODO Allow for a select more option to get access to full list of Time Zones
+    # See issue: https://github.com/cisagov/gophish-tools/issues/49
 
     # Creates list of US Time Zones
     time_zone = list()
