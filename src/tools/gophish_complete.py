@@ -1,4 +1,4 @@
-"""Complete a campaign in GoPhish and/or output a GoPhish campaign summary.
+"""Complete a campaign in Gophish and/or output a Gophish campaign summary.
 
 Usage:
   gophish-complete [--campaign=NAME] [--summary-only] [--log-level=LEVEL] SERVER API_KEY
@@ -6,10 +6,10 @@ Usage:
   gophish-complete --version
 
 Options:
-  API_KEY                   GoPhish API key.
-  SERVER                    Full URL to GoPhish server.
-  -c --campaign=NAME        GoPhish campaign name.
-  -s --summary-only         Output a summary of a GoPhish campaign.
+  API_KEY                   Gophish API key.
+  SERVER                    Full URL to Gophish server.
+  -c --campaign=NAME        Gophish campaign name.
+  -s --summary-only         Output a summary of a Gophish campaign.
   -h --help                 Show this screen.
   --version                 Show version.
   -l --log-level=LEVEL      If specified, then the log level will be set to
@@ -38,7 +38,7 @@ from util.input import get_input, get_number
 
 from ._version import __version__
 
-# Disable "Insecure Request" warning: GoPhish uses a self-signed certificate
+# Disable "Insecure Request" warning: Gophish uses a self-signed certificate
 # as default for https connections, which can not be  verified by a third
 # party; thus, an SSL insecure request warning is produced.
 requests.packages.urllib3.disable_warnings()
@@ -72,7 +72,7 @@ def get_campaigns(api, assessment_id=""):
     provided, then only the campaigns for that assessment will be returned.
 
     Args:
-        api (GoPhish API): Connection to GoPhish server via the API.
+        api (Gophish API): Connection to Gophish server via the API.
         assessment_id (string): Assessment identifier to get campaigns from.
 
     Raises:
@@ -117,15 +117,15 @@ def select_campaign(campaigns):
 
 
 def complete_campaign(api_key, server, campaign_id):
-    """Complete a campaign in GoPhish.
+    """Complete a campaign in Gophish.
 
     Args:
-        api_key (string): GoPhish API key.
-        server (string): Full URL to GoPhish server.
-        campaign_id (int): GoPhish campaign id.
+        api_key (string): Gophish API key.
+        server (string): Full URL to Gophish server.
+        campaign_id (int): Gophish campaign id.
 
     Raises:
-        UserWarning: GoPhish is unsuccessful in completing the campaign.
+        UserWarning: Gophish is unsuccessful in completing the campaign.
     """
     url = f"{server}/api/campaigns/{campaign_id}/complete?api_key={api_key}"
 
