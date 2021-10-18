@@ -341,7 +341,7 @@ def import_email(assessment, campaign_number, template_smtp):
 
             continue
 
-    # Finalize SMTP profile, push to GoPhish for check.
+    # Finalize SMTP profile, push to Gophish for check.
     # TODO Need to valid this formatting.
     temp_smtp.from_address = import_temp["from_address"]
 
