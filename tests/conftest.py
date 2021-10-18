@@ -8,8 +8,8 @@ import hashlib
 import json
 
 # Third-Party Libraries
-from gophish.models import Group as GoPhish_Group
-from gophish.models import User as GoPhish_User
+from gophish.models import Group as Gophish_Group
+from gophish.models import User as Gophish_User
 import pytest
 
 # cisagov Libraries
@@ -259,22 +259,22 @@ def multiple_campaign_object(template_object, smtp_object):
 
 @pytest.fixture
 def multiple_gophish_group_object():
-    """Return list of GoPhish group objects."""
+    """Return list of Gophish group objects."""
     groups = list()
 
     for x in range(1, 3):
         groups.append(
-            GoPhish_Group(
+            Gophish_Group(
                 group_id={x},
                 name=f"RVXXX1-G{x}",
                 targets=[
-                    GoPhish_User(
+                    Gophish_User(
                         first_name="Jane",
                         last_name="Smith",
                         email=f"jane.smith{x}@domain.tld",
                         position="IT",
                     ),
-                    GoPhish_User(
+                    Gophish_User(
                         first_name="John",
                         last_name="Doe",
                         email=f"john.doe{x}@domain.tld",
@@ -289,7 +289,7 @@ def multiple_gophish_group_object():
 
 @pytest.fixture
 def email_target_json():
-    """Return a email target JSON with 4 emails matching the GoPhish group object."""
+    """Return a email target JSON with 4 emails matching the Gophish group object."""
     targets = list()
     for (email, position) in [
         ("jane.smith1@domain.tld", "IT"),
