@@ -400,6 +400,13 @@ def main() -> None:
             logging.critical(e.args[0])
             sys.exit(1)
 
+    pattern = re.compile("^RV([0-9]){4}")
+    match = pattern.match(args["ASSESSMENT_ID"])
+
+    if match is False:
+        logging.critical('"%s" is an invalid assessment_id format. Example: RV1234')
+        sys.exit(1)
+
     if assessment_exists(api, args["ASSESSMENT_ID"]):
         assessment_dict: Dict = dict()
 
