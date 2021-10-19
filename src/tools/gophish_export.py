@@ -403,7 +403,7 @@ def main() -> None:
     pattern = re.compile("^RV([0-9]){4}")
     match = pattern.match(args["ASSESSMENT_ID"])
 
-    if match is False:
+    if match is None:
         logging.critical('"%s" is an invalid assessment_id format. Example: RV1234')
         sys.exit(1)
 
