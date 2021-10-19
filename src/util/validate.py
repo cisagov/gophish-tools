@@ -15,6 +15,21 @@ EMAIL_TEMPLATE = {
 }
 
 
+def validate_assessment_id(assessment_id):
+    """Validate that the provided assessment_id is matching the valid assessment_id format. Example: RV1234.
+
+    Args:
+        assessment_id (string): Assessment identifier to validate.
+
+    Returns:
+        match: the result of a regular expression match.
+    """
+    pattern = re.compile("^RV([0-9]){4}")
+    match = pattern.match(assessment_id)
+
+    return match
+
+
 def validate_email(email):
     """Validate email format.
 

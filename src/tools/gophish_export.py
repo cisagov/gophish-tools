@@ -32,6 +32,7 @@ import requests
 
 # cisagov Libraries
 from tools.connect import connect_api
+from util.validate import validate_assessment_id
 
 from ._version import __version__
 
@@ -39,21 +40,6 @@ from ._version import __version__
 # as default for https connections, which can not be  verified by a third
 # party; thus, an SSL insecure request warning is produced.
 requests.packages.urllib3.disable_warnings()
-
-
-def assessment_id_valid(assessment_id):
-    """Check if the provided assessment_id is matching the valid assessment_id format. Example: RV1234.
-
-    Args:
-        assessment_id (string): Assessment identifier to validate.
-
-    Returns:
-        match: the result of a regular expression match.
-    """
-    pattern = re.compile("^RV([0-9]){4}")
-    match = pattern.match(assessment_id)
-
-    return match
 
 
 def assessment_exists(api, assessment_id):
@@ -415,7 +401,7 @@ def main() -> None:
             logging.critical(e.args[0])
             sys.exit(1)
 
-    if not assessment_id_valid(args["ASSESSMENT_ID"]):
+    if not validate_assessment_id(args["ASSESSMENT_ID"]):
         logging.critical(
             '"%s" is an invalid assessment_id format. Example: RV1234',
             args["ASSESSMENT_ID"],
