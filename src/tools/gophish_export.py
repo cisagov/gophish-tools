@@ -41,6 +41,21 @@ from ._version import __version__
 requests.packages.urllib3.disable_warnings()
 
 
+def assessment_id_valid(assessment_id):
+    """Check if the provided assessment_id is matching the valid assessment_id format. Example: RV1234.
+
+    Args:
+        assessment_id (string): Assessment identifier to validate.
+
+    Returns:
+        match: the result of a regular expression match.
+    """
+    pattern = re.compile("^RV([0-9]){4}")
+    match = pattern.match(assessment_id)
+
+    return match
+
+
 def assessment_exists(api, assessment_id):
     """Check if GoPhish has at least one campaign for designated assessment.
 
@@ -400,17 +415,14 @@ def main() -> None:
             logging.critical(e.args[0])
             sys.exit(1)
 
-    pattern = re.compile("^RV([0-9]){4}")
-    match = pattern.match(args["ASSESSMENT_ID"])
-
-    print(args["ASSESSMENT_ID"])
-    print(match)
-
-    if match is None:
-        logging.critical('"%s" is an invalid assessment_id format. Example: RV1234')
+    if not assessment_id_valid(args["ASSESSMENT_ID"]):
+        logging.critical(
+            '"%s" is an invalid assessment_id format. Example: RV1234',
+            args["ASSESSMENT_ID"],
+        )
         sys.exit(1)
 
-    if match and assessment_exists(api, args["ASSESSMENT_ID"]):
+    if assessment_exists(api, args["ASSESSMENT_ID"]):
         assessment_dict: Dict = dict()
 
         # Add targets list to assessment dict.
