@@ -24,8 +24,7 @@ def validate_assessment_id(assessment_id):
     Returns:
         match: the result of a regular expression match.
     """
-    pattern = re.compile("^RV([0-9]){4}")
-    match = pattern.match(assessment_id)
+    match = re.match(r"^RV\d{4}", assessment_id)
 
     return match
 
