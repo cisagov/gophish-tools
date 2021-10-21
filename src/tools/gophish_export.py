@@ -403,7 +403,8 @@ def main() -> None:
 
     if not validate_assessment_id(args["ASSESSMENT_ID"]):
         logging.critical(
-            '"%s" is an invalid assessment_id format. Example: RV1234',
+            '"%s" is an invalid assessment_id format. Assessment Identifiers begin with RV and followed by a 4 or 5 '
+            "digit numerical sequence. Example: RV1234",
             args["ASSESSMENT_ID"],
         )
         sys.exit(1)

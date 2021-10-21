@@ -22,11 +22,9 @@ def validate_assessment_id(assessment_id):
         assessment_id (string): Assessment identifier to validate.
 
     Returns:
-        match: the result of a regular expression match.
+        match: The result of a regular expression match.
     """
-    match = re.match(r"^RV\d{4}", assessment_id)
-
-    return match
+    return re.match(r"^RV\d{4,5}$", assessment_id)
 
 
 def validate_email(email):
