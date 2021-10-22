@@ -1,4 +1,4 @@
-"""Import an assessment JSON file into GoPhish.
+"""Import an assessment JSON file into Gophish.
 
 Usage:
   gophish-import [--log-level=LEVEL] [--reschedule] ASSESSMENT_FILE SERVER API_KEY
@@ -6,9 +6,9 @@ Usage:
   gophish-import --version
 
 Options:
-  API_KEY                   GoPhish API key.
+  API_KEY                   Gophish API key.
   ASSESSMENT_FILE           Name of the JSON file containing assessment data.
-  SERVER                    Full URL to GoPhish server.
+  SERVER                    Full URL to Gophish server.
   -r --reschedule           Adjust the current schedule of an assessment with the new schedule in the ASSESSMENT_FILE.
   -h --help                 Show this screen.
   --version                 Show version.
@@ -33,7 +33,7 @@ from tools.connect import connect_api
 
 from ._version import __version__
 
-# Disable "Insecure Request" warning: GoPhish uses a self-signed certificate
+# Disable "Insecure Request" warning: Gophish uses a self-signed certificate
 # as default for https connections, which can not be  verified by a third
 # party; thus, an SSL insecure request warning is produced.
 requests.packages.urllib3.disable_warnings()
@@ -58,8 +58,8 @@ def load_landings(api, assessment):
         logging.debug("Redirect URL: %s", new_page.redirect_url)
 
         """
-         Catches when a page has already been loaded into GoPhish.
-         Finds the current GoPhish page ID so it can be deleted
+         Catches when a page has already been loaded into Gophish.
+         Finds the current Gophish page ID so it can be deleted
          prior to re-loading the new page.
         """
         while True:
@@ -106,8 +106,8 @@ def load_groups(api, assessment):
             new_group.targets.append(target)
 
         """
-         Catches when a Group has already been loaded into GoPhish.
-         Finds the current GoPhish group ID so it can be deleted
+         Catches when a Group has already been loaded into Gophish.
+         Finds the current Gophish group ID so it can be deleted
          prior to re-loading the new group.
         """
         while True:
@@ -155,8 +155,8 @@ def build_campaigns(api, assessment):
         )
 
         """
-         Catches when Template has already been loaded into GoPhish.
-         Finds the current GoPhish template ID so it can be deleted
+         Catches when Template has already been loaded into Gophish.
+         Finds the current Gophish template ID so it can be deleted
          prior to re-loading the new template.
         """
         while True:
@@ -306,7 +306,7 @@ def main() -> None:
         # Load Landing page
         assessment["pages"] = load_landings(api, assessment)
 
-        # Load Groups into GoPhish, returns group numbers correlated to Group number
+        # Load Groups into Gophish, returns group numbers correlated to Group number
         assessment["groups"] = load_groups(api, assessment)
 
         # Load Campaigns

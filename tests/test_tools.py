@@ -1,5 +1,5 @@
 #!/usr/bin/env pytest -vs
-"""Tests for GoPhish tool functions."""
+"""Tests for Gophish tool functions."""
 
 # Third-Party Libraries
 from mock import patch
@@ -38,14 +38,14 @@ class TestExport:
 
     @patch("tools.connect")
     def test_assessment_exists_found(self, mock_api, multiple_campaign_object):
-        """Verify True is returned when assessment is in GoPhish."""
+        """Verify True is returned when assessment is in Gophish."""
         mock_api.campaigns.get.return_value = multiple_campaign_object
 
         assert assessment_exists(mock_api, "RVXXX1") is True
 
     @patch("tools.connect")
     def test_assessment_exists_not_found(self, mock_api, multiple_campaign_object):
-        """Verify False is returned when assessment is not in GoPhish."""
+        """Verify False is returned when assessment is not in Gophish."""
         mock_api.campaigns.get.return_value = multiple_campaign_object
         assert assessment_exists(mock_api, "RVXXX3") is False
 
@@ -55,12 +55,12 @@ class TestExport:
         assert find_unique_target_clicks_count(multiple_click_object) == 4
 
     def mock_get_group_ids(self, s, group_object):
-        """Return a mock list of GoPhish group objects."""
+        """Return a mock list of Gophish group objects."""
         return group_object
 
     # Mocks the group id's returned for the assessment's groups.
     @patch("tools.gophish_export.get_group_ids", return_value=[1, 2])
-    # Mock API to allow GoPhish group objects to be returned.
+    # Mock API to allow Gophish group objects to be returned.
     @patch("tools.connect")
     def test_export_targets(
         self, mock_api, mock_export, multiple_gophish_group_object, email_target_json

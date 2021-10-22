@@ -1,4 +1,4 @@
-"""Module to create a GoPhish API connection."""
+"""Module to create a Gophish API connection."""
 
 # Third-Party Libraries
 from gophish import Gophish
@@ -7,7 +7,7 @@ from requests.exceptions import ConnectionError, MissingSchema
 
 
 def connect_api(api_key, server):
-    """Create a GoPhish API connection."""
+    """Create a Gophish API connection."""
     api = Gophish(api_key, host=server, verify=False)
 
     # Sets up connection and test that it works.
@@ -22,7 +22,7 @@ def connect_api(api_key, server):
         raise Exception(f"Error Connecting: {message}")
 
     except ConnectionError:
-        raise Exception("Networking Error, unable to reach GoPhish.")
+        raise Exception("Networking Error, unable to reach Gophish.")
 
     except Exception:
-        raise Exception("Cannot connect to GoPhish.")
+        raise Exception("Cannot connect to Gophish.")
