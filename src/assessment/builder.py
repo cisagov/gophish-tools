@@ -50,13 +50,16 @@ AUTO_FORWARD = """
                 </html>
                """
 
+CONFIRMATION_PROMPT = "\nDo you need to modify any of the values for this campaign?"
+
 
 def set_time_zone():
     """Select a timezone from a list of US-based time zones.
 
-    :return: Time zone name based on pytz.
+    Returns: Time zone name based on pytz.
     """
     # TODO Allow for a select more option to get access to full list of Time Zones
+    # See issue: https://github.com/cisagov/gophish-tools/issues/49
 
     # Creates list of US Time Zones
     time_zone = list()
@@ -103,7 +106,7 @@ def display_list_pages(assessment):
 def build_assessment(assessment_id):
     """Walk user through building a new assessment document.
 
-    :return an assessment object
+    Returns: an assessment object
     """
     logging.info("Building Assessment")
     # Initializes assessment object with ID and timezone
@@ -212,7 +215,7 @@ def review_campaign(campaign):
                         )
                     )
 
-        if yes_no_prompt("\nChanges Required") == "yes":
+        if yes_no_prompt(CONFIRMATION_PROMPT) == "yes":
             completer = WordCompleter(
                 campaign_dict.keys().remove("template"), ignore_case=True
             )
@@ -472,7 +475,10 @@ def build_emails(domains, labels):
                             targets.append(target)
                 else:
                     logging.error("{} Formatting Errors".format(len(format_error)))
-                    if yes_no_prompt("Would you like to correct each here") == "yes":
+                    if (
+                        yes_no_prompt("Would you like to correct each here? (yes/no)")
+                        == "yes"
+                    ):
                         for email in format_error:
                             email[2] = prompt(
                                 "Correct Email Formatting: ",
@@ -501,10 +507,11 @@ def build_emails(domains, labels):
                             validator=EmailValidator(),
                         )
                 else:
-                    logging.error(
-                        "{} Domain Miss Match Errors".format(len(format_error))
-                    )
-                    if yes_no_prompt("Would you like to correct each here") == "yes":
+                    logging.error("{} Domain Mismatch Errors".format(len(format_error)))
+                    if (
+                        yes_no_prompt("Would you like to correct each here? (yes/no)")
+                        == "yes"
+                    ):
                         for email in domain_miss_match:
                             while True:
                                 email[2] = prompt(
@@ -568,7 +575,7 @@ def build_pages(id_):
     for page_num in range(int(num_pages)):
         logging.info(f"Building Page {page_num + 1}")
         temp_page = Page()
-        auto_forward = yes_no_prompt("    Will this page auto forward")
+        auto_forward = yes_no_prompt("    Will this page auto forward?")
 
         if auto_forward == "yes":
 
@@ -581,7 +588,7 @@ def build_pages(id_):
         else:
             temp_page.name = f"{id_}-{page_num+1}-Landing"
 
-            forward = yes_no_prompt("    Will this page forward after action")
+            forward = yes_no_prompt("    Will this page forward after action? (yes/no)")
             if forward == "yes":
                 temp_page.capture_credentials = True
                 temp_page.redirect_url = get_input("    URL to Redirect to:")
@@ -629,7 +636,7 @@ def review_page(page):
             if key != "html":
                 print("{}: {}".format(key, value))
                 page_keys.append(key)
-        if yes_no_prompt("Changes Required") == "yes":
+        if yes_no_prompt(CONFIRMATION_PROMPT) == "yes":
             completer = WordCompleter(page_keys, ignore_case=True)
 
             # Loops to get valid Field name form user.
