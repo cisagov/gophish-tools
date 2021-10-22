@@ -1,14 +1,14 @@
-"""Send a duplicate assessment from GoPhish to custom targets as a test.
+"""Send a duplicate assessment from Gophish to custom targets as a test.
 
 Usage:
-  gophish-test [--log-level=LEVEL] ASSESSMENT_ID SERVER API_KEY
-  gophish-test (-h | --help)
-  gophish-test --version
+  Gophish-test [--log-level=LEVEL] ASSESSMENT_ID SERVER API_KEY
+  Gophish-test (-h | --help)
+  Gophish-test --version
 
 Options:
-  API_KEY                   GoPhish API key.
+  API_KEY                   Gophish API key.
   ASSESSMENT_ID             ID of the assessment to test.
-  SERVER                    Full URL to GoPhish server.
+  SERVER                    Full URL to Gophish server.
   -h --help                 Show this screen.
   --version                 Show version.
   -l --log-level=LEVEL      If specified, then the log level will be set to
@@ -37,7 +37,7 @@ from util.validate import validate_email
 
 from ._version import __version__
 
-# Disable "Insecure Request" warning: GoPhish uses a self-signed certificate
+# Disable "Insecure Request" warning: Gophish uses a self-signed certificate
 # as default for https connections, which can not be  verified by a third
 # party; thus, an SSL insecure request warning is produced.
 requests.packages.urllib3.disable_warnings()

@@ -9,7 +9,7 @@ from prompt_toolkit.validation import ValidationError, Validator
 EMAIL_TEMPLATE = {
     "id": "Template ID from Database",
     "from_address": 'Full email address format "Display Name<email@domain.com>"',
-    "subject": "Email Subject with GoPhish tags if desired",
+    "subject": "Email Subject with Gophish tags if desired",
     "html": "HTML Body of the email",
     "text": "Text Body of the email",
 }

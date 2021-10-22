@@ -1,4 +1,4 @@
-"""Export all the data from an assessment within GoPhish into a single JSON file.
+"""Export all the data from an assessment within Gophish into a single JSON file.
 
 Usage:
   gophish-export [--log-level=LEVEL] ASSESSMENT_ID SERVER API_KEY
@@ -6,9 +6,9 @@ Usage:
   gophish-export --version
 
 Options:
-  API_KEY                   GoPhish API key.
+  API_KEY                   Gophish API key.
   ASSESSMENT_ID             ID of the assessment to export data from.
-  SERVER                    Full URL to GoPhish server.
+  SERVER                    Full URL to Gophish server.
   -h --help                 Show this screen.
   --version                 Show version.
   -l --log-level=LEVEL      If specified, then the log level will be set to
@@ -36,17 +36,17 @@ from util.validate import validate_assessment_id
 
 from ._version import __version__
 
-# Disable "Insecure Request" warning: GoPhish uses a self-signed certificate
+# Disable "Insecure Request" warning: Gophish uses a self-signed certificate
 # as default for https connections, which can not be  verified by a third
 # party; thus, an SSL insecure request warning is produced.
 requests.packages.urllib3.disable_warnings()
 
 
 def assessment_exists(api, assessment_id):
-    """Check if GoPhish has at least one campaign for designated assessment.
+    """Check if Gophish has at least one campaign for designated assessment.
 
     Args:
-        api (GoPhish API): Connection to GoPhish server via the API.
+        api (Gophish API): Connection to Gophish server via the API.
         assessment_id (string): Assessment identifier to get campaigns from.
 
     Returns:
@@ -69,7 +69,7 @@ def export_targets(api, assessment_id):
     sha256 hash of the target's email and assessment id with any labels.
 
     Args:
-        api (GoPhish API): Connection to GoPhish server via the API.
+        api (Gophish API): Connection to Gophish server via the API.
         assessment_id (string): Assessment identifier to get campaigns from.
 
     Returns:
@@ -108,7 +108,7 @@ def export_targets(api, assessment_id):
 
 def get_group_ids(api, assessment_id):
     """Return a list of group IDs for all groups starting with specified assessment_id."""
-    rawGroup = api.groups.get()  # Holds raw list of campaigns from GoPhish.
+    rawGroup = api.groups.get()  # Holds raw list of campaigns from Gophish.
     groups = list()  # Holds list of campaign IDs that match the assessment.
 
     for group in rawGroup:
@@ -123,7 +123,7 @@ def export_campaigns(api, assessment_id):
     """Add all the campaigns' data for an assessment to a list.
 
     Args:
-        api (GoPhish API): Connection to GoPhish server via the API.
+        api (Gophish API): Connection to Gophish server via the API.
         assessment_id (string): Assessment identifier to get campaigns from.
 
     Returns:
@@ -142,7 +142,7 @@ def export_campaigns(api, assessment_id):
 
 def get_campaign_ids(api, assessment_id):
     """Return a list of campaign IDs for all campaigns starting with specified assessment_id."""
-    rawCampaigns = api.campaigns.get()  # Holds raw list of campaigns from GoPhish.
+    rawCampaigns = api.campaigns.get()  # Holds raw list of campaigns from Gophish.
     campaigns = list()  # Holds list of campaign IDs that match the assessment.
 
     for campaign in rawCampaigns:
@@ -157,7 +157,7 @@ def get_campaign_data(api, campaign_id):
     """Return campaign metadata for the given campaign ID."""
     campaign = dict()
 
-    # Pulls the campaign data as dict from GoPhish.
+    # Pulls the campaign data as dict from Gophish.
     rawCampaign: dict = api.campaigns.get(campaign_id).as_dict()
 
     campaign["id"] = rawCampaign["name"]
@@ -168,14 +168,14 @@ def get_campaign_data(api, campaign_id):
 
     campaign["subject"] = rawCampaign["template"]["subject"]
 
-    # Get the template ID from the GoPhish template name.
+    # Get the template ID from the Gophish template name.
     campaign["template"] = (
         api.templates.get(rawCampaign["template"]["id"]).as_dict()["name"].split("-")[2]
     )
 
     campaign["clicks"] = get_click_data(api, campaign_id)
 
-    # Get the e-mail send status from GoPhish.
+    # Get the e-mail send status from Gophish.
     campaign["status"] = get_email_status(api, campaign_id)
 
     return campaign
@@ -427,6 +427,6 @@ def main() -> None:
         write_campaign_summary(api, args["ASSESSMENT_ID"])
     else:
         logging.error(
-            'Assessment "%s" does not exist in GoPhish.', args["ASSESSMENT_ID"]
+            'Assessment "%s" does not exist in Gophish.', args["ASSESSMENT_ID"]
         )
         sys.exit(1)

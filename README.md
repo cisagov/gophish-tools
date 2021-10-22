@@ -12,19 +12,19 @@
 ![Docker Image Size](https://img.shields.io/docker/image-size/cisagov/gophish-tools)
 
 This repository contains a set of scripts that can be used by phishing
-campaign assessors to simplify the process of managing GoPhish campaigns.
+campaign assessors to simplify the process of managing Gophish campaigns.
 
 ## Scripts ##
 
 - `gophish-cleaner` - Removes an assessment or elements of an assessment
-  in GoPhish.
-- `gophish-complete` - Completes a campaign in GoPhish and/or outputs a
-  GoPhish campaign summary.
-- `gophish-export` - Exports all the data from an assessment within GoPhish
+  in Gophish.
+- `gophish-complete` - Completes a campaign in Gophish and/or outputs a
+  Gophish campaign summary.
+- `gophish-export` - Exports all the data from an assessment within Gophish
   into a single JSON file. In addition, user report JSONs for each campaign in
   an assessment will also be generated.
-- `gophish-import` - Imports an assessment JSON file into GoPhish.
-- `gophish-test` - Sends a duplicate assessment from GoPhish to custom
+- `gophish-import` - Imports an assessment JSON file into Gophish.
+- `gophish-test` - Sends a duplicate assessment from Gophish to custom
   targets as a test.
 - `pca-wizard` - Creates an assessment JSON file via an interactive "wizard".
 - `pca-wizard-templates` - Generates templates for files needed when creating
@@ -96,14 +96,14 @@ An example assessment JSON can be found [here](src/assessment/sample_assessment.
 |------|-------------|:----:|:-------:|:--------:|
 | id | Assessment identifier. (e.g. "RV0000") | string | | yes |
 | timezone | Timezone name based on [pytz](http://pytz.sourceforge.net/) timezones. (e.g. "US/Eastern") | string | | yes |
-| domain | Assessment domain for GoPhish public interface. (e.g. "domain.tld") | string | | yes |
+| domain | Assessment domain for Gophish public interface. (e.g. "domain.tld") | string | | yes |
 | target_domain | Approved target domains where all email recipients must reside. (e.g. ["target1.tld", "target2.tld"]) | list(string) | | yes |
 | start_date | Assessment start date in 24-hr ISO format with offset. (e.g. "2020-01-01T14:00:00-04:00") | string | | yes |
 | end_date | Assessment end date in 24-hr ISO format with offset. (e.g. "2020-01-06T15:30:00-04:00") | string | | yes |
 | reschedule | Indicates if the assessment json is a rescheduled assessment. | boolean | | yes |
 | start_campaign | The campaign that the assessment should start at. | integer | `1` | no |
 | groups | Consolidated list of email recipients grouped to receive campaigns, [example](#group-dictionary). | list(dict) | | yes |
-| pages | GoPhish landing pages, [example](#page-dictionary). | list(dict) | | yes |
+| pages | Gophish landing pages, [example](#page-dictionary). | list(dict) | | yes |
 | campaigns | Assessment campaigns, [example](#campaign-dictionary). | list(dict) | | yes |
 
 ### Group Dictionary ###
@@ -130,8 +130,8 @@ with the command `pca-wizard-templates  --targets`.
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
 | name | Page name in the format of `{assessment identifier}-{integer}-{descriptor}` (e.g. "RV0000-1-AutoForward"). | string | | yes |
-| capture_credentials | Capture all non-password input with GoPhish. Supports forwarding after submit action. | boolean | | yes |
-| capture_passwords | Capture password input by the user, but note that captured input is **stored in plain text as of GoPhish version 0.9.0.** | boolean | `False` | no |
+| capture_credentials | Capture all non-password input with Gophish. Supports forwarding after submit action. | boolean | | yes |
+| capture_passwords | Capture password input by the user, but note that captured input is **stored in plain text as of Gophish version 0.9.0.** | boolean | `False` | no |
 | html | Content of the landing page in HTML format. | string | | yes |
 
 ### Campaign Dictionary ###
@@ -145,7 +145,7 @@ with the command `pca-wizard-templates  --targets`.
 | page_name | Landing page name as defined in the assessment json. | string | | yes |
 | group_name | Group name as defined in the assessment json. | string | | yes |
 | template | Email template for the campaign, [example](#email-template-dictionary). | dict | | yes |
-| smtp | GoPhish sending profile, [example](#smtp-dictionary). | dict | | yes |
+| smtp | Gophish sending profile, [example](#smtp-dictionary). | dict | | yes |
 
 ### Email Template Dictionary ###
 
@@ -165,9 +165,9 @@ with the command `pca-wizard-templates  --emails`.
 |------|-------------|:----:|:-------:|:--------:|
 | name | Sending profile name in the format of `{assessment identifier}-SP-{integer}` (e.g. "RV0000-SP-1"). | string | | yes |
 | from_address | From email address with display name, required format: `{display name}<{sending email address}>`. (e.g. "John Doe\<john.doe@domain.tld\>") | string | | yes |
-| host | Email server for GoPhish to send email through. | string | "postfix:587" | no |
-| interface_type | Type of interface GoPhish will use with mail server. | string | "SMTP" | no |
-| ignore_cert | Indicate if GoPhish should ignore certs with mail server. | boolean | `True` | no |
+| host | Email server for Gophish to send email through. | string | "postfix:587" | no |
+| interface_type | Type of interface Gophish will use with mail server. | string | "SMTP" | no |
+| ignore_cert | Indicate if Gophish should ignore certs with mail server. | boolean | `True` | no |
 
 ## User Report Field Dictionary ##
 

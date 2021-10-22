@@ -1,4 +1,4 @@
-"""Remove an assessment or elements of an assessment in GoPhish.
+"""Remove an assessment or elements of an assessment in Gophish.
 
 Usage:
   gophish-cleaner (--assessment | --campaigns | --groups | --pages | --smtp | --templates) [--log-level=LEVEL] ASSESSMENT_ID SERVER API_KEY
@@ -6,9 +6,9 @@ Usage:
   gophish-cleaner --version
 
 Options:
-  API_KEY                   GoPhish API key.
+  API_KEY                   Gophish API key.
   ASSESSMENT_ID             ID of the assessment to remove data from.
-  SERVER                    Full URL to GoPhish server.
+  SERVER                    Full URL to Gophish server.
   -a --assessment           Remove all data for the specified assessment.
   -c --campaigns            Remove all campaigns from the specified assessment.
   -g --groups               Remove all users and groups from the specified assessment.
@@ -39,7 +39,7 @@ from tools.connect import connect_api
 
 from ._version import __version__
 
-# Disable "Insecure Request" warning: GoPhish uses a self-signed certificate
+# Disable "Insecure Request" warning: Gophish uses a self-signed certificate
 # as default for https connections, which can not be  verified by a third
 # party; thus, an SSL insecure request warning is produced.
 requests.packages.urllib3.disable_warnings()
