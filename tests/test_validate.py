@@ -5,7 +5,12 @@
 import pytest
 
 # cisagov Libraries
-from util.validate import FormatError, validate_domain, validate_email
+from util.validate import (
+    FormatError,
+    validate_assessment_id,
+    validate_domain,
+    validate_email,
+)
 
 
 @pytest.mark.parametrize(
@@ -35,3 +40,15 @@ def test_validate_domain_valid(email, domain):
 def test_validate_domain_invalid(email, domain):
     """Test an invalid domain."""
     assert not validate_domain(email, domain)
+
+
+@pytest.mark.parametrize("assessment_id", ["RV1234"])
+def test_validate_assessment_id_valid(assessment_id):
+    """Test a valid assessment_id."""
+    assert validate_assessment_id(assessment_id)
+
+
+@pytest.mark.parametrize("assessment_id", ["RV...."])
+def test_validate_assessment_id_invalid(assessment_id):
+    """Test an invalid assessment_id."""
+    assert not validate_assessment_id(assessment_id)

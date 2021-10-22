@@ -32,6 +32,7 @@ import requests
 
 # cisagov Libraries
 from tools.connect import connect_api
+from util.validate import validate_assessment_id
 
 from ._version import __version__
 
@@ -399,6 +400,14 @@ def main() -> None:
         except Exception as e:
             logging.critical(e.args[0])
             sys.exit(1)
+
+    if not validate_assessment_id(args["ASSESSMENT_ID"]):
+        logging.critical(
+            '"%s" is an invalid assessment_id format. Assessment identifiers begin with RV and are followed by '
+            " a 4 or 5 digit numerical sequence. Examples: RV1234, RV12345",
+            args["ASSESSMENT_ID"],
+        )
+        sys.exit(1)
 
     if assessment_exists(api, args["ASSESSMENT_ID"]):
         assessment_dict: Dict = dict()
