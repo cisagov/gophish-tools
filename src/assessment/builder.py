@@ -576,12 +576,12 @@ def build_pages(id_):
         logging.info(f"Building Page {page_num + 1}")
         temp_page = Page()
         auto_forward = yes_no_prompt("    Will this page auto forward?")
+        temp_page.capture_credentials = False
+        temp_page.capture_passwords = False
 
         if auto_forward == "yes":
 
             setattr(temp_page, "name", f"{id_}-{page_num+1}-AutoForward")
-            temp_page.capture_credentials = False
-            temp_page.capture_passwords = False
             temp_page.html = AUTO_FORWARD
             temp_page.redirect_url = get_input("    URL to Redirect to:")
 
@@ -590,12 +590,7 @@ def build_pages(id_):
 
             forward = yes_no_prompt("    Will this page forward after action? (yes/no)")
             if forward == "yes":
-                temp_page.capture_credentials = False
                 temp_page.redirect_url = get_input("    URL to Redirect to:")
-            else:
-                temp_page.capture_credentials = False
-
-            temp_page.capture_passwords = False
 
             # Receives the file name and checks if it exists.
             while True:
