@@ -580,14 +580,12 @@ def build_pages(id_):
         temp_page.capture_passwords = False
 
         if auto_forward == "yes":
-
             setattr(temp_page, "name", f"{id_}-{page_num+1}-AutoForward")
             temp_page.html = AUTO_FORWARD
             temp_page.redirect_url = get_input("    URL to Redirect to:")
 
         else:
             temp_page.name = f"{id_}-{page_num+1}-Landing"
-
             forward = yes_no_prompt("    Will this page forward after action? (yes/no)")
             if forward == "yes":
                 temp_page.redirect_url = get_input("    URL to Redirect to:")
