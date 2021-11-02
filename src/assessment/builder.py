@@ -16,6 +16,7 @@ Options:
 # Standard Python Libraries
 import copy
 import csv
+import datetime
 import json
 import logging
 import sys
@@ -155,7 +156,13 @@ def build_campaigns(assessment, campaign_number, template_smtp):
     campaign = Campaign(name=assessment.id)
 
     # Get Launch Time
-    campaign.launch_date = get_time_input("start", assessment.timezone)
+    while True:
+        campaign.launch_date = get_time_input("start", assessment.timezone)
+
+        if campaign.launch_date > datetime.now():
+            break
+        else:
+            logging.error("Launch date is not after the current datetime")
 
     while True:
         campaign.complete_date = get_time_input("end", assessment.timezone)
@@ -164,6 +171,11 @@ def build_campaigns(assessment, campaign_number, template_smtp):
             break
         else:
             logging.error("Complete Date is not after Launch Date.")
+
+        if campaign.complete_date > datetime.now():
+            break
+        else:
+            logging.error("Complete date is not after the current datetime.")
 
     campaign.smtp, campaign.template = import_email(
         assessment, campaign_number, template_smtp
