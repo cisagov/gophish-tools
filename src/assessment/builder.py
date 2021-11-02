@@ -16,7 +16,7 @@ Options:
 # Standard Python Libraries
 import copy
 import csv
-import datetime
+from datetime import datetime
 import json
 import logging
 import sys
