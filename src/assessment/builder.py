@@ -154,31 +154,26 @@ def build_campaigns(assessment, campaign_number, template_smtp):
     # Set up component holders
     logging.info("Building Campaign %s", assessment.id)
     campaign = Campaign(name=assessment.id)
+    campaign_tz = pytz.timezone(assessment.timezone)
 
     # Get Launch Time
     while True:
         campaign.launch_date = get_time_input("start", assessment.timezone)
-        logging.info("Campaign launch date: %s", campaign.launch_date)
-        if (
-            campaign.launch_date
-            > pytz.timezone(assessment.timezone).localize(datetime.now()).isoformat()
-        ):
+
+        if campaign.launch_date > datetime.now(campaign_tz).isoformat():
             break
         else:
             logging.error("Launch date is not after the current datetime")
 
     while True:
         campaign.complete_date = get_time_input("end", assessment.timezone)
-        logging.info("Campaign complete date: %s", campaign.complete_date)
+
         if campaign.complete_date > campaign.launch_date:
             break
         else:
             logging.error("Complete Date is not after Launch Date.")
 
-        if (
-            campaign.complete_date
-            > pytz.timezone(assessment.timezone).localize(datetime.now()).isoformat()
-        ):
+        if campaign.complete_date > datetime.now(campaign_tz).isoformat():
             break
         else:
             logging.error("Complete date is not after the current datetime.")
