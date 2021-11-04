@@ -155,11 +155,11 @@ def build_campaigns(assessment, campaign_number, template_smtp):
     logging.info("Building Campaign %s", assessment.id)
     campaign = Campaign(name=assessment.id)
     campaign_tz = pytz.timezone(assessment.timezone)
-
+    logging.info("Assessment timezone: %s", assessment.timezone)
     # Get Launch Time
     while True:
         campaign.launch_date = get_time_input("start", assessment.timezone)
-
+        logging.info("Campaign launch date: %s", campaign.launch_date)
         if campaign.launch_date > datetime.now(campaign_tz).isoformat():
             break
         else:
@@ -167,7 +167,9 @@ def build_campaigns(assessment, campaign_number, template_smtp):
 
     while True:
         campaign.complete_date = get_time_input("end", assessment.timezone)
-
+        datetime_now = datetime.now(campaign_tz).isoformat()
+        logging.info("Campaign complete date: %s", campaign.complete_date)
+        logging.info("Datetime_now: %s", datetime_now)
         if campaign.complete_date > campaign.launch_date:
             break
         else:
