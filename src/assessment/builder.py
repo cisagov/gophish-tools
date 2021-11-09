@@ -168,15 +168,15 @@ def build_campaigns(assessment, campaign_number, template_smtp):
     while True:
         campaign.complete_date = get_time_input("end", assessment.timezone)
 
-        if campaign.complete_date < campaign.launch_date:
-            logging.error("Complete Date is not after launch Date.")
-
-        elif campaign.complete_date < datetime.now(campaign_tz).isoformat():
-            logging.error("Complete date is not after the current datetime.")
-
+        if campaign.complete_date > campaign.launch_date:
+            pass  # Do nothing yet and continue checks
         else:
-            # else we have valid complete dates
-            break
+            logging.error("Complete Date is not after Launch Date.")
+
+        if campaign.complete_date > datetime.now(campaign_tz).isoformat():
+            break  # Valid input, break out of loop
+        else:
+            logging.error("Complete date is not after the current datetime.")
 
     campaign.smtp, campaign.template = import_email(
         assessment, campaign_number, template_smtp
