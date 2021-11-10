@@ -171,7 +171,7 @@ def build_campaigns(assessment, campaign_number, template_smtp):
         if campaign.complete_date > campaign.launch_date:
             pass  # Do nothing yet and continue checks
         else:
-            logging.error("Complete Date is not after Launch Date.")
+            logging.error("Complete date is not after launch date.")
 
         if campaign.complete_date > datetime.now(campaign_tz).isoformat():
             break  # Valid input, break out of loop
