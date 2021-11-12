@@ -16,6 +16,7 @@ Options:
 # Standard Python Libraries
 import copy
 import csv
+from datetime import datetime
 import json
 import logging
 import sys
@@ -153,17 +154,29 @@ def build_campaigns(assessment, campaign_number, template_smtp):
     # Set up component holders
     logging.info("Building Campaign %s", assessment.id)
     campaign = Campaign(name=assessment.id)
+    campaign_tz = pytz.timezone(assessment.timezone)
 
     # Get Launch Time
-    campaign.launch_date = get_time_input("start", assessment.timezone)
+    while True:
+        campaign.launch_date = get_time_input("start", assessment.timezone)
+
+        if campaign.launch_date > datetime.now(campaign_tz).isoformat():
+            break
+        else:
+            logging.error("Launch date is not after the current datetime")
 
     while True:
         campaign.complete_date = get_time_input("end", assessment.timezone)
 
         if campaign.complete_date > campaign.launch_date:
-            break
+            pass  # Do nothing yet and continue checks
         else:
-            logging.error("Complete Date is not after Launch Date.")
+            logging.error("Complete date is not after launch date.")
+
+        if campaign.complete_date > datetime.now(campaign_tz).isoformat():
+            break  # Valid input, break out of loop
+        else:
+            logging.error("Complete date is not after the current datetime.")
 
     campaign.smtp, campaign.template = import_email(
         assessment, campaign_number, template_smtp
