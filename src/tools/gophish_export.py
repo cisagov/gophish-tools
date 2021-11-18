@@ -277,6 +277,7 @@ def write_campaign_summary(api, assessment_id):
     file_out = open(campaign_summary_textfile, "w+")
     file_out.write("Campaigns for Assessment: " + assessment_id)
 
+    campaign_data["assessment_id"] = assessment_id
     regex = re.compile(r"^.*_(?P<level>level-[1-6])$")
     for campaign_id in campaign_ids:
         campaign = api.campaigns.get(campaign_id)
@@ -292,7 +293,6 @@ def write_campaign_summary(api, assessment_id):
             )
             continue
 
-        logging.info(level)
         clicks = get_click_data(api, campaign_id)
 
         total_clicks = api.campaigns.summary(campaign_id=campaign_id).stats.clicked
@@ -301,6 +301,8 @@ def write_campaign_summary(api, assessment_id):
             percent_clicks = unique_clicks / float(total_clicks)
         else:
             percent_clicks = 0.0
+        campaign_data[level]["campaign_id"] = campaign_id
+        campaign_data[level]["level"] = level
         campaign_data[level]["subject"] = campaign.template.subject
         campaign_data[level]["sender"] = campaign.smtp.from_address
         campaign_data[level]["start_date"] = campaign.launch_date
@@ -313,6 +315,7 @@ def write_campaign_summary(api, assessment_id):
         file_out.write("\n")
         file_out.write("-" * 50)
         file_out.write("\nCampaign: %s" % campaign.name)
+        file_out.write("\nLevel: %s" % level)
         file_out.write("\nSubject: %s" % campaign_data[level]["subject"])
         file_out.write("\nSender: %s" % campaign_data[level]["sender"])
         file_out.write("\nStart Date: %s" % campaign_data[level]["start_date"])
