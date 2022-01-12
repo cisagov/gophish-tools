@@ -28,7 +28,7 @@ from typing import Dict
 # Third-Party Libraries
 from docopt import docopt
 import httpagentparser
-import requests
+import requests.packages.urllib3
 
 # cisagov Libraries
 from tools.connect import connect_api

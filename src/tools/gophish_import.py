@@ -26,7 +26,7 @@ from typing import Dict
 # Third-Party Libraries
 from docopt import docopt
 from gophish.models import SMTP, Campaign, Error, Group, Page, Template, User
-import requests
+import requests.packages.urllib3
 
 # cisagov Libraries
 from tools.connect import connect_api
