@@ -249,7 +249,7 @@ jobs:
           version=$(./bump_version.sh project show)
           docker save $IMAGE_NAME:latest | gzip > dist/image.tar.gz
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: dist-${{ matrix.python-version }}
           path: dist
