@@ -1,8 +1,10 @@
 #!/usr/bin/env pytest -vs
 """Tests for Gophish tool functions."""
 
+# Standard Python Libraries
+from unittest.mock import patch
+
 # Third-Party Libraries
-from mock import patch
 import pytest
 
 # cisagov Libraries
