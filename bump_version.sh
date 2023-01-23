@@ -14,11 +14,11 @@ else
   case $1 in
     project)
       VERSION_FILE=src/_version.py
-      old_version=$(sed -n "s/^__version__ = \"\(.*\)\"$/\1/p" $VERSION_FILE)
+      old_version=$(sed -n "s/^__version__ = \"\(.*\)\"$/\1/p" "$VERSION_FILE")
       ;;
     assessment | templates | tools)
       VERSION_FILE=src/$1/_version.py
-      old_version=$(sed -n "s/^__version__ = \"\(.*\)\"$/\1/p" $VERSION_FILE)
+      old_version=$(sed -n "s/^__version__ = \"\(.*\)\"$/\1/p" "$VERSION_FILE")
       ;;
     *)
       echo "$HELP_INFORMATION"
@@ -37,7 +37,7 @@ else
       # A temp file is used to provide compatability with macOS development
       # as a result of macOS using the BSD version of sed
       tmp_file=/tmp/version.$$
-      sed "s/$old_version_regex/$new_version/" $VERSION_FILE > $tmp_file
+      sed "s/$old_version_regex/$new_version/" "$VERSION_FILE" > $tmp_file
       mv "$tmp_file" "$VERSION_FILE"
       git add "$VERSION_FILE"
       git commit -m"Bump $1 version from $old_version to $new_version"
@@ -49,7 +49,7 @@ else
       # A temp file is used to provide compatability with macOS development
       # as a result of macOS using the BSD version of sed
       tmp_file=/tmp/version.$$
-      sed "s/$old_version_regex/$new_version/" $VERSION_FILE > $tmp_file
+      sed "s/$old_version_regex/$new_version/" "$VERSION_FILE" > $tmp_file
       mv "$tmp_file" "$VERSION_FILE"
       git add "$VERSION_FILE"
       git commit -m"Bump $1 version from $old_version to $new_version"
