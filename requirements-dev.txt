@@ -2,3 +2,7 @@
 ipython
 mypy
 semver
+types-docopt
+types-Pygments
+types-pytz
+types-requests
