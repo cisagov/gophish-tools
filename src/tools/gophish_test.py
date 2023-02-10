@@ -27,8 +27,11 @@ from typing import Dict
 
 # Third-Party Libraries
 from docopt import docopt
-from gophish.models import SMTP, Campaign, Group, Page, Template, User
-import requests.packages.urllib3
+
+# No type stubs exist for gophish or requests.packages.urllib3, so we add
+# "type: ignore" to tell mypy to ignore these libraries
+from gophish.models import SMTP, Campaign, Group, Page, Template, User  # type: ignore
+import requests.packages.urllib3  # type: ignore
 
 # cisagov Libraries
 from tools.connect import connect_api

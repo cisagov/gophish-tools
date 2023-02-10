@@ -27,8 +27,11 @@ from typing import Dict
 
 # Third-Party Libraries
 from docopt import docopt
-import httpagentparser
-import requests.packages.urllib3
+
+# No type stubs exist for httpagentparser or requests.packages.urllib3, so we
+# add "type: ignore" to tell mypy to ignore these libraries
+import httpagentparser  # type: ignore
+import requests.packages.urllib3  # type: ignore
 
 # cisagov Libraries
 from tools.connect import connect_api

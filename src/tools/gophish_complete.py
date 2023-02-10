@@ -30,7 +30,10 @@ from typing import Dict
 
 # Third-Party Libraries
 from docopt import docopt
-import requests.packages.urllib3
+
+# No type stubs exist for requests.packages.urllib3, so we add "type: ignore"
+# to tell mypy to ignore this library
+import requests.packages.urllib3  # type: ignore
 
 # cisagov Libraries
 from tools.connect import connect_api
