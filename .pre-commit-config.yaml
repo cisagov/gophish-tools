@@ -116,7 +116,6 @@ repos:
     hooks:
       - id: mypy
         additional_dependencies:
-          - types-mock
           - types-pytz
           - types-requests
   - repo: https://github.com/asottile/pyupgrade
