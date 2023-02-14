@@ -6,3 +6,4 @@ types-docopt
 types-Pygments
 types-pytz
 types-requests
+types-urllib3

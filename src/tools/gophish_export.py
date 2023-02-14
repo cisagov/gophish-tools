@@ -28,10 +28,10 @@ from typing import Dict
 # Third-Party Libraries
 from docopt import docopt
 
-# No type stubs exist for httpagentparser or requests.packages.urllib3, so we
-# add "type: ignore" to tell mypy to ignore these libraries
+# No type stubs exist for httpagentparser, so we add "type: ignore" to tell
+# mypy to ignore this library
 import httpagentparser  # type: ignore
-import requests.packages.urllib3  # type: ignore
+import urllib3
 
 # cisagov Libraries
 from tools.connect import connect_api
@@ -42,7 +42,7 @@ from ._version import __version__
 # Disable "Insecure Request" warning: Gophish uses a self-signed certificate
 # as default for https connections, which can not be  verified by a third
 # party; thus, an SSL insecure request warning is produced.
-requests.packages.urllib3.disable_warnings()
+urllib3.disable_warnings()
 
 
 def assessment_exists(api, assessment_id):

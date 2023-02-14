@@ -99,6 +99,7 @@ setup(
         "pytz >= 2019.1",
         "schema",
         "setuptools >= 24.2.0",
+        "urllib3",
     ],
     extras_require={
         "test": [
