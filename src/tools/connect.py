@@ -1,8 +1,10 @@
 """Module to create a Gophish API connection."""
 
 # Third-Party Libraries
-from gophish import Gophish
-from gophish.models import Error
+# No type stubs exist for gophish, so we add "type: ignore" to tell mypy to
+# ignore this library
+from gophish import Gophish  # type: ignore
+from gophish.models import Error  # type: ignore
 from requests.exceptions import ConnectionError, MissingSchema
 
 

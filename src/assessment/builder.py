@@ -343,7 +343,7 @@ def import_email(assessment, campaign_number, template_smtp):
             # Validates that all fields are present or raise MissingKey Error.
             email_import_validation(import_temp)
             break
-        except EnvironmentError:
+        except OSError:
             logging.critical("Import File not found: {}.json".format(import_file_name))
             print("Please try again...")
 
@@ -386,7 +386,7 @@ def create_email(assessment, campaign_number=""):
                 temp_template.html = htmlFile.read()
 
             break
-        except EnvironmentError:
+        except OSError:
             logging.error(f"HTML Template File not found: {html_file_name}.html")
             print("Please try again...")
 
@@ -401,7 +401,7 @@ def create_email(assessment, campaign_number=""):
                 temp_template.text = textFile.read()
 
             break
-        except EnvironmentError:
+        except OSError:
             logging.critical(
                 "Text Template File not found: {}.txt".format(text_file_name)
             )
@@ -549,7 +549,7 @@ def build_emails(domains, labels):
             if len(targets) == 0:
                 raise Exception("No targets loaded")
             break
-        except EnvironmentError:
+        except OSError:
             logging.critical("Email File not found: {}.csv".format(email_file_name))
             print("\t Please try again...")
         except Exception:
@@ -614,7 +614,7 @@ def build_pages(id_):
                         temp_page.html = landingFile.read()
 
                     break
-                except EnvironmentError:
+                except OSError:
                     logging.critical(
                         f"ERROR- Landing Page File not found: {landing_file_name}.html"
                     )

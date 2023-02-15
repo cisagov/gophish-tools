@@ -7,7 +7,7 @@ from typing import Any, Dict
 # TODO Research .attribute only valid properties
 
 
-class Model(object):
+class Model:
     """The Model class."""
 
     _valid_properties: Dict[str, Any] = dict()

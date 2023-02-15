@@ -110,7 +110,7 @@ def main() -> None:
         with open(args["ASSESSMENT_FILE"]) as json_file:
             json_data = json.load(json_file)
 
-    except EnvironmentError:
+    except OSError:
         logging.critical(f"JSON file not found: {args['ASSESSMENT_FILE']}")
         logging.critical("Please run command from the location with the file.")
         # Bandit complains about the input() function, but it is safe to

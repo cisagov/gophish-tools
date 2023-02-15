@@ -25,8 +25,19 @@ from typing import Dict
 
 # Third-Party Libraries
 from docopt import docopt
-from gophish.models import SMTP, Campaign, Error, Group, Page, Template, User
-import requests.packages.urllib3
+
+# No type stubs exist for gophish, so we add "type: ignore" to tell mypy to
+# ignore this library
+from gophish.models import (  # type: ignore
+    SMTP,
+    Campaign,
+    Error,
+    Group,
+    Page,
+    Template,
+    User,
+)
+import urllib3
 
 # cisagov Libraries
 from tools.connect import connect_api
@@ -36,7 +47,7 @@ from ._version import __version__
 # Disable "Insecure Request" warning: Gophish uses a self-signed certificate
 # as default for https connections, which can not be  verified by a third
 # party; thus, an SSL insecure request warning is produced.
-requests.packages.urllib3.disable_warnings()
+urllib3.disable_warnings()
 
 
 def load_landings(api, assessment):

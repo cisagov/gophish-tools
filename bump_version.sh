@@ -25,6 +25,11 @@ else
       exit
       ;;
   esac
+
+  # Comment out periods so they are interpreted as periods and don't
+  # just match any character
+  old_version_regex=${old_version//\./\\\.}
+
   case $2 in
     major | minor | patch | prerelease | build)
       new_version=$(python -c "import semver; print(semver.bump_$2('$old_version'))")
@@ -32,7 +37,7 @@ else
       # A temp file is used to provide compatability with macOS development
       # as a result of macOS using the BSD version of sed
       tmp_file=/tmp/version.$$
-      sed "s/$old_version/$new_version/" "$VERSION_FILE" > $tmp_file
+      sed "s/$old_version_regex/$new_version/" "$VERSION_FILE" > $tmp_file
       mv "$tmp_file" "$VERSION_FILE"
       git add "$VERSION_FILE"
       git commit -m"Bump $1 version from $old_version to $new_version"
@@ -44,7 +49,7 @@ else
       # A temp file is used to provide compatability with macOS development
       # as a result of macOS using the BSD version of sed
       tmp_file=/tmp/version.$$
-      sed "s/$old_version/$new_version/" "$VERSION_FILE" > $tmp_file
+      sed "s/$old_version_regex/$new_version/" "$VERSION_FILE" > $tmp_file
       mv "$tmp_file" "$VERSION_FILE"
       git add "$VERSION_FILE"
       git commit -m"Bump $1 version from $old_version to $new_version"

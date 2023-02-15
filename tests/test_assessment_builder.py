@@ -1,7 +1,7 @@
 #!/usr/bin/env pytest -vs
 """Test for Assessment Builder."""
-# Third-Party Libraries
-from mock import patch
+# Standard Python Libraries
+from unittest.mock import patch
 
 # cisagov Libraries
 from assessment.builder import set_time_zone
