@@ -79,7 +79,6 @@ def add_group(api, assessment_id):
     target.first_name = get_input("Enter First Name: ")
     # Receives the file name and checks if it exists.
     while target.first_name != "done" or target.first_name == "":
-
         target.last_name = get_input("Enter Last Name: ")
 
         while True:

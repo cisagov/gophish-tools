@@ -291,7 +291,7 @@ def multiple_gophish_group_object():
 def email_target_json():
     """Return a email target JSON with 4 emails matching the Gophish group object."""
     targets = list()
-    for (email, position) in [
+    for email, position in [
         ("jane.smith1@domain.tld", "IT"),
         ("john.doe1@domain.tld", "HR"),
         ("jane.smith2@domain.tld", "IT"),
