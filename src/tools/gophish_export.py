@@ -87,7 +87,6 @@ def export_targets(api, assessment_id):
         raw_targets = api.groups.get(group_id).as_dict()["targets"]
 
         for raw_target in raw_targets:
-
             target = dict()
 
             target["id"] = hashlib.sha256(
@@ -225,7 +224,6 @@ def get_email_status(api, campaign_id):
             email["status"] = "SUCCESS"
 
         elif rawEvent["message"] == "Error Sending Email":
-
             email["user"] = hashlib.sha256(
                 rawEvent["email"].encode("utf-8")
             ).hexdigest()
