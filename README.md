@@ -93,12 +93,12 @@ An example assessment JSON can be found [here](src/assessment/sample_assessment.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
-| id | Assessment identifier. (e.g. "RV0000") | string | | yes |
-| timezone | Timezone name based on [pytz](http://pytz.sourceforge.net/) timezones. (e.g. "US/Eastern") | string | | yes |
-| domain | Assessment domain for Gophish public interface. (e.g. "domain.tld") | string | | yes |
-| target_domain | Approved target domains where all email recipients must reside. (e.g. ["target1.tld", "target2.tld"]) | list(string) | | yes |
-| start_date | Assessment start date in 24-hr ISO format with offset. (e.g. "2020-01-01T14:00:00-04:00") | string | | yes |
-| end_date | Assessment end date in 24-hr ISO format with offset. (e.g. "2020-01-06T15:30:00-04:00") | string | | yes |
+| id | Assessment identifier. (e.g. `RV0000`) | string | | yes |
+| timezone | Timezone name based on [pytz](http://pytz.sourceforge.net/) timezones. (e.g. `US/Eastern`) | string | | yes |
+| domain | Assessment domain for Gophish public interface. (e.g. `domain.tld`) | string | | yes |
+| target_domain | Approved target domains where all email recipients must reside. (e.g. `[target1.tld, target2.tld]`) | list(string) | | yes |
+| start_date | Assessment start date in 24-hr ISO format with offset. (e.g. `2020-01-01T14:00:00-04:00`) | string | | yes |
+| end_date | Assessment end date in 24-hr ISO format with offset. (e.g. `2020-01-06T15:30:00-04:00`) | string | | yes |
 | reschedule | Indicates if the assessment json is a rescheduled assessment. | boolean | | yes |
 | start_campaign | The campaign that the assessment should start at. | integer | `1` | no |
 | groups | Consolidated list of email recipients grouped to receive campaigns, [example](#group-dictionary). | list(dict) | | yes |
@@ -112,7 +112,7 @@ with the command `pca-wizard-templates  --targets`.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
-| name | Group name in the format of `{assessment identifier}-G{integer}` (e.g. "RV0000-G1"). | string | | yes |
+| name | Group name in the format of `{assessment identifier}-G{integer}` (e.g. `RV0000-G1`). | string | | yes |
 | targets | List of email recipients, [example](#target-dictionary). | list(dict) | | yes |
 
 ### Target Dictionary ###
@@ -121,14 +121,14 @@ with the command `pca-wizard-templates  --targets`.
 |------|-------------|:----:|:-------:|:--------:|
 | first_name | Recipient's first name. | string | | yes |
 | last_name | Recipient's last name. | string | | yes |
-| email | Recipient's email address. (e.g. "john.doe@target1.tld") | string | | yes |
+| email | Recipient's email address. (e.g. `john.doe@target1.tld`) | string | | yes |
 | position | Position name for use in creating sub-groups of recipients within the organization such as "HR", "IT", etc. | string | | no |
 
 ### Page Dictionary ###
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
-| name | Page name in the format of `{assessment identifier}-{integer}-{descriptor}` (e.g. "RV0000-1-AutoForward"). | string | | yes |
+| name | Page name in the format of `{assessment identifier}-{integer}-{descriptor}` (e.g. `RV0000-1-AutoForward`). | string | | yes |
 | capture_credentials | Capture all non-password input with Gophish. Supports forwarding after submit action. | boolean | | yes |
 | capture_passwords | Capture password input by the user, but note that captured input is **stored in plain text as of Gophish version 0.9.0.** | boolean | `False` | no |
 | html | Content of the landing page in HTML format. | string | | yes |
@@ -137,10 +137,10 @@ with the command `pca-wizard-templates  --targets`.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
-| name | Campaign name in the format of `{assessment identifier}-C{integer}` (e.g. "RV0000-C1"). | string | | yes |
-| launch_date | Campaign launch date in 24-hr ISO format with offset. (e.g. "2020-01-01T14:00:00-04:00")  | string | | yes |
-| completed_date | Campaign completion date in 24-hr ISO format with offset. (e.g. "2020-01-01T15:30:00-04:00")  | string | | yes |
-| url | Full URL for the campaign's landing page. (e.g. "http://domain.tld/camp/1") | string | | yes |
+| name | Campaign name in the format of `{assessment identifier}-C{integer}` (e.g. `RV0000-C1`). | string | | yes |
+| launch_date | Campaign launch date in 24-hr ISO format with offset. (e.g. `2020-01-01T14:00:00-04:00`)  | string | | yes |
+| completed_date | Campaign completion date in 24-hr ISO format with offset. (e.g. `2020-01-01T15:30:00-04:00`)  | string | | yes |
+| url | Full URL for the campaign's landing page. (e.g. `http://domain.tld/camp/1`) | string | | yes |
 | page_name | Landing page name as defined in the assessment json. | string | | yes |
 | group_name | Group name as defined in the assessment json. | string | | yes |
 | template | Email template for the campaign, [example](#email-template-dictionary). | dict | | yes |
@@ -153,7 +153,7 @@ with the command `pca-wizard-templates  --emails`.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
-| name | Template name in the format of `{assessment identifier}-T{integer}-{template identifier}` (e.g. "RV0000-T1-1A2B3D"). | string | | yes |
+| name | Template name in the format of `{assessment identifier}-T{integer}-{template identifier}` (e.g. `RV0000-T1-1A2B3D`). | string | | yes |
 | subject | Email subject as seen by recipients. | string | | yes |
 | html | HTML representation of the email. | string | | yes |
 | text | Plain text representation of the email. | string | | yes |
@@ -162,10 +162,10 @@ with the command `pca-wizard-templates  --emails`.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
-| name | Sending profile name in the format of `{assessment identifier}-SP-{integer}` (e.g. "RV0000-SP-1"). | string | | yes |
-| from_address | From email address with display name, required format: `{display name}<{sending email address}>`. (e.g. "John Doe\<john.doe@domain.tld\>") | string | | yes |
-| host | Email server for Gophish to send email through. | string | "postfix:587" | no |
-| interface_type | Type of interface Gophish will use with mail server. | string | "SMTP" | no |
+| name | Sending profile name in the format of `{assessment identifier}-SP-{integer}` (e.g. `RV0000-SP-1`). | string | | yes |
+| from_address | From email address with display name, required format: `{display name}<{sending email address}>`. (e.g. `John Doe<john.doe@domain.tld>`) | string | | yes |
+| host | Email server for Gophish to send email through. | string | `postfix:587` | no |
+| interface_type | Type of interface Gophish will use with mail server. | string | `SMTP` | no |
 | ignore_cert | Indicate if Gophish should ignore certs with mail server. | boolean | `True` | no |
 
 ## User Report Field Dictionary ##
@@ -179,7 +179,7 @@ campaign.
 | assessment | Assessment ID that this user report is associated with. | string |
 | campaign | Campaign ID that this user report is associated with. | string |
 | customer | Customer ID that this user report document is associated with. Note that Gophish does not contain this information, so `gophish-export` will always export it as an empty string. | string |
-| first_report | First report (click) generated by a targeted user. Format: "YYYY-MM-DDThh:mm.ss" | datetime |
+| first_report | First report (click) generated by a targeted user. Format: `YYYY-MM-DDThh:mm.ss` | datetime |
 | total_num_reports | Total number of user reports received during a campaign. | integer |
 
 ## Campaign Summary Field Dictionary ##
