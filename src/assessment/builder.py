@@ -26,7 +26,9 @@ from typing import Dict
 from docopt import docopt
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import WordCompleter
-from prompt_toolkit.shortcuts import message_dialog, radiolist_dialog
+from prompt_toolkit.formatted_text import HTML
+from prompt_toolkit.shortcuts import input_dialog, message_dialog, radiolist_dialog
+from prompt_toolkit.styles import Style
 import pytz
 
 # cisagov Libraries
@@ -52,6 +54,15 @@ AUTO_FORWARD = """
                """
 
 CONFIRMATION_PROMPT = "\nDo you need to modify any of the values for this campaign?"
+
+BASE_PROMPT_STYLE = Style.from_dict(
+    {
+        "dialog": "bg:#2A72AD",
+        "dialog frame.label": "bg:#7DB5FA #ffffff",
+        "dialog.body": "bg:#7DB5FA #ffffff",
+        "dialog shadow": "bg:#000000",
+    }
+)
 
 
 def set_time_zone():
@@ -104,6 +115,39 @@ def display_list_pages(assessment):
     print("\n")
 
 
+def get_assessment_domain_input():
+    """Get input prompt."""
+    prompt_result = input_dialog(
+        title=HTML('<style fg="ansired">Assessment Domain Input</style>'),
+        text="Enter Assessment Domain (subdomain.domain.tld): ",
+        style=BASE_PROMPT_STYLE,
+    ).run()
+    return prompt_result
+
+
+def get_assessment_target_domains():
+    """Get input prompt."""
+    prompt_result = input_dialog(
+        title=HTML('<style fg="ansired">Assessment Target Domains Input</style>'),
+        text="Enter Targeted domain(s) separated by spaces: ",
+        style=BASE_PROMPT_STYLE,
+    ).run()
+    # Keeping original formatting.
+    return prompt_result.lower().split(" ")
+
+
+def get_smtp_host_input(default):
+    """Get input prompt."""
+    prompt_result = input_dialog(
+        title=HTML('<style fg="ansired">SMTP HostInput</style>'),
+        text="Enter Targeted domain(s) separated by spaces: ",
+        style=BASE_PROMPT_STYLE,
+        validator=BlankInputValidator(),
+    ).run()
+    # Keeping original formatting.
+    return prompt_result.lower().split(" ")
+
+
 def build_assessment(assessment_id):
     """Walk user through building a new assessment document.
 
@@ -114,10 +158,12 @@ def build_assessment(assessment_id):
     assessment = Assessment(id=assessment_id, timezone=set_time_zone())
 
     # Uses prompt to set Assessment and target domains while not allowing blank input
-    assessment.domain = get_input("    Assessment Domain (subdomain.domain.tld):")
-    assessment.target_domains = (
-        get_input("    Targeted domain(s) separated by spaces:").lower().split(" ")
-    )
+    # assessment.domain = get_input("    Assessment Domain (subdomain.domain.tld):")
+    # assessment.target_domains = (
+    #     get_input("    Targeted domain(s) separated by spaces:").lower().split(" ")
+    # )
+    assessment.domain = get_assessment_domain_input()
+    assessment.target_domains = get_assessment_target_domains()
 
     # Uses functions to build out aspects of assessment.
     assessment.pages = build_pages(assessment.id)
