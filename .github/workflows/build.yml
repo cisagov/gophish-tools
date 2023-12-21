@@ -161,7 +161,11 @@ jobs:
           - "3.9"
           - "3.10"
           - "3.11"
-          - "3.12"
+          # gophish-tools cannot support Python 3.12 until the gophish
+          # Python package supports a newer version of the urllib3
+          # library.  The reason is identical to what is discussed here:
+          # https://bugzilla.mozilla.org/show_bug.cgi?id=1857492
+          # - "3.12"
         include:
           - os: ubuntu-20.04
             python-version: "3.6"
@@ -270,7 +274,11 @@ jobs:
           - "3.9"
           - "3.10"
           - "3.11"
-          - "3.12"
+          # gophish-tools cannot support Python 3.12 until the gophish
+          # Python package supports a newer version of the urllib3
+          # library.  The reason is identical to what is discussed here:
+          # https://bugzilla.mozilla.org/show_bug.cgi?id=1857492
+          # - "3.12"
         include:
           - os: ubuntu-20.04
             python-version: "3.6"
@@ -347,7 +355,11 @@ jobs:
           - "3.9"
           - "3.10"
           - "3.11"
-          - "3.12"
+          # gophish-tools cannot support Python 3.12 until the gophish
+          # Python package supports a newer version of the urllib3
+          # library.  The reason is identical to what is discussed here:
+          # https://bugzilla.mozilla.org/show_bug.cgi?id=1857492
+          # - "3.12"
         include:
           - os: ubuntu-20.04
             python-version: "3.6"
