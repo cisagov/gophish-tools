@@ -81,6 +81,11 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        # gophish-tools cannot support Python 3.12 until the gophish
+        # Python package supports a newer version of the urllib3
+        # library.  The reason is identical to what is discussed here:
+        # https://bugzilla.mozilla.org/show_bug.cgi?id=1857492
+        # "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
     python_requires=">=3.6",
