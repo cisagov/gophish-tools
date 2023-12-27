@@ -38,7 +38,7 @@ def display_assessment_dates(assessment):
     print("--------    ------              ---")
     for campaign in assessment.campaigns:
         print(
-            f"  {campaign.name[len(campaign.name) -1 ]}        {campaign.launch_date}    {campaign.complete_date}"
+            f"  {campaign.name[len(campaign.name) - 1]}        {campaign.launch_date}    {campaign.complete_date}"
         )
 
     print()
