@@ -75,7 +75,6 @@ setup(
         # that you indicate whether you support Python 2, Python 3 or both.
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
@@ -88,7 +87,7 @@ setup(
         # "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     # What does your project relate to?
     keywords="gophish automation",
     packages=find_packages(where="src"),
@@ -100,7 +99,7 @@ setup(
         "docopt >= 0.6.2",
         "gophish >= 0.2.5",
         "httpagentparser",
-        "prompt-toolkit == 3.0.28",
+        "prompt-toolkit == 3.0.43",
         "pytz >= 2019.1",
         "schema",
         "setuptools >= 24.2.0",
