@@ -50,7 +50,7 @@ jobs:
           docker push "${IMAGE_NAME}:${version_array[0]}.${version_array[1]}"
           docker push "${IMAGE_NAME}:${version_array[0]}"
       - name: Publish README.md to Docker Hub
-        uses: peter-evans/dockerhub-description@v2
+        uses: peter-evans/dockerhub-description@v4
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USER }}
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PW }}
