@@ -99,7 +99,7 @@ setup(
         "docopt >= 0.6.2",
         "gophish >= 0.2.5",
         "httpagentparser",
-        "prompt-toolkit == 3.0.43",
+        "prompt-toolkit == 3.0.46",
         "pytz >= 2019.1",
         "schema",
         "setuptools >= 24.2.0",
