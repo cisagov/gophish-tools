@@ -276,9 +276,12 @@ jobs:
           restore-keys: |
             ${{ env.BASE_CACHE_KEY }}
       - name: Install dependencies
+        # We manually upgrade urllib3 here because coveralls needs it
+        # but gophish-tools (really gophish) doesn't allow it.
         run: |
           python -m pip install --upgrade pip
           pip install --upgrade --requirement requirements-test.txt
+          pip install --upgrade urllib3
       - name: Finished coveralls reports
         run: coveralls --finish
         env:
