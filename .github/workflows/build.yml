@@ -162,8 +162,14 @@ jobs:
           -C /tmp/terraform-docs \
           -o $(go env GOPATH)/bin/terraform-docs
       - name: Install dependencies
+        # We don't upgrade setuptools here because the versions of
+        # gophish on PYPI are ancient and depend on an equally ancient
+        # version of setuptools.  The gophish package installation
+        # will fail if we let pip pull in the latest setuptools;
+        # instead, we let the gophish package installation itself
+        # choose the version of setuptools to install.
         run: |
-          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install --upgrade pip wheel
           pip install --upgrade --requirement requirements-test.txt
       - name: Set up pre-commit hook environments
         run: pre-commit install-hooks
@@ -327,8 +333,13 @@ jobs:
           restore-keys: |
             ${{ env.BASE_CACHE_KEY }}
       - name: Install build dependencies
+        # We don't upgrade setuptools here because gophish is ancient
+        # code that depends on an ancient version of setuptools.  The
+        # pip install command fails if we let the python -m pip
+        # command pull in the latest setuptools; it is safer to let
+        # the pip install command pull in setuptools itself.
         run: |
-          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install --upgrade pip wheel
           python -m pip install --upgrade build
       - name: Build Python artifacts
         run: python -m build
@@ -411,7 +422,13 @@ jobs:
         name: Get the name of the retrieved wheel (there should only be one)
         run: echo "wheel=$(ls dist/*whl)" >> $GITHUB_OUTPUT
       - name: Update core Python packages
-        run: python -m pip install --upgrade pip setuptools wheel
+        # We don't upgrade setuptools here because the versions of
+        # gophish on PYPI are ancient and depend on an equally ancient
+        # version of setuptools.  The gophish package installation
+        # will fail if we let pip pull in the latest setuptools;
+        # instead, we let the gophish package installation itself
+        # choose the version of setuptools to install.
+        run: python -m pip install --upgrade pip wheel
       - name: Install the built wheel (along with testing dependencies)
         run: python -m pip install ${{ steps.find-wheel.outputs.wheel }}[test]
       - name: Run tests
