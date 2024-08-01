@@ -163,7 +163,7 @@ jobs:
           -o $(go env GOPATH)/bin/terraform-docs
       - name: Install dependencies
         # We don't upgrade setuptools here because the versions of
-        # gophish on PYPI are ancient and depend on an equally ancient
+        # gophish on PyPI are ancient and depend on an equally ancient
         # version of setuptools.  The gophish package installation
         # will fail if we let pip pull in the latest setuptools;
         # instead, we let the gophish package installation itself
@@ -426,7 +426,7 @@ jobs:
         run: echo "wheel=$(ls dist/*whl)" >> $GITHUB_OUTPUT
       - name: Update core Python packages
         # We don't upgrade setuptools here because the versions of
-        # gophish on PYPI are ancient and depend on an equally ancient
+        # gophish on PyPI are ancient and depend on an equally ancient
         # version of setuptools.  The gophish package installation
         # will fail if we let pip pull in the latest setuptools;
         # instead, we let the gophish package installation itself
