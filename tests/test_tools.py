@@ -1,4 +1,3 @@
-#!/usr/bin/env pytest -vs
 """Tests for Gophish tool functions."""
 
 # Standard Python Libraries

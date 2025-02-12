@@ -1,5 +1,5 @@
-#!/usr/bin/env pytest -vs
 """Test for Assessment Builder."""
+
 # Standard Python Libraries
 from unittest.mock import patch
 

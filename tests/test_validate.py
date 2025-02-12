@@ -1,4 +1,3 @@
-#!/usr/bin/env pytest -vs
 """Tests for Validation functions."""
 
 # Third-Party Libraries
