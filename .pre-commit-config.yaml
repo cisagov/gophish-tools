@@ -166,6 +166,7 @@ repos:
           - types-pytz
           - types-requests
           - types-setuptools
+          - types-urllib3
   - repo: https://github.com/pypa/pip-audit
     rev: v2.7.3
     hooks:

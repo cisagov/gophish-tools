@@ -114,7 +114,11 @@ setup(
         # checking between environments.
         "dev": [
             "types-docopt",
+            "types-Pygments",
+            "types-pytz",
+            "types-requests",
             "types-setuptools",
+            "types-urllib3",
         ],
         "test": [
             "coverage",
