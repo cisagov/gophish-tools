@@ -16,12 +16,15 @@ cd /usr/local/bin || exit
 # Create output that can be eval'd to create aliases for the various
 # commands in gophish-tools
 for f in pca-*; do
+  # shellcheck disable=SC1083,SC2086
   echo alias $f=\"docker run -it --network host --rm --volume \\\`pwd\\\`:/home/cisa \\\"\\\${GOPHISH_TOOLS_IMAGE:-cisagov/gophish-tools}\\\" $f\"
 done
 
 for f in gophish-*; do
+  # shellcheck disable=SC1083,SC2086
   echo alias $f=\"docker run -it --network host --rm --volume \\\`pwd\\\`:/home/cisa \\\"\\\${GOPHISH_TOOLS_IMAGE:-cisagov/gophish-tools}\\\" $f\"
 done
 
 # Create an alias to execute a shell in the gophish-tools container
+# shellcheck disable=SC1083,SC2086
 echo alias gophish-tools-bash=\"docker run -it --rm --network host --volume \\\`pwd\\\`:/home/cisa \\\"\\\${GOPHISH_TOOLS_IMAGE:-cisagov/gophish-tools}\\\" /bin/bash\"
