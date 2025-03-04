@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo '################################################################################'
 echo '# The following output is used to setup aliases to containerized commands.'
 echo '# To apply these changes in a shell, eval the output of this container:'
