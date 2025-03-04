@@ -1,27 +1,25 @@
 #!/bin/bash
 
-echo '################################################################################'
-echo '# The following output is used to setup aliases to containerized commands.'
-echo '# To apply these changes in a shell, eval the output of this container:'
-echo '#   eval "$(docker run cisagov/gophish-tools)"'
-echo '# '
-echo '# Environment variable:'
-echo '# GOPHISH_TOOLS_IMAGE, defaults to "cisagov/gophish-tools" if not set'
-echo '# '
-echo '################################################################################'
+echo ################################################################################
+echo # The following output is used to setup aliases to containerized commands.
+echo # To apply these changes in a shell, eval the output of this container:
+echo #   eval "$(docker run cisagov/gophish-tools)"
+echo #
+echo # Environment variable:
+echo # GOPHISH_TOOLS_IMAGE, defaults to "cisagov/gophish-tools" if not set
+echo #
+echo ################################################################################
 echo
 
-cd /usr/local/bin
+cd /usr/local/bin || exit
 
 # Create output that can be eval'd to create aliases for the various
 # commands in gophish-tools
-for f in pca-*
-do
+for f in pca-*; do
   echo alias $f=\"docker run -it --network host --rm --volume \\\`pwd\\\`:/home/cisa \\\"\\\${GOPHISH_TOOLS_IMAGE:-cisagov/gophish-tools}\\\" $f\"
 done
 
-for f in gophish-*
-do
+for f in gophish-*; do
   echo alias $f=\"docker run -it --network host --rm --volume \\\`pwd\\\`:/home/cisa \\\"\\\${GOPHISH_TOOLS_IMAGE:-cisagov/gophish-tools}\\\" $f\"
 done
 
