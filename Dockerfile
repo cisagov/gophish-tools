@@ -31,7 +31,6 @@ WORKDIR $GOPHISH_TOOLS_SRC
 COPY . $GOPHISH_TOOLS_SRC
 
 RUN pip install --no-cache-dir .
-RUN chmod +x ${GOPHISH_TOOLS_SRC}/var/getenv
 RUN ln -snf ${GOPHISH_TOOLS_SRC}/var/getenv /usr/local/bin
 
 USER cisa
