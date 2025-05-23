@@ -418,10 +418,10 @@ jobs:
       - name: Determine project version
         id: get_ver
         run: |
-          echo "##[set-output name=version;]$(./bump_version.sh project show)"
+          echo "##[set-output name=version;]$(./bump-version show)"
       - name: Build Docker image
         run: |
-          version=$(./bump_version.sh project show)
+          version=$(./bump-version show)
           docker build \
             --tag "$IMAGE_NAME" \
             --build-arg GIT_COMMIT=$(git log -1 --format=%H) \
@@ -430,7 +430,7 @@ jobs:
             .
       - name: Save Docker image artifact
         run: |
-          version=$(./bump_version.sh project show)
+          version=$(./bump-version show)
           docker save $IMAGE_NAME:latest | gzip > dist/image.tar.gz
       - name: Upload artifacts
         uses: actions/upload-artifact@v4

@@ -23,7 +23,7 @@ jobs:
       - name: Determine image version
         id: get_ver
         run: |
-          echo "##[set-output name=version;]$(./bump_version.sh project show)"
+          echo "##[set-output name=version;]$(./bump-version show)"
       - name: Build Docker image
         run: |
           docker build \
