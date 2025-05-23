@@ -3,7 +3,9 @@ name: release
 
 on:  # yamllint disable-line rule:truthy
   release:
-    types: [prereleased, released]
+    types:
+      - prereleased
+      - released
 
 env:
   IMAGE_NAME: cisagov/gophish-tools
