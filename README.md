@@ -3,7 +3,6 @@
 [![GitHub Build Status](https://github.com/cisagov/gophish-tools/workflows/build/badge.svg)](https://github.com/cisagov/gophish-tools/actions)
 [![CodeQL](https://github.com/cisagov/gophish-tools/workflows/CodeQL/badge.svg)](https://github.com/cisagov/gophish-tools/actions/workflows/codeql-analysis.yml)
 [![Coverage Status](https://coveralls.io/repos/github/cisagov/gophish-tools/badge.svg?branch=develop)](https://coveralls.io/github/cisagov/gophish-tools?branch=develop)
-[![Known Vulnerabilities](https://snyk.io/test/github/cisagov/gophish-tools/develop/badge.svg)](https://snyk.io/test/github/cisagov/gophish-tools)
 
 ## Docker Image ##
 
@@ -88,8 +87,9 @@ a `gophish-tools` container.
 ## Assessment JSON Field Dictionary ##
 
 The following items are included in the assessment JSON as produced by
-`pca-wizard`.
-An example assessment JSON can be found [here](src/assessment/sample_assessment.json).
+`pca-wizard`.  An [example assessment
+JSON](src/assessment/sample_assessment.json) can be found in this
+project.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-------:|:--------:|
