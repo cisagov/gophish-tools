@@ -163,6 +163,3 @@ testpaths = ["tests/"]
 [tool.setuptools.dynamic]
 readme = {file = ["README.md"], content-type = "text/markdown"}
 version = {attr = "_version.__version__"}
-
-[tool.setuptools.package-data]
-example = ["data/*.txt"]
