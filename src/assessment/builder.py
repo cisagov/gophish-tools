@@ -83,7 +83,7 @@ def display_list_groups(assessment):
     # Prints groups or No Groups message
     if assessment.groups:
         for index, temp_group in enumerate(assessment.groups):
-            print("\t{}\t{}".format(index + 1, temp_group.name))
+            print(f"\t{index + 1}\t{temp_group.name}")
     else:
         print("\t--NO GROUPS--")
 
@@ -98,7 +98,7 @@ def display_list_pages(assessment):
     # Prints pages or No pages message
     if assessment.pages:
         for index, temp_page in enumerate(assessment.pages):
-            print("\t{}\t{}".format(index + 1, temp_page.name))
+            print(f"\t{index + 1}\t{temp_page.name}")
     else:
         print("\t--NO PAGES--")
 
@@ -197,7 +197,7 @@ def build_campaigns(assessment, campaign_number, template_smtp):
 
     campaign = review_campaign(campaign)
 
-    logging.info("Successfully Added Campaign {}".format(campaign.name))
+    logging.info(f"Successfully Added Campaign {campaign.name}")
 
     return campaign
 
@@ -243,7 +243,7 @@ def review_campaign(campaign):
                 if update_key != "smtp":
                     try:
                         update_value = prompt(
-                            "{}: ".format(update_key),
+                            f"{update_key}: ",
                             default=campaign_dict[update_key],
                             validator=BlankInputValidator(),
                         )
@@ -270,7 +270,7 @@ def review_campaign(campaign):
                     ).lower()
                     try:
                         update_value = prompt(
-                            "{}: ".format(update_sub),
+                            f"{update_sub}: ",
                             default=campaign_dict[update_key].as_dict()[update_sub],
                             validator=BlankInputValidator(),
                         )
@@ -289,7 +289,7 @@ def select_group(assessment):
     """Select a group."""
     # Select Group:
     if len(assessment.groups) == 1:  # If only one auto sets.
-        logging.info("Group auto set to {}".format(assessment.groups[0].name))
+        logging.info(f"Group auto set to {assessment.groups[0].name}")
         group_name = assessment.groups[0].name
     else:  # Allows user to choose from multiple groups;
         while True:
@@ -308,7 +308,7 @@ def select_group(assessment):
 def select_page(assessment):
     """Select a page."""
     if len(assessment.pages) == 1:  # If only one auto sets.
-        logging.info("Page auto set to {}".format(assessment.pages[0].name))
+        logging.info(f"Page auto set to {assessment.pages[0].name}")
         page_name = assessment.pages[0].name
     else:  # Allows user to choose from multiple pages
         while True:
@@ -345,12 +345,12 @@ def import_email(assessment, campaign_number, template_smtp):
             email_import_validation(import_temp)
             break
         except OSError:
-            logging.critical("Import File not found: {}.json".format(import_file_name))
+            logging.critical(f"Import File not found: {import_file_name}.json")
             print("Please try again...")
 
         except MissingKey as e:
             # Logs and indicates the user should correct before clicking ok which will re-run the import.
-            logging.critical("Missing Field from import: {}".format(e.key))
+            logging.critical(f"Missing Field from import: {e.key}")
             message_dialog(
                 title="Missing Field",
                 text=f'Email import is missing the "{e.key}" field, please correct before clicking Ok.\n {e.key}: {e.description}',
@@ -404,7 +404,7 @@ def create_email(assessment, campaign_number=""):
             break
         except OSError:
             logging.critical(
-                "Text Template File not found: {}.txt".format(text_file_name)
+                f"Text Template File not found: {text_file_name}.txt"
             )
             print("Please try again...")
 
@@ -488,7 +488,7 @@ def build_emails(domains, labels):
                             target = target_add_label(labels, email, target)
                             targets.append(target)
                 else:
-                    logging.error("{} Formatting Errors".format(len(format_error)))
+                    logging.error(f"{len(format_error)} Formatting Errors")
                     if (
                         yes_no_prompt("Would you like to correct each here? (yes/no)")
                         == "yes"
@@ -521,7 +521,7 @@ def build_emails(domains, labels):
                             validator=EmailValidator(),
                         )
                 else:
-                    logging.error("{} Domain Mismatch Errors".format(len(format_error)))
+                    logging.error(f"{len(format_error)} Domain Mismatch Errors")
                     if (
                         yes_no_prompt("Would you like to correct each here? (yes/no)")
                         == "yes"
@@ -551,7 +551,7 @@ def build_emails(domains, labels):
                 raise Exception("No targets loaded")
             break
         except OSError:
-            logging.critical("Email File not found: {}.csv".format(email_file_name))
+            logging.critical(f"Email File not found: {email_file_name}.csv")
             print("\t Please try again...")
         except Exception:
             # Logs and indicates the user should correct before clicking ok which will re-run the import.
@@ -568,7 +568,7 @@ def build_emails(domains, labels):
 def target_add_label(labels, email, target):
     """Add a label to a target."""
     if labels == "yes" and not email[3]:
-        logging.error("Missing Label for {}".format(target.email))
+        logging.error(f"Missing Label for {target.email}")
         target.position = get_input("Please enter a label:")
     else:
         target.position = email[3]
@@ -641,7 +641,7 @@ def review_page(page):
         page_keys = list()
         for key, value in page.as_dict().items():
             if key != "html":
-                print("{}: {}".format(key, value))
+                print(f"{key}: {value}")
                 page_keys.append(key)
         if yes_no_prompt(CONFIRMATION_PROMPT) == "yes":
             completer = WordCompleter(page_keys, ignore_case=True)
@@ -656,7 +656,7 @@ def review_page(page):
 
                 try:
                     update_value = prompt(
-                        "{}: ".format(update_key),
+                        f"{update_key}: ",
                         default=page.as_dict()[update_key],
                         validator=BlankInputValidator(),
                     )
@@ -672,7 +672,7 @@ def review_page(page):
 
 def main() -> None:
     """Set up logging and call the build_assessments function."""
-    args: Dict[str, str] = docopt(__doc__, version=__version__)
+    args: dict[str, str] = docopt(__doc__, version=__version__)
 
     # Set up logging
     log_level = args["--log-level"]
