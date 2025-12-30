@@ -28,7 +28,6 @@ Options:
 # Standard Python Libraries
 import logging
 import sys
-from typing import Dict
 
 # Third-Party Libraries
 from docopt import docopt
@@ -149,7 +148,7 @@ def remove_template(api, assessment_id):
 
 def main() -> None:
     """Set up logging, connect to API, remove assessment data."""
-    args: Dict[str, str] = docopt(__doc__, version=__version__)
+    args: dict[str, str] = docopt(__doc__, version=__version__)
 
     # Set up logging
     log_level = args["--log-level"]

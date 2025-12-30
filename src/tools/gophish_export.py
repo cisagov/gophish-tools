@@ -23,7 +23,6 @@ import json
 import logging
 import re
 import sys
-from typing import Dict
 
 # Third-Party Libraries
 from docopt import docopt
@@ -378,7 +377,7 @@ def export_user_reports(api, assessment_id):
 
 def main() -> None:
     """Set up logging, connect to API, export all assessment data."""
-    args: Dict[str, str] = docopt(__doc__, version=__version__)
+    args: dict[str, str] = docopt(__doc__, version=__version__)
 
     # Set up logging
     log_level = args["--log-level"]
@@ -411,7 +410,7 @@ def main() -> None:
         sys.exit(1)
 
     if assessment_exists(api, args["ASSESSMENT_ID"]):
-        assessment_dict: Dict = dict()
+        assessment_dict: dict = dict()
 
         # Add targets list to assessment dict.
         assessment_dict["targets"] = export_targets(api, args["ASSESSMENT_ID"])

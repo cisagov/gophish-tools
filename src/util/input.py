@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 def yes_no_prompt(message):
     """Prompt for a yes/no response."""
     return prompt(
-        "{}?(yes/no) ".format(message),
+        f"{message}?(yes/no) ",
         completer=WordCompleter(["yes", "no"], ignore_case=True),
         validator=BooleanValidator(),
     ).lower()

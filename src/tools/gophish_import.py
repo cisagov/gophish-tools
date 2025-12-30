@@ -21,7 +21,6 @@ Options:
 import json
 import logging
 import sys
-from typing import Dict
 
 # Third-Party Libraries
 from docopt import docopt
@@ -274,7 +273,7 @@ def build_campaigns(api, assessment):
 
 def main() -> None:
     """Set up logging, connect to API, import all assessment data."""
-    args: Dict[str, str] = docopt(__doc__, version=__version__)
+    args: dict[str, str] = docopt(__doc__, version=__version__)
 
     # Set up logging
     log_level = args["--log-level"]

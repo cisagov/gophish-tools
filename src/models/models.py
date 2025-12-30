@@ -2,7 +2,7 @@
 
 # Standard Python Libraries
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any
 
 # TODO Research .attribute only valid properties
 
@@ -10,7 +10,7 @@ from typing import Any, Dict
 class Model:
     """The Model class."""
 
-    _valid_properties: Dict[str, Any] = dict()
+    _valid_properties: dict[str, Any] = dict()
 
     @classmethod
     def _is_builtin(cls, obj):
@@ -52,7 +52,7 @@ class Model:
 class Assessment(Model):
     """The Assessment class."""
 
-    _valid_properties: Dict[str, Any] = {
+    _valid_properties: dict[str, Any] = {
         "id": None,
         "timezone": "US/Eastern",
         "domain": None,
@@ -118,7 +118,7 @@ class Page(Model):
 class Group(Model):
     """The Group class."""
 
-    _valid_properties: Dict[str, Any] = {"name": None, "targets": []}
+    _valid_properties: dict[str, Any] = {"name": None, "targets": []}
 
     def __init__(self, **kwargs):
         """Create a new group instance."""
