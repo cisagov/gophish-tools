@@ -18,7 +18,6 @@ Options:
 import json
 import logging
 import sys
-from typing import Dict
 
 # Third-Party Libraries
 from docopt import docopt
@@ -91,7 +90,7 @@ def reschedule(assessment):
 
 def main() -> None:
     """Set up logging and call the reschedule function."""
-    args: Dict[str, str] = docopt(__doc__, version=__version__)
+    args: dict[str, str] = docopt(__doc__, version=__version__)
 
     # Set up logging
     log_level = args["--log-level"]

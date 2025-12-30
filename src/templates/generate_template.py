@@ -13,7 +13,6 @@ Options:
 
 # Standard Python Libraries
 import json
-from typing import Dict
 
 # Third-Party Libraries
 from docopt import docopt
@@ -47,7 +46,7 @@ def targets_output():
 
 def main() -> None:
     """Execute either email_output() or targets_output()."""
-    args: Dict[str, str] = docopt(__doc__, version=__version__)
+    args: dict[str, str] = docopt(__doc__, version=__version__)
 
     if args["--emails"]:
         email_output()

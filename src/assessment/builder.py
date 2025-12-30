@@ -21,7 +21,6 @@ from datetime import datetime
 import json
 import logging
 import sys
-from typing import Dict
 
 # Third-Party Libraries
 from docopt import docopt
@@ -403,9 +402,7 @@ def create_email(assessment, campaign_number=""):
 
             break
         except OSError:
-            logging.critical(
-                f"Text Template File not found: {text_file_name}.txt"
-            )
+            logging.critical(f"Text Template File not found: {text_file_name}.txt")
             print("Please try again...")
 
     return temp_smtp, temp_template

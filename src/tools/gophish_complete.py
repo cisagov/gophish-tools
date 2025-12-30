@@ -26,7 +26,6 @@ NOTE:
 # Standard Python Libraries
 import logging
 import sys
-from typing import Dict
 
 # Third-Party Libraries
 from docopt import docopt
@@ -158,7 +157,7 @@ def print_summary(api, campaign_id):
 
 def main() -> None:
     """Set up logging, connect to API, call requested function(s)."""
-    args: Dict[str, str] = docopt(__doc__, version=__version__)
+    args: dict[str, str] = docopt(__doc__, version=__version__)
 
     # Set up logging
     log_level = args["--log-level"]
