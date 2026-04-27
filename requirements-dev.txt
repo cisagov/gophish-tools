@@ -3,7 +3,7 @@
 ipython
 mypy
 # The bump-version script requires at least version 3 of semver.
-semver>=3
+semver>=3.0.4
 types-docopt
 types-Pygments
 types-pytz
