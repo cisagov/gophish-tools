@@ -65,8 +65,7 @@ def group_json(target_json):
 @pytest.fixture(scope="module")
 def target_json():
     """Return a Target JSON with 2 emails."""
-    return json.loads(
-        """[
+    return json.loads("""[
         {
             "first_name": "John",
             "last_name": "Doe",
@@ -79,8 +78,7 @@ def target_json():
             "email": "jane.smith@domain.test",
             "position": "HR"
         }
-    ]"""
-    )
+    ]""")
 
 
 @pytest.fixture
@@ -118,28 +116,24 @@ def campaign_json(template_json, smtp_json):
 @pytest.fixture
 def template_json():
     """Return a Template JSON."""
-    return json.loads(
-        """{
+    return json.loads("""{
         "name": "RVXXX1-T1-ID",
         "subject": "Campaign 1",
         "html": "<html>Body Test</html>",
         "text": "Body Test"
-    }"""
-    )
+    }""")
 
 
 @pytest.fixture
 def smtp_json():
     """Return an SMTP JSON."""
-    return json.loads(
-        """{
+    return json.loads("""{
         "name": "RVXXX1-SP",
         "from_address": "Camp1 Phish<camp1.phish@bad.domain>",
         "host": "postfix:587",
         "interface_type": "SMTP",
         "ignore_cert": true
-    }"""
-    )
+    }""")
 
 
 # Object Fixtures
