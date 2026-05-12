@@ -83,7 +83,7 @@ def get_campaigns(api, assessment_id=""):
     """
     allCampaigns = api.campaigns.get()
 
-    assessmentCampaigns = dict()
+    assessmentCampaigns = {}
 
     for campaign in allCampaigns:
         if campaign.name.startswith(assessment_id):

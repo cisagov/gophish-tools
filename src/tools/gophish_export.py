@@ -79,19 +79,19 @@ def export_targets(api, assessment_id):
     """
     groupIDs = get_group_ids(api, assessment_id)
 
-    targets = list()
+    targets = []
 
     for group_id in groupIDs:
         # Gets target list for parsing.
         raw_targets = api.groups.get(group_id).as_dict()["targets"]
 
         for raw_target in raw_targets:
-            target = dict()
+            target = {}
 
             target["id"] = hashlib.sha256(
                 raw_target["email"].encode("utf-8")
             ).hexdigest()
-            target["customer_defined_labels"] = dict()
+            target["customer_defined_labels"] = {}
 
             if "position" in raw_target:
                 target["customer_defined_labels"][assessment_id] = [
@@ -110,7 +110,7 @@ def export_targets(api, assessment_id):
 def get_group_ids(api, assessment_id):
     """Return a list of group IDs for all groups starting with specified assessment_id."""
     rawGroup = api.groups.get()  # Holds raw list of campaigns from Gophish.
-    groups = list()  # Holds list of campaign IDs that match the assessment.
+    groups = []  # Holds list of campaign IDs that match the assessment.
 
     for group in rawGroup:
         group = group.as_dict()
@@ -131,7 +131,7 @@ def export_campaigns(api, assessment_id):
         List of the assessment's campaigns with data.
     """
     campaignIDs = get_campaign_ids(api, assessment_id)
-    campaigns = list()
+    campaigns = []
 
     for campaign_id in campaignIDs:
         campaigns.append(get_campaign_data(api, campaign_id))
@@ -144,7 +144,7 @@ def export_campaigns(api, assessment_id):
 def get_campaign_ids(api, assessment_id):
     """Return a list of campaign IDs for all campaigns starting with specified assessment_id."""
     rawCampaigns = api.campaigns.get()  # Holds raw list of campaigns from Gophish.
-    campaigns = list()  # Holds list of campaign IDs that match the assessment.
+    campaigns = []  # Holds list of campaign IDs that match the assessment.
 
     for campaign in rawCampaigns:
         campaign = campaign.as_dict()
@@ -156,7 +156,7 @@ def get_campaign_ids(api, assessment_id):
 
 def get_campaign_data(api, campaign_id):
     """Return campaign metadata for the given campaign ID."""
-    campaign = dict()
+    campaign = {}
 
     # Pulls the campaign data as dict from Gophish.
     rawCampaign: dict = api.campaigns.get(campaign_id).as_dict()
@@ -185,11 +185,11 @@ def get_campaign_data(api, campaign_id):
 def get_click_data(api, campaign_id):
     """Return a list of all clicks for a given campaign."""
     rawEvents = api.campaigns.get(campaign_id).as_dict()["timeline"]
-    clicks = list()  # Holds list of all users that clicked.
+    clicks = []  # Holds list of all users that clicked.
 
     for rawEvent in rawEvents:
         if rawEvent["message"] == "Clicked Link":
-            click = dict()
+            click = {}
 
             # Builds out click document.
             click["user"] = hashlib.sha256(
@@ -209,9 +209,9 @@ def get_click_data(api, campaign_id):
 def get_email_status(api, campaign_id):
     """Return the email send status and time."""
     rawEvents = api.campaigns.get(campaign_id).as_dict()["timeline"]
-    status = list()
+    status = []
     for rawEvent in rawEvents:
-        email = dict()
+        email = {}
 
         if rawEvent["message"] == "Email Sent":
             email["user"] = hashlib.sha256(
@@ -243,7 +243,7 @@ def get_email_status(api, campaign_id):
 
 def get_application(rawEvent):
     """Return application details."""
-    application = dict()
+    application = {}
 
     application["external_ip"] = rawEvent["details"]["browser"]["address"]
 
@@ -336,7 +336,7 @@ def export_user_reports(api, assessment_id):
 
     for campaign_id in campaign_ids:
         first_report = None
-        user_report_doc = dict()
+        user_report_doc = {}
         campaign = get_campaign_data(api, campaign_id)
 
         # iterate over clicks and find the earliest click
@@ -410,7 +410,7 @@ def main() -> None:
         sys.exit(1)
 
     if assessment_exists(api, args["ASSESSMENT_ID"]):
-        assessment_dict: dict = dict()
+        assessment_dict: dict = {}
 
         # Add targets list to assessment dict.
         assessment_dict["targets"] = export_targets(api, args["ASSESSMENT_ID"])

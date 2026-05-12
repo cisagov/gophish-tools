@@ -49,7 +49,7 @@ def get_campaigns(api, assessment_id):
     """Return a list of all campaigns in an assessment."""
     logging.info("Gathering Campaigns")
     allCampaigns = api.campaigns.get()
-    assessmentCampaigns = list()
+    assessmentCampaigns = []
 
     for campaign in allCampaigns:
         if campaign.name.startswith(assessment_id):
@@ -72,7 +72,7 @@ def add_group(api, assessment_id):
     newGroup.name = "Test-" + assessment_id
 
     # Holds list of Users to be added to group.
-    targets = list()
+    targets = []
 
     target = User()
     target.first_name = get_input("Enter First Name: ")

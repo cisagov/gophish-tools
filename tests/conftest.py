@@ -230,7 +230,7 @@ def assessment_object(group_object, page_object, campaign_object):
 @pytest.fixture
 def multiple_campaign_object(template_object, smtp_object):
     """Return list of campaign objects."""
-    campaigns = list()
+    campaigns = []
 
     for x in range(1, 8):
         campaigns.append(
@@ -254,7 +254,7 @@ def multiple_campaign_object(template_object, smtp_object):
 @pytest.fixture
 def multiple_gophish_group_object():
     """Return list of Gophish group objects."""
-    groups = list()
+    groups = []
 
     for x in range(1, 3):
         groups.append(
@@ -284,7 +284,7 @@ def multiple_gophish_group_object():
 @pytest.fixture
 def email_target_json():
     """Return a email target JSON with 4 emails matching the Gophish group object."""
-    targets = list()
+    targets = []
     for email, position in [
         ("jane.smith1@domain.tld", "IT"),
         ("john.doe1@domain.tld", "HR"),
@@ -304,7 +304,7 @@ def email_target_json():
 @pytest.fixture
 def multiple_click_object():
     """Return a list of clicks to match the correct number of unique users."""
-    clicks = list()
+    clicks = []
     for x in range(0, 2):
         clicks.append(
             Click(

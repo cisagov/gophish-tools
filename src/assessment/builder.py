@@ -63,7 +63,7 @@ def set_time_zone():
     # See issue: https://github.com/cisagov/gophish-tools/issues/49
 
     # Creates list of US Time Zones
-    time_zone = list()
+    time_zone = []
     for zone in pytz.common_timezones:
         if zone.startswith("US/"):
             time_zone.append((zone, zone))
@@ -136,7 +136,7 @@ def build_assessment(assessment_id):
     template_smtp.username = input("SMTP User: ")  # nosec
     template_smtp.password = input("SMTP Password: ")  # nosec
 
-    assessment.campaigns = list()
+    assessment.campaigns = []
     logging.info("Building Campaigns")
     num_campaigns = get_number("    How many Campaigns?")
     for campaign_number in range(0, num_campaigns):
@@ -411,7 +411,7 @@ def create_email(assessment, campaign_number=""):
 def build_groups(id, target_domains):
     """Build groups."""
     logging.info("Getting Group Metadata")
-    groups = list()
+    groups = []
 
     # Looks through to get the number of groups as a number with error checking
     num_groups = get_number("    How many groups do you need?")
@@ -437,9 +437,9 @@ def build_groups(id, target_domains):
 def build_emails(domains, labels):
     """Build emails."""
     # Holds list of Users to be added to group.
-    targets = list()
-    domain_miss_match = list()
-    format_error = list()
+    targets = []
+    domain_miss_match = []
+    format_error = []
 
     # Receives the file name and checks if it exists.
     while True:
@@ -577,7 +577,7 @@ def build_pages(id_):
 
     :return a page object
     """
-    pages = list()
+    pages = []
     logging.info("Getting Page Metadata")
 
     # Looks through to get the number of pages as a number with error checking
@@ -635,7 +635,7 @@ def review_page(page):
     # Loops until not changes are required.
     while True:
         print("\n")
-        page_keys = list()
+        page_keys = []
         for key, value in page.as_dict().items():
             if key != "html":
                 print(f"{key}: {value}")

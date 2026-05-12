@@ -10,7 +10,7 @@ from typing import Any
 class Model:
     """The Model class."""
 
-    _valid_properties: dict[str, Any] = dict()
+    _valid_properties: dict[str, Any] = {}
 
     @classmethod
     def _is_builtin(cls, obj):
