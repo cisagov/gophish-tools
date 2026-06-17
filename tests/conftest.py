@@ -305,7 +305,7 @@ def email_target_json():
 def multiple_click_object():
     """Return a list of clicks to match the correct number of unique users."""
     clicks = []
-    for x in range(0, 2):
+    for _x in range(0, 2):
         clicks.append(
             Click(
                 message="Testing",
