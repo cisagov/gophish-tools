@@ -338,8 +338,8 @@ def import_email(assessment, campaign_number, template_smtp):
             # Drops .json if included so it can always be added as fail safe.
             import_file_name = import_file_name.split(".", 1)[0]
 
-            with open(import_file_name + ".json") as importFile:
-                import_temp = json.load(importFile)
+            with open(import_file_name + ".json") as import_file:
+                import_temp = json.load(import_file)
 
             # Validates that all fields are present or raise MissingKeyError.
             email_import_validation(import_temp)
@@ -387,8 +387,8 @@ def create_email(assessment, campaign_number=""):
             # Drops .html if included so it can always be added as fail safe.
             html_file_name = html_file_name.split(".", 1)[0]
 
-            with open(html_file_name + ".html") as htmlFile:
-                temp_template.html = htmlFile.read()
+            with open(html_file_name + ".html") as html_file:
+                temp_template.html = html_file.read()
 
             break
         except OSError:
@@ -402,8 +402,8 @@ def create_email(assessment, campaign_number=""):
             # Drops .txt if included so it can always be added as fail safe.
             text_file_name = text_file_name.split(".", 1)[0]
 
-            with open(text_file_name + ".txt") as textFile:
-                temp_template.text = textFile.read()
+            with open(text_file_name + ".txt") as text_file:
+                temp_template.text = text_file.read()
 
             break
         except OSError:
@@ -619,8 +619,8 @@ def build_pages(id_):
                     # Drops .html if included so it can always be added as fail safe.
                     landing_file_name = landing_file_name.split(".", 1)[0]
 
-                    with open(landing_file_name + ".html") as landingFile:
-                        temp_page.html = landingFile.read()
+                    with open(landing_file_name + ".html") as landing_file:
+                        temp_page.html = landing_file.read()
 
                     break
                 except OSError:

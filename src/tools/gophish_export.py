@@ -54,8 +54,8 @@ def assessment_exists(api, assessment_id):
     Returns:
         boolean: Indicates if a campaign is found starting with assessment_id.
     """
-    allCampaigns = api.campaigns.get()
-    for campaign in allCampaigns:
+    all_campaigns = api.campaigns.get()
+    for campaign in all_campaigns:
         if campaign.name.startswith(assessment_id):
             return True
 
@@ -77,11 +77,11 @@ def export_targets(api, assessment_id):
     Returns:
         List of targets from the assessment's group(s).
     """
-    groupIDs = get_group_ids(api, assessment_id)
+    group_ids = get_group_ids(api, assessment_id)
 
     targets = []
 
-    for group_id in groupIDs:
+    for group_id in group_ids:
         # Gets target list for parsing.
         raw_targets = api.groups.get(group_id).as_dict()["targets"]
 
@@ -109,10 +109,10 @@ def export_targets(api, assessment_id):
 
 def get_group_ids(api, assessment_id):
     """Return list of all group IDs starting with specified assessment_id."""
-    rawGroup = api.groups.get()  # Holds raw list of campaigns from Gophish.
+    raw_group = api.groups.get()  # Holds raw list of campaigns from Gophish.
     groups = []  # Holds list of campaign IDs that match the assessment.
 
-    for group in rawGroup:
+    for group in raw_group:
         group = group.as_dict()
         if group["name"].startswith(assessment_id):
             groups.append(group["id"])
@@ -130,10 +130,10 @@ def export_campaigns(api, assessment_id):
     Returns:
         List of the assessment's campaigns with data.
     """
-    campaignIDs = get_campaign_ids(api, assessment_id)
+    campaign_ids = get_campaign_ids(api, assessment_id)
     campaigns = []
 
-    for campaign_id in campaignIDs:
+    for campaign_id in campaign_ids:
         campaigns.append(get_campaign_data(api, campaign_id))
 
     logging.info("%d campaigns found for assessment %s.", len(campaigns), assessment_id)
@@ -143,10 +143,10 @@ def export_campaigns(api, assessment_id):
 
 def get_campaign_ids(api, assessment_id):
     """Return list of all campaign IDs starting with specified assessment_id."""
-    rawCampaigns = api.campaigns.get()  # Holds raw list of campaigns from Gophish.
+    raw_campaigns = api.campaigns.get()  # Holds raw list of campaigns from Gophish.
     campaigns = []  # Holds list of campaign IDs that match the assessment.
 
-    for campaign in rawCampaigns:
+    for campaign in raw_campaigns:
         campaign = campaign.as_dict()
         if campaign["name"].startswith(assessment_id):
             campaigns.append(campaign["id"])
@@ -159,19 +159,21 @@ def get_campaign_data(api, campaign_id):
     campaign = {}
 
     # Pulls the campaign data as dict from Gophish.
-    rawCampaign: dict = api.campaigns.get(campaign_id).as_dict()
+    raw_campaign: dict = api.campaigns.get(campaign_id).as_dict()
 
-    campaign["id"] = rawCampaign["name"]
+    campaign["id"] = raw_campaign["name"]
 
-    campaign["start_time"] = rawCampaign["launch_date"]
-    campaign["end_time"] = rawCampaign["completed_date"]
-    campaign["url"] = rawCampaign["url"]
+    campaign["start_time"] = raw_campaign["launch_date"]
+    campaign["end_time"] = raw_campaign["completed_date"]
+    campaign["url"] = raw_campaign["url"]
 
-    campaign["subject"] = rawCampaign["template"]["subject"]
+    campaign["subject"] = raw_campaign["template"]["subject"]
 
     # Get the template ID from the Gophish template name.
     campaign["template"] = (
-        api.templates.get(rawCampaign["template"]["id"]).as_dict()["name"].split("-")[2]
+        api.templates.get(raw_campaign["template"]["id"])
+        .as_dict()["name"]
+        .split("-")[2]
     )
 
     campaign["clicks"] = get_click_data(api, campaign_id)
@@ -184,22 +186,22 @@ def get_campaign_data(api, campaign_id):
 
 def get_click_data(api, campaign_id):
     """Return a list of all clicks for a given campaign."""
-    rawEvents = api.campaigns.get(campaign_id).as_dict()["timeline"]
+    raw_events = api.campaigns.get(campaign_id).as_dict()["timeline"]
     clicks = []  # Holds list of all users that clicked.
 
-    for rawEvent in rawEvents:
-        if rawEvent["message"] == "Clicked Link":
+    for raw_event in raw_events:
+        if raw_event["message"] == "Clicked Link":
             click = {}
 
             # Builds out click document.
             click["user"] = hashlib.sha256(
-                rawEvent["email"].encode("utf-8")
+                raw_event["email"].encode("utf-8")
             ).hexdigest()
-            click["source_ip"] = rawEvent["details"]["browser"]["address"]
+            click["source_ip"] = raw_event["details"]["browser"]["address"]
 
-            click["time"] = rawEvent["time"]
+            click["time"] = raw_event["time"]
 
-            click["application"] = get_application(rawEvent)
+            click["application"] = get_application(raw_event)
 
             clicks.append(click)
 
@@ -208,30 +210,30 @@ def get_click_data(api, campaign_id):
 
 def get_email_status(api, campaign_id):
     """Return the email send status and time."""
-    rawEvents = api.campaigns.get(campaign_id).as_dict()["timeline"]
+    raw_events = api.campaigns.get(campaign_id).as_dict()["timeline"]
     status = []
-    for rawEvent in rawEvents:
+    for raw_event in raw_events:
         email = {}
 
-        if rawEvent["message"] == "Email Sent":
+        if raw_event["message"] == "Email Sent":
             email["user"] = hashlib.sha256(
-                rawEvent["email"].encode("utf-8")
+                raw_event["email"].encode("utf-8")
             ).hexdigest()
 
-            email["time"] = rawEvent["time"]
+            email["time"] = raw_event["time"]
 
             email["status"] = "SUCCESS"
 
-        elif rawEvent["message"] == "Error Sending Email":
+        elif raw_event["message"] == "Error Sending Email":
             email["user"] = hashlib.sha256(
-                rawEvent["email"].encode("utf-8")
+                raw_event["email"].encode("utf-8")
             ).hexdigest()
 
             # Trim microseconds before converting to datetime.
-            rawEvent["time"] = datetime.strptime(
-                rawEvent["time"].split(".")[0], "%Y-%m-%dT%H:%M:%S"
+            raw_event["time"] = datetime.strptime(
+                raw_event["time"].split(".")[0], "%Y-%m-%dT%H:%M:%S"
             )
-            email["time"] = rawEvent["time"]
+            email["time"] = raw_event["time"]
 
             email["status"] = "Failed"
 
@@ -241,16 +243,16 @@ def get_email_status(api, campaign_id):
     return status
 
 
-def get_application(rawEvent):
+def get_application(raw_event):
     """Return application details."""
     application = {}
 
-    application["external_ip"] = rawEvent["details"]["browser"]["address"]
+    application["external_ip"] = raw_event["details"]["browser"]["address"]
 
     # Process user agent string.
-    userAgent = rawEvent["details"]["browser"]["user-agent"]
-    application["name"] = httpagentparser.detect(userAgent)["platform"]["name"]
-    application["version"] = httpagentparser.detect(userAgent)["platform"]["version"]
+    user_agent = raw_event["details"]["browser"]["user-agent"]
+    application["name"] = httpagentparser.detect(user_agent)["platform"]["name"]
+    application["version"] = httpagentparser.detect(user_agent)["platform"]["version"]
 
     return application
 

@@ -49,28 +49,28 @@ urllib3.disable_warnings()
 def get_campaigns(api, assessment_id):
     """Return a list of all campaigns in an assessment."""
     logging.info("Gathering Campaigns")
-    allCampaigns = api.campaigns.get()
-    assessmentCampaigns = []
+    all_campaigns = api.campaigns.get()
+    assessment_campaigns = []
 
-    for campaign in allCampaigns:
+    for campaign in all_campaigns:
         if campaign.name.startswith(assessment_id):
-            assessmentCampaigns.append(campaign)
+            assessment_campaigns.append(campaign)
 
     # Sets err to true if assessmentCampaigns has 0 length.
-    logging.debug("Num Campaigns: %d", len(assessmentCampaigns))
-    if not len(assessmentCampaigns):
+    logging.debug("Num Campaigns: %d", len(assessment_campaigns))
+    if not len(assessment_campaigns):
         logging.warning("No Campaigns found for %s", assessment_id)
 
-    return assessmentCampaigns
+    return assessment_campaigns
 
 
 def add_group(api, assessment_id):
     """Create a test group."""
     logging.info("Adding Test Group")
 
-    newGroup = Group()
+    new_group = Group()
 
-    newGroup.name = "Test-" + assessment_id
+    new_group.name = "Test-" + assessment_id
 
     # Holds list of Users to be added to group.
     targets = []
@@ -95,35 +95,35 @@ def add_group(api, assessment_id):
         target = User()
         target.first_name = get_input("Enter First Name or 'done': ")
 
-    newGroup.targets = targets
+    new_group.targets = targets
 
-    newGroup = api.groups.post(newGroup)
+    new_group = api.groups.post(new_group)
 
-    return newGroup.name
+    return new_group.name
 
 
-def campaign_test(api, assessmentCampaigns, assessment_id):
+def campaign_test(api, assessment_campaigns, assessment_id):
     """Create test campaigns."""
-    tempGroups = [Group(name=add_group(api, assessment_id))]
+    temp_groups = [Group(name=add_group(api, assessment_id))]
 
-    for campaign in assessmentCampaigns:
-        tempUrl = campaign.url
-        tempName = "Test-" + campaign.name
-        tempPage = Page(name=campaign.page.name)
-        tempTemplate = Template(name=campaign.template.name)
-        tempSmtp = SMTP(name=campaign.smtp.name)
+    for campaign in assessment_campaigns:
+        temp_url = campaign.url
+        temp_name = "Test-" + campaign.name
+        temp_page = Page(name=campaign.page.name)
+        temp_template = Template(name=campaign.template.name)
+        temp_smtp = SMTP(name=campaign.smtp.name)
 
-        postCampaign = Campaign(
-            name=tempName,
-            groups=tempGroups,
-            page=tempPage,
-            template=tempTemplate,
-            smtp=tempSmtp,
-            url=tempUrl,
+        post_campaign = Campaign(
+            name=temp_name,
+            groups=temp_groups,
+            page=temp_page,
+            template=temp_template,
+            smtp=temp_smtp,
+            url=temp_url,
         )
 
-        postCampaign = api.campaigns.post(postCampaign)
-        logging.debug("Test Campaign added: %s", postCampaign.name)
+        post_campaign = api.campaigns.post(post_campaign)
+        logging.debug("Test Campaign added: %s", post_campaign.name)
 
     logging.info("All Test campaigns added.")
 
@@ -156,10 +156,10 @@ def main() -> None:
         logging.critical(e.args[0])
         sys.exit(1)
 
-    assessmentCampaigns = get_campaigns(api, args["ASSESSMENT_ID"])
+    assessment_campaigns = get_campaigns(api, args["ASSESSMENT_ID"])
 
-    if len(assessmentCampaigns) > 0:
-        campaign_test(api, assessmentCampaigns, args["ASSESSMENT_ID"])
+    if len(assessment_campaigns) > 0:
+        campaign_test(api, assessment_campaigns, args["ASSESSMENT_ID"])
 
     # Stop logging and clean up
     logging.shutdown()

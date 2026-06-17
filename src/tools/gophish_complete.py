@@ -82,18 +82,18 @@ def get_campaigns(api, assessment_id=""):
     Returns:
         dict: Campaign id as key, campaign name as value.
     """
-    allCampaigns = api.campaigns.get()
+    all_campaigns = api.campaigns.get()
 
-    assessmentCampaigns = {}
+    assessment_campaigns = {}
 
-    for campaign in allCampaigns:
+    for campaign in all_campaigns:
         if campaign.name.startswith(assessment_id):
-            assessmentCampaigns[campaign.id] = campaign.name
+            assessment_campaigns[campaign.id] = campaign.name
 
-    if len(assessmentCampaigns) == 0:
+    if len(assessment_campaigns) == 0:
         raise LookupError(f"No campaigns found for assessment {assessment_id}")
 
-    return assessmentCampaigns
+    return assessment_campaigns
 
 
 def select_campaign(campaigns):
@@ -107,14 +107,14 @@ def select_campaign(campaigns):
     print("")
 
     while True:
-        inputId = get_number("ID: ")
-        if inputId in campaigns:
+        input_id = get_number("ID: ")
+        if input_id in campaigns:
             break
         else:
             logging.warning("Bad Campaign ID")
             print("Try again...")
 
-    return inputId
+    return input_id
 
 
 def complete_campaign(api_key, server, campaign_id):
