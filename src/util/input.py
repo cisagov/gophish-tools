@@ -67,9 +67,10 @@ def get_time_input(type_, time_zone, default=""):
     while True:
         try:
             input_time = get_input(
-                "    Please enter the {} date and time from {} (mm/dd/YYYY HH:MM (24hr)):\n        ".format(
-                    type_, time_zone
-                ),
+                (
+                    "    Please enter the {} date and time from "
+                    "{} (mm/dd/YYYY HH:MM (24hr)):\n        "
+                ).format(type_, time_zone),
                 default,
             )
             input_time = datetime.strptime(input_time, "%m/%d/%Y %H:%M")

@@ -1,7 +1,9 @@
 """Remove an assessment or elements of an assessment in Gophish.
 
 Usage:
-  gophish-cleaner (--assessment | --campaigns | --groups | --pages | --smtp | --templates) [--log-level=LEVEL] ASSESSMENT_ID SERVER API_KEY
+  gophish-cleaner
+  (--assessment | --campaigns | --groups | --pages | --smtp | --templates)
+  [--log-level=LEVEL] ASSESSMENT_ID SERVER API_KEY
   gophish-cleaner (-h | --help)
   gophish-cleaner --version
 
@@ -158,7 +160,8 @@ def main() -> None:
         )
     except ValueError:
         logging.critical(
-            '"%s" is not a valid logging level.  Possible values are debug, info, warning, and error.',
+            '"%s" is not a valid logging level.  Possible values are '
+            "debug, info, warning, and error.",
             log_level,
         )
         sys.exit(1)

@@ -22,7 +22,7 @@ class TestComplete:
         "campaigns", [{"1": "RV0000-C1", "2": "RV0000-C2", "3": "RV0000-C3"}]
     )
     def test_get_campaign_id_found(self, campaigns):
-        """Verify correct campaign id is returned when a valid campaign name is provided."""
+        """Verify correct campaign id returned for valid campaign name."""
         assert get_campaign_id("RV0000-C2", campaigns) == "2"
 
     @pytest.mark.parametrize(

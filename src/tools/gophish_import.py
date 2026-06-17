@@ -9,7 +9,8 @@ Options:
   API_KEY                   Gophish API key.
   ASSESSMENT_FILE           Name of the JSON file containing assessment data.
   SERVER                    Full URL to Gophish server.
-  -r --reschedule           Adjust the current schedule of an assessment with the new schedule in the ASSESSMENT_FILE.
+  -r --reschedule           Adjust the current schedule of an assessment with
+                            the new schedule in the ASSESSMENT_FILE.
   -h --help                 Show this screen.
   --version                 Show version.
   -l --log-level=LEVEL      If specified, then the log level will be set to
@@ -283,7 +284,8 @@ def main() -> None:
         )
     except ValueError:
         logging.critical(
-            '"%s" is not a valid logging level.  Possible values are debug, info, warning, and error.',
+            '"%s" is not a valid logging level.  Possible values are '
+            "debug, info, warning, and error.",
             log_level,
         )
         sys.exit(1)

@@ -17,7 +17,8 @@ Options:
                             "warning", "error", and "critical". [default: info]
 
 NOTE:
-  * If a campaign name is not provided, all assessment campaigns will be listed to select from.
+  * If a campaign name is not provided, all assessment campaigns will
+    be listed to select from.
 """
 
 # import IPython; IPython.embed() #<<< BREAKPOINT >>>
@@ -167,7 +168,8 @@ def main() -> None:
         )
     except ValueError:
         logging.critical(
-            '"%s" is not a valid logging level. Possible values are debug, info, warning, and error.',
+            '"%s" is not a valid logging level. Possible values are '
+            "debug, info, warning, and error.",
             log_level,
         )
         sys.exit(1)

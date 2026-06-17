@@ -108,7 +108,7 @@ def export_targets(api, assessment_id):
 
 
 def get_group_ids(api, assessment_id):
-    """Return a list of group IDs for all groups starting with specified assessment_id."""
+    """Return list of all group IDs starting with specified assessment_id."""
     rawGroup = api.groups.get()  # Holds raw list of campaigns from Gophish.
     groups = []  # Holds list of campaign IDs that match the assessment.
 
@@ -142,7 +142,7 @@ def export_campaigns(api, assessment_id):
 
 
 def get_campaign_ids(api, assessment_id):
-    """Return a list of campaign IDs for all campaigns starting with specified assessment_id."""
+    """Return list of all campaign IDs starting with specified assessment_id."""
     rawCampaigns = api.campaigns.get()  # Holds raw list of campaigns from Gophish.
     campaigns = []  # Holds list of campaign IDs that match the assessment.
 
@@ -268,7 +268,10 @@ def write_campaign_summary(api, assessment_id):
     campaign_ids = get_campaign_ids(api, assessment_id)
     campaign_data_template = "campaign_data.json"
     campaign_summary_json = f"{assessment_id}_campaign_data.json"
-    campaign_summary_textfile = f"{assessment_id}_summary_{datetime.strftime(datetime.now(), '%Y-%m-%dT%H:%M:%S')}.txt"
+    campaign_summary_textfile = (
+        f"{assessment_id}_summary_"
+        f"{datetime.strftime(datetime.now(), '%Y-%m-%dT%H:%M:%S')}.txt"
+    )
 
     with open(campaign_data_template) as template:
         campaign_data = json.load(template)
@@ -285,8 +288,10 @@ def write_campaign_summary(api, assessment_id):
             level = match.group("level")
         else:
             logging.warn(
-                "Encountered campaign (%s) that is unable to be processed for campaign summary export. \n"
-                "Campaign name is not properly suffixed with the campaign level number (e.g. '_level-1')\n"
+                "Encountered campaign (%s) that is unable to be processed for "
+                "campaign summary export. \n"
+                "Campaign name is not properly suffixed with the campaign "
+                "level number (e.g. '_level-1')\n"
                 "Skipping campaign",
                 campaign.name,
             )
@@ -387,7 +392,8 @@ def main() -> None:
         )
     except ValueError:
         logging.critical(
-            '"%s" is not a valid logging level. Possible values are debug, info, warning, and error.',
+            '"%s" is not a valid logging level. Possible values are '
+            "debug, info, warning, and error.",
             log_level,
         )
         sys.exit(1)
@@ -403,7 +409,8 @@ def main() -> None:
 
     if not validate_assessment_id(args["ASSESSMENT_ID"]):
         logging.critical(
-            '"%s" is an invalid assessment_id format. Assessment identifiers begin with RV and are followed by '
+            '"%s" is an invalid assessment_id format. Assessment identifiers '
+            "begin with RV and are followed by "
             " a 4 or 5 digit numerical sequence. Examples: RV1234, RV12345",
             args["ASSESSMENT_ID"],
         )

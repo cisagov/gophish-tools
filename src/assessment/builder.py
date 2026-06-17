@@ -252,7 +252,8 @@ def review_campaign(campaign):
                         setattr(campaign, update_key, update_value)
                         break
                 else:
-                    # Builds a word completion list with each word of the option being capitalized.
+                    # Builds a word completion list with each word of
+                    # the option being capitalized.
                     sub_completer = WordCompleter(
                         list(
                             map(
@@ -348,11 +349,15 @@ def import_email(assessment, campaign_number, template_smtp):
             print("Please try again...")
 
         except MissingKey as e:
-            # Logs and indicates the user should correct before clicking ok which will re-run the import.
+            # Logs and indicates the user should correct before clicking
+            # ok which will re-run the import.
             logging.critical(f"Missing Field from import: {e.key}")
             message_dialog(
                 title="Missing Field",
-                text=f'Email import is missing the "{e.key}" field, please correct before clicking Ok.\n {e.key}: {e.description}',
+                text=(
+                    f'Email import is missing the "{e.key}" field, '
+                    f"please correct before clicking Ok.\n {e.key}: {e.description}"
+                ),
             )
 
             continue
@@ -506,7 +511,8 @@ def build_emails(domains, labels):
                                 targets.append(target)
                     else:
                         logging.warning(
-                            "Incorrectly formatted Emails will not be added, continuing..."
+                            "Incorrectly formatted Emails will not be "
+                            "added, continuing..."
                         )
 
                 # Works through emails found to have domain miss match.
@@ -541,7 +547,8 @@ def build_emails(domains, labels):
                                     break
                     else:
                         logging.warning(
-                            "Incorrectly formatted Emails will not be added, continuing..."
+                            "Incorrectly formatted Emails will not be "
+                            "added, continuing..."
                         )
 
             if len(targets) == 0:
@@ -551,11 +558,15 @@ def build_emails(domains, labels):
             logging.critical(f"Email File not found: {email_file_name}.csv")
             print("\t Please try again...")
         except Exception:
-            # Logs and indicates the user should correct before clicking ok which will re-run the import.
+            # Logs and indicates the user should correct before clicking
+            # ok which will re-run the import.
             logging.critical("No targets loaded")
             message_dialog(
                 title="Missing Targets",
-                text="No targets loaded from file, please check file before clicking Ok.",
+                text=(
+                    "No targets loaded from file, please check file "
+                    "before clicking Ok."
+                ),
             )
             continue
 
@@ -679,9 +690,9 @@ def main() -> None:
         )
     except ValueError:
         logging.critical(
-            '"{}"is not a valid logging level.  Possible values are debug, info, warning, and error.'.format(
-                log_level
-            )
+            '"%s" is not a valid logging level.  Possible values are '
+            "debug, info, warning, and error.",
+            log_level,
         )
         sys.exit(1)
 

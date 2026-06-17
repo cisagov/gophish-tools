@@ -16,8 +16,9 @@ Options:
                             "warning", "error", and "critical". [default: info]
 
 NOTE:
-  * The test assessment is an exact copy of the real assessment that will be immediately sent
-  to the custom targets provided in this tool.
+  * The test assessment is an exact copy of the real assessment that
+  will be immediately sent to the custom targets provided in this
+  tool.
 """
 
 # Standard Python Libraries
@@ -141,7 +142,8 @@ def main() -> None:
         )
     except ValueError:
         logging.critical(
-            '"%s" is not a valid logging level.  Possible values are debug, info, warning, and error.',
+            '"%s" is not a valid logging level.  Possible values are '
+            "debug, info, warning, and error.",
             log_level,
         )
         sys.exit(1)
