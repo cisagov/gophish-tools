@@ -255,12 +255,10 @@ def review_campaign(campaign):
                     # Builds a word completion list with each word of
                     # the option being capitalized.
                     sub_completer = WordCompleter(
-                        list(
-                            map(
-                                lambda sub_field: sub_field.replace("_", " ").title(),
-                                campaign_dict[update_key].as_dict().keys(),
-                            )
-                        ),
+                        [
+                            sub_field.replace("_", " ").title()
+                            for sub_field in campaign_dict[update_key].as_dict().keys()
+                        ],
                         ignore_case=True,
                     )
                     update_sub = prompt(
