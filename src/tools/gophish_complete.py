@@ -134,9 +134,9 @@ def complete_campaign(api_key, server, campaign_id):
     """
     url = f"{server}/api/campaigns/{campaign_id}/complete?api_key={api_key}"
 
-    # Bandit complains about disabling the SSL certificate check, but we have
+    # Bandit and flake8 complain about disabling the SSL certificate check, but we have
     # no choice here since we are using a self-signed certificate.
-    response = requests.get(url=url, verify=False)  # nosec
+    response = requests.get(url=url, verify=False)  # noqa: DUO123 # nosec
 
     if not response.json()["success"]:
         raise UserWarning(response.json()["message"])
