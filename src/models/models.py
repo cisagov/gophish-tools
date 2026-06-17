@@ -196,7 +196,7 @@ class SMTP(Model):
     _valid_properties = {
         "name": None,
         "from_address": None,
-        "password": None,
+        "password": None,  # nosec: B105
         "host": "postfix:587",
         "interface_type": "SMTP",
         "ignore_cert": True,
