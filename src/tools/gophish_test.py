@@ -43,7 +43,11 @@ from ._version import __version__
 # Disable "Insecure Request" warning: Gophish uses a self-signed certificate
 # as default for https connections, which can not be  verified by a third
 # party; thus, an SSL insecure request warning is produced.
-urllib3.disable_warnings()
+#
+# Without the noqa comment flake8 generates a DUO131 error because
+# disabling this warning allows for the possibility of insecure
+# connections.
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  # noqa: DUO131
 
 
 def get_campaigns(api, assessment_id):
