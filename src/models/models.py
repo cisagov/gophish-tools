@@ -154,14 +154,14 @@ class Target(Model):
         self.last_name = last_name
         self.email = email
         if "position" in kwargs.keys():
-            setattr(self, "position", kwargs["position"])
+            self.position = kwargs["position"]
 
     @classmethod
     def parse(cls, json):
         """Parse target json."""
         email = cls(json["first_name"], json["last_name"], json["email"])
         if json["position"]:
-            setattr(email, "position", json["position"])
+            email.position = json["position"]
         return email
 
 
