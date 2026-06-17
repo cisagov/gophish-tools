@@ -41,7 +41,11 @@ from ._version import __version__
 # Disable "Insecure Request" warning: Gophish uses a self-signed certificate
 # as default for https connections, which can not be  verified by a third
 # party; thus, an SSL insecure request warning is produced.
-urllib3.disable_warnings()
+#
+# Without the noqa comment flake8 generates a DUO131 error because
+# disabling this warning allows for the possibility of insecure
+# connections.
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  # noqa: DUO131
 
 
 def assessment_exists(api, assessment_id):
@@ -54,8 +58,8 @@ def assessment_exists(api, assessment_id):
     Returns:
         boolean: Indicates if a campaign is found starting with assessment_id.
     """
-    allCampaigns = api.campaigns.get()
-    for campaign in allCampaigns:
+    all_campaigns = api.campaigns.get()
+    for campaign in all_campaigns:
         if campaign.name.startswith(assessment_id):
             return True
 
@@ -77,21 +81,21 @@ def export_targets(api, assessment_id):
     Returns:
         List of targets from the assessment's group(s).
     """
-    groupIDs = get_group_ids(api, assessment_id)
+    group_ids = get_group_ids(api, assessment_id)
 
-    targets = list()
+    targets = []
 
-    for group_id in groupIDs:
+    for group_id in group_ids:
         # Gets target list for parsing.
         raw_targets = api.groups.get(group_id).as_dict()["targets"]
 
         for raw_target in raw_targets:
-            target = dict()
+            target = {}
 
             target["id"] = hashlib.sha256(
                 raw_target["email"].encode("utf-8")
             ).hexdigest()
-            target["customer_defined_labels"] = dict()
+            target["customer_defined_labels"] = {}
 
             if "position" in raw_target:
                 target["customer_defined_labels"][assessment_id] = [
@@ -108,11 +112,11 @@ def export_targets(api, assessment_id):
 
 
 def get_group_ids(api, assessment_id):
-    """Return a list of group IDs for all groups starting with specified assessment_id."""
-    rawGroup = api.groups.get()  # Holds raw list of campaigns from Gophish.
-    groups = list()  # Holds list of campaign IDs that match the assessment.
+    """Return list of all group IDs starting with specified assessment_id."""
+    raw_group = api.groups.get()  # Holds raw list of campaigns from Gophish.
+    groups = []  # Holds list of campaign IDs that match the assessment.
 
-    for group in rawGroup:
+    for group in raw_group:
         group = group.as_dict()
         if group["name"].startswith(assessment_id):
             groups.append(group["id"])
@@ -130,10 +134,10 @@ def export_campaigns(api, assessment_id):
     Returns:
         List of the assessment's campaigns with data.
     """
-    campaignIDs = get_campaign_ids(api, assessment_id)
-    campaigns = list()
+    campaign_ids = get_campaign_ids(api, assessment_id)
+    campaigns = []
 
-    for campaign_id in campaignIDs:
+    for campaign_id in campaign_ids:
         campaigns.append(get_campaign_data(api, campaign_id))
 
     logging.info("%d campaigns found for assessment %s.", len(campaigns), assessment_id)
@@ -142,11 +146,11 @@ def export_campaigns(api, assessment_id):
 
 
 def get_campaign_ids(api, assessment_id):
-    """Return a list of campaign IDs for all campaigns starting with specified assessment_id."""
-    rawCampaigns = api.campaigns.get()  # Holds raw list of campaigns from Gophish.
-    campaigns = list()  # Holds list of campaign IDs that match the assessment.
+    """Return list of all campaign IDs starting with specified assessment_id."""
+    raw_campaigns = api.campaigns.get()  # Holds raw list of campaigns from Gophish.
+    campaigns = []  # Holds list of campaign IDs that match the assessment.
 
-    for campaign in rawCampaigns:
+    for campaign in raw_campaigns:
         campaign = campaign.as_dict()
         if campaign["name"].startswith(assessment_id):
             campaigns.append(campaign["id"])
@@ -156,22 +160,24 @@ def get_campaign_ids(api, assessment_id):
 
 def get_campaign_data(api, campaign_id):
     """Return campaign metadata for the given campaign ID."""
-    campaign = dict()
+    campaign = {}
 
     # Pulls the campaign data as dict from Gophish.
-    rawCampaign: dict = api.campaigns.get(campaign_id).as_dict()
+    raw_campaign: dict = api.campaigns.get(campaign_id).as_dict()
 
-    campaign["id"] = rawCampaign["name"]
+    campaign["id"] = raw_campaign["name"]
 
-    campaign["start_time"] = rawCampaign["launch_date"]
-    campaign["end_time"] = rawCampaign["completed_date"]
-    campaign["url"] = rawCampaign["url"]
+    campaign["start_time"] = raw_campaign["launch_date"]
+    campaign["end_time"] = raw_campaign["completed_date"]
+    campaign["url"] = raw_campaign["url"]
 
-    campaign["subject"] = rawCampaign["template"]["subject"]
+    campaign["subject"] = raw_campaign["template"]["subject"]
 
     # Get the template ID from the Gophish template name.
     campaign["template"] = (
-        api.templates.get(rawCampaign["template"]["id"]).as_dict()["name"].split("-")[2]
+        api.templates.get(raw_campaign["template"]["id"])
+        .as_dict()["name"]
+        .split("-")[2]
     )
 
     campaign["clicks"] = get_click_data(api, campaign_id)
@@ -184,22 +190,22 @@ def get_campaign_data(api, campaign_id):
 
 def get_click_data(api, campaign_id):
     """Return a list of all clicks for a given campaign."""
-    rawEvents = api.campaigns.get(campaign_id).as_dict()["timeline"]
-    clicks = list()  # Holds list of all users that clicked.
+    raw_events = api.campaigns.get(campaign_id).as_dict()["timeline"]
+    clicks = []  # Holds list of all users that clicked.
 
-    for rawEvent in rawEvents:
-        if rawEvent["message"] == "Clicked Link":
-            click = dict()
+    for raw_event in raw_events:
+        if raw_event["message"] == "Clicked Link":
+            click = {}
 
             # Builds out click document.
             click["user"] = hashlib.sha256(
-                rawEvent["email"].encode("utf-8")
+                raw_event["email"].encode("utf-8")
             ).hexdigest()
-            click["source_ip"] = rawEvent["details"]["browser"]["address"]
+            click["source_ip"] = raw_event["details"]["browser"]["address"]
 
-            click["time"] = rawEvent["time"]
+            click["time"] = raw_event["time"]
 
-            click["application"] = get_application(rawEvent)
+            click["application"] = get_application(raw_event)
 
             clicks.append(click)
 
@@ -208,30 +214,30 @@ def get_click_data(api, campaign_id):
 
 def get_email_status(api, campaign_id):
     """Return the email send status and time."""
-    rawEvents = api.campaigns.get(campaign_id).as_dict()["timeline"]
-    status = list()
-    for rawEvent in rawEvents:
-        email = dict()
+    raw_events = api.campaigns.get(campaign_id).as_dict()["timeline"]
+    status = []
+    for raw_event in raw_events:
+        email = {}
 
-        if rawEvent["message"] == "Email Sent":
+        if raw_event["message"] == "Email Sent":
             email["user"] = hashlib.sha256(
-                rawEvent["email"].encode("utf-8")
+                raw_event["email"].encode("utf-8")
             ).hexdigest()
 
-            email["time"] = rawEvent["time"]
+            email["time"] = raw_event["time"]
 
             email["status"] = "SUCCESS"
 
-        elif rawEvent["message"] == "Error Sending Email":
+        elif raw_event["message"] == "Error Sending Email":
             email["user"] = hashlib.sha256(
-                rawEvent["email"].encode("utf-8")
+                raw_event["email"].encode("utf-8")
             ).hexdigest()
 
             # Trim microseconds before converting to datetime.
-            rawEvent["time"] = datetime.strptime(
-                rawEvent["time"].split(".")[0], "%Y-%m-%dT%H:%M:%S"
+            raw_event["time"] = datetime.strptime(
+                raw_event["time"].split(".")[0], "%Y-%m-%dT%H:%M:%S"
             )
-            email["time"] = rawEvent["time"]
+            email["time"] = raw_event["time"]
 
             email["status"] = "Failed"
 
@@ -241,16 +247,16 @@ def get_email_status(api, campaign_id):
     return status
 
 
-def get_application(rawEvent):
+def get_application(raw_event):
     """Return application details."""
-    application = dict()
+    application = {}
 
-    application["external_ip"] = rawEvent["details"]["browser"]["address"]
+    application["external_ip"] = raw_event["details"]["browser"]["address"]
 
     # Process user agent string.
-    userAgent = rawEvent["details"]["browser"]["user-agent"]
-    application["name"] = httpagentparser.detect(userAgent)["platform"]["name"]
-    application["version"] = httpagentparser.detect(userAgent)["platform"]["version"]
+    user_agent = raw_event["details"]["browser"]["user-agent"]
+    application["name"] = httpagentparser.detect(user_agent)["platform"]["name"]
+    application["version"] = httpagentparser.detect(user_agent)["platform"]["version"]
 
     return application
 
@@ -268,7 +274,10 @@ def write_campaign_summary(api, assessment_id):
     campaign_ids = get_campaign_ids(api, assessment_id)
     campaign_data_template = "campaign_data.json"
     campaign_summary_json = f"{assessment_id}_campaign_data.json"
-    campaign_summary_textfile = f"{assessment_id}_summary_{datetime.strftime(datetime.now(), '%Y-%m-%dT%H:%M:%S')}.txt"
+    campaign_summary_textfile = (
+        f"{assessment_id}_summary_"
+        f"{datetime.strftime(datetime.now(), '%Y-%m-%dT%H:%M:%S')}.txt"
+    )
 
     with open(campaign_data_template) as template:
         campaign_data = json.load(template)
@@ -285,8 +294,10 @@ def write_campaign_summary(api, assessment_id):
             level = match.group("level")
         else:
             logging.warn(
-                "Encountered campaign (%s) that is unable to be processed for campaign summary export. \n"
-                "Campaign name is not properly suffixed with the campaign level number (e.g. '_level-1')\n"
+                "Encountered campaign (%s) that is unable to be processed for "
+                "campaign summary export. \n"
+                "Campaign name is not properly suffixed with the campaign "
+                "level number (e.g. '_level-1')\n"
                 "Skipping campaign",
                 campaign.name,
             )
@@ -336,7 +347,7 @@ def export_user_reports(api, assessment_id):
 
     for campaign_id in campaign_ids:
         first_report = None
-        user_report_doc = dict()
+        user_report_doc = {}
         campaign = get_campaign_data(api, campaign_id)
 
         # iterate over clicks and find the earliest click
@@ -387,7 +398,8 @@ def main() -> None:
         )
     except ValueError:
         logging.critical(
-            '"%s" is not a valid logging level. Possible values are debug, info, warning, and error.',
+            '"%s" is not a valid logging level. Possible values are '
+            "debug, info, warning, and error.",
             log_level,
         )
         sys.exit(1)
@@ -403,14 +415,15 @@ def main() -> None:
 
     if not validate_assessment_id(args["ASSESSMENT_ID"]):
         logging.critical(
-            '"%s" is an invalid assessment_id format. Assessment identifiers begin with RV and are followed by '
+            '"%s" is an invalid assessment_id format. Assessment identifiers '
+            "begin with RV and are followed by "
             " a 4 or 5 digit numerical sequence. Examples: RV1234, RV12345",
             args["ASSESSMENT_ID"],
         )
         sys.exit(1)
 
     if assessment_exists(api, args["ASSESSMENT_ID"]):
-        assessment_dict: dict = dict()
+        assessment_dict: dict = {}
 
         # Add targets list to assessment dict.
         assessment_dict["targets"] = export_targets(api, args["ASSESSMENT_ID"])

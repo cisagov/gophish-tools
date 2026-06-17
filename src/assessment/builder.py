@@ -36,7 +36,7 @@ from util.set_date import set_date
 from util.validate import (
     BlankInputValidator,
     EmailValidator,
-    MissingKey,
+    MissingKeyError,
     email_import_validation,
     validate_domain,
     validate_email,
@@ -63,7 +63,7 @@ def set_time_zone():
     # See issue: https://github.com/cisagov/gophish-tools/issues/49
 
     # Creates list of US Time Zones
-    time_zone = list()
+    time_zone = []
     for zone in pytz.common_timezones:
         if zone.startswith("US/"):
             time_zone.append((zone, zone))
@@ -136,7 +136,7 @@ def build_assessment(assessment_id):
     template_smtp.username = input("SMTP User: ")  # nosec
     template_smtp.password = input("SMTP Password: ")  # nosec
 
-    assessment.campaigns = list()
+    assessment.campaigns = []
     logging.info("Building Campaigns")
     num_campaigns = get_number("    How many Campaigns?")
     for campaign_number in range(0, num_campaigns):
@@ -252,14 +252,13 @@ def review_campaign(campaign):
                         setattr(campaign, update_key, update_value)
                         break
                 else:
-                    # Builds a word completion list with each word of the option being capitalized.
+                    # Builds a word completion list with each word of
+                    # the option being capitalized.
                     sub_completer = WordCompleter(
-                        list(
-                            map(
-                                lambda sub_field: sub_field.replace("_", " ").title(),
-                                campaign_dict[update_key].as_dict().keys(),
-                            )
-                        ),
+                        [
+                            sub_field.replace("_", " ").title()
+                            for sub_field in campaign_dict[update_key].as_dict().keys()
+                        ],
                         ignore_case=True,
                     )
                     update_sub = prompt(
@@ -337,22 +336,26 @@ def import_email(assessment, campaign_number, template_smtp):
             # Drops .json if included so it can always be added as fail safe.
             import_file_name = import_file_name.split(".", 1)[0]
 
-            with open(import_file_name + ".json") as importFile:
-                import_temp = json.load(importFile)
+            with open(import_file_name + ".json") as import_file:
+                import_temp = json.load(import_file)
 
-            # Validates that all fields are present or raise MissingKey Error.
+            # Validates that all fields are present or raise MissingKeyError.
             email_import_validation(import_temp)
             break
         except OSError:
             logging.critical(f"Import File not found: {import_file_name}.json")
             print("Please try again...")
 
-        except MissingKey as e:
-            # Logs and indicates the user should correct before clicking ok which will re-run the import.
+        except MissingKeyError as e:
+            # Logs and indicates the user should correct before clicking
+            # ok which will re-run the import.
             logging.critical(f"Missing Field from import: {e.key}")
             message_dialog(
                 title="Missing Field",
-                text=f'Email import is missing the "{e.key}" field, please correct before clicking Ok.\n {e.key}: {e.description}',
+                text=(
+                    f'Email import is missing the "{e.key}" field, '
+                    f"please correct before clicking Ok.\n {e.key}: {e.description}"
+                ),
             )
 
             continue
@@ -382,8 +385,8 @@ def create_email(assessment, campaign_number=""):
             # Drops .html if included so it can always be added as fail safe.
             html_file_name = html_file_name.split(".", 1)[0]
 
-            with open(html_file_name + ".html") as htmlFile:
-                temp_template.html = htmlFile.read()
+            with open(html_file_name + ".html") as html_file:
+                temp_template.html = html_file.read()
 
             break
         except OSError:
@@ -397,8 +400,8 @@ def create_email(assessment, campaign_number=""):
             # Drops .txt if included so it can always be added as fail safe.
             text_file_name = text_file_name.split(".", 1)[0]
 
-            with open(text_file_name + ".txt") as textFile:
-                temp_template.text = textFile.read()
+            with open(text_file_name + ".txt") as text_file:
+                temp_template.text = text_file.read()
 
             break
         except OSError:
@@ -411,7 +414,7 @@ def create_email(assessment, campaign_number=""):
 def build_groups(id, target_domains):
     """Build groups."""
     logging.info("Getting Group Metadata")
-    groups = list()
+    groups = []
 
     # Looks through to get the number of groups as a number with error checking
     num_groups = get_number("    How many groups do you need?")
@@ -437,9 +440,9 @@ def build_groups(id, target_domains):
 def build_emails(domains, labels):
     """Build emails."""
     # Holds list of Users to be added to group.
-    targets = list()
-    domain_miss_match = list()
-    format_error = list()
+    targets = []
+    domain_miss_match = []
+    format_error = []
 
     # Receives the file name and checks if it exists.
     while True:
@@ -506,7 +509,8 @@ def build_emails(domains, labels):
                                 targets.append(target)
                     else:
                         logging.warning(
-                            "Incorrectly formatted Emails will not be added, continuing..."
+                            "Incorrectly formatted Emails will not be "
+                            "added, continuing..."
                         )
 
                 # Works through emails found to have domain miss match.
@@ -541,7 +545,8 @@ def build_emails(domains, labels):
                                     break
                     else:
                         logging.warning(
-                            "Incorrectly formatted Emails will not be added, continuing..."
+                            "Incorrectly formatted Emails will not be "
+                            "added, continuing..."
                         )
 
             if len(targets) == 0:
@@ -551,11 +556,15 @@ def build_emails(domains, labels):
             logging.critical(f"Email File not found: {email_file_name}.csv")
             print("\t Please try again...")
         except Exception:
-            # Logs and indicates the user should correct before clicking ok which will re-run the import.
+            # Logs and indicates the user should correct before clicking
+            # ok which will re-run the import.
             logging.critical("No targets loaded")
             message_dialog(
                 title="Missing Targets",
-                text="No targets loaded from file, please check file before clicking Ok.",
+                text=(
+                    "No targets loaded from file, please check file "
+                    "before clicking Ok."
+                ),
             )
             continue
 
@@ -577,7 +586,7 @@ def build_pages(id_):
 
     :return a page object
     """
-    pages = list()
+    pages = []
     logging.info("Getting Page Metadata")
 
     # Looks through to get the number of pages as a number with error checking
@@ -591,7 +600,7 @@ def build_pages(id_):
         temp_page.capture_passwords = False
 
         if auto_forward == "yes":
-            setattr(temp_page, "name", f"{id_}-{page_num + 1}-AutoForward")
+            temp_page.name = f"{id_}-{page_num + 1}-AutoForward"
             temp_page.html = AUTO_FORWARD
             temp_page.redirect_url = get_input("    URL to Redirect to:")
 
@@ -608,8 +617,8 @@ def build_pages(id_):
                     # Drops .html if included so it can always be added as fail safe.
                     landing_file_name = landing_file_name.split(".", 1)[0]
 
-                    with open(landing_file_name + ".html") as landingFile:
-                        temp_page.html = landingFile.read()
+                    with open(landing_file_name + ".html") as landing_file:
+                        temp_page.html = landing_file.read()
 
                     break
                 except OSError:
@@ -635,7 +644,7 @@ def review_page(page):
     # Loops until not changes are required.
     while True:
         print("\n")
-        page_keys = list()
+        page_keys = []
         for key, value in page.as_dict().items():
             if key != "html":
                 print(f"{key}: {value}")
@@ -679,9 +688,9 @@ def main() -> None:
         )
     except ValueError:
         logging.critical(
-            '"{}"is not a valid logging level.  Possible values are debug, info, warning, and error.'.format(
-                log_level
-            )
+            '"%s" is not a valid logging level.  Possible values are '
+            "debug, info, warning, and error.",
+            log_level,
         )
         sys.exit(1)
 

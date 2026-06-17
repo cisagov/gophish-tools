@@ -17,7 +17,8 @@ Options:
                             "warning", "error", and "critical". [default: info]
 
 NOTE:
-  * If a campaign name is not provided, all assessment campaigns will be listed to select from.
+  * If a campaign name is not provided, all assessment campaigns will
+    be listed to select from.
 """
 
 # import IPython; IPython.embed() #<<< BREAKPOINT >>>
@@ -41,7 +42,11 @@ from ._version import __version__
 # Disable "Insecure Request" warning: Gophish uses a self-signed certificate
 # as default for https connections, which can not be  verified by a third
 # party; thus, an SSL insecure request warning is produced.
-urllib3.disable_warnings()
+#
+# Without the noqa comment flake8 generates a DUO131 error because
+# disabling this warning allows for the possibility of insecure
+# connections.
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  # noqa: DUO131
 
 
 def get_campaign_id(campaign_name, campaigns):
@@ -81,18 +86,18 @@ def get_campaigns(api, assessment_id=""):
     Returns:
         dict: Campaign id as key, campaign name as value.
     """
-    allCampaigns = api.campaigns.get()
+    all_campaigns = api.campaigns.get()
 
-    assessmentCampaigns = dict()
+    assessment_campaigns = {}
 
-    for campaign in allCampaigns:
+    for campaign in all_campaigns:
         if campaign.name.startswith(assessment_id):
-            assessmentCampaigns[campaign.id] = campaign.name
+            assessment_campaigns[campaign.id] = campaign.name
 
-    if len(assessmentCampaigns) == 0:
+    if len(assessment_campaigns) == 0:
         raise LookupError(f"No campaigns found for assessment {assessment_id}")
 
-    return assessmentCampaigns
+    return assessment_campaigns
 
 
 def select_campaign(campaigns):
@@ -106,14 +111,14 @@ def select_campaign(campaigns):
     print("")
 
     while True:
-        inputId = get_number("ID: ")
-        if inputId in campaigns:
+        input_id = get_number("ID: ")
+        if input_id in campaigns:
             break
         else:
             logging.warning("Bad Campaign ID")
             print("Try again...")
 
-    return inputId
+    return input_id
 
 
 def complete_campaign(api_key, server, campaign_id):
@@ -129,9 +134,9 @@ def complete_campaign(api_key, server, campaign_id):
     """
     url = f"{server}/api/campaigns/{campaign_id}/complete?api_key={api_key}"
 
-    # Bandit complains about disabling the SSL certificate check, but we have
+    # Bandit and flake8 complain about disabling the SSL certificate check, but we have
     # no choice here since we are using a self-signed certificate.
-    response = requests.get(url=url, verify=False)  # nosec
+    response = requests.get(url=url, verify=False)  # noqa: DUO123 # nosec
 
     if not response.json()["success"]:
         raise UserWarning(response.json()["message"])
@@ -167,7 +172,8 @@ def main() -> None:
         )
     except ValueError:
         logging.critical(
-            '"%s" is not a valid logging level. Possible values are debug, info, warning, and error.',
+            '"%s" is not a valid logging level. Possible values are '
+            "debug, info, warning, and error.",
             log_level,
         )
         sys.exit(1)

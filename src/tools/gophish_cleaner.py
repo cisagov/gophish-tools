@@ -1,7 +1,9 @@
 """Remove an assessment or elements of an assessment in Gophish.
 
 Usage:
-  gophish-cleaner (--assessment | --campaigns | --groups | --pages | --smtp | --templates) [--log-level=LEVEL] ASSESSMENT_ID SERVER API_KEY
+  gophish-cleaner
+  (--assessment | --campaigns | --groups | --pages | --smtp | --templates)
+  [--log-level=LEVEL] ASSESSMENT_ID SERVER API_KEY
   gophish-cleaner (-h | --help)
   gophish-cleaner --version
 
@@ -39,9 +41,13 @@ from tools.connect import connect_api
 from ._version import __version__
 
 # Disable "Insecure Request" warning: Gophish uses a self-signed certificate
-# as default for https connections, which can not be  verified by a third
+# as default for https connections, which can not be verified by a third
 # party; thus, an SSL insecure request warning is produced.
-urllib3.disable_warnings()
+#
+# Without the noqa comment flake8 generates a DUO131 error because
+# disabling this warning allows for the possibility of insecure
+# connections.
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  # noqa: DUO131
 
 
 def confirm_id(element, assessment_id):
@@ -93,9 +99,9 @@ def remove_assessment(api, assessment_id):
 
 def remove_campaigns(api, assessment_id):
     """Remove all campaigns from an assessment."""
-    allCampaigns = api.campaigns.get()
+    all_campaigns = api.campaigns.get()
 
-    for campaign in allCampaigns:
+    for campaign in all_campaigns:
         if campaign.name.startswith(assessment_id):
             api.campaigns.delete(campaign.id)
 
@@ -104,9 +110,9 @@ def remove_campaigns(api, assessment_id):
 
 def remove_smtp(api, assessment_id):
     """Remove all SMTP from an assessment."""
-    allSMTP = api.smtp.get()
+    all_smtp = api.smtp.get()
 
-    for smtp in allSMTP:
+    for smtp in all_smtp:
         if smtp.name.startswith(assessment_id):
             api.smtp.delete(smtp.id)
 
@@ -115,9 +121,9 @@ def remove_smtp(api, assessment_id):
 
 def remove_page(api, assessment_id):
     """Remove all pages from an assessment."""
-    allPages = api.pages.get()
+    all_pages = api.pages.get()
 
-    for page in allPages:
+    for page in all_pages:
         if page.name.startswith(assessment_id):
             api.pages.delete(page.id)
 
@@ -126,9 +132,9 @@ def remove_page(api, assessment_id):
 
 def remove_group(api, assessment_id):
     """Remove all groups from an assessment."""
-    allGroups = api.groups.get()
+    all_groups = api.groups.get()
 
-    for group in allGroups:
+    for group in all_groups:
         if group.name.startswith(assessment_id):
             api.groups.delete(group.id)
 
@@ -137,9 +143,9 @@ def remove_group(api, assessment_id):
 
 def remove_template(api, assessment_id):
     """Remove all templates from an assessment."""
-    allTemplates = api.templates.get()
+    all_templates = api.templates.get()
 
-    for template in allTemplates:
+    for template in all_templates:
         if template.name.startswith(assessment_id):
             api.templates.delete(template.id)
 
@@ -158,7 +164,8 @@ def main() -> None:
         )
     except ValueError:
         logging.critical(
-            '"%s" is not a valid logging level.  Possible values are debug, info, warning, and error.',
+            '"%s" is not a valid logging level.  Possible values are '
+            "debug, info, warning, and error.",
             log_level,
         )
         sys.exit(1)

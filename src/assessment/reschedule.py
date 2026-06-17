@@ -38,7 +38,8 @@ def display_assessment_dates(assessment):
     print("--------    ------              ---")
     for campaign in assessment.campaigns:
         print(
-            f"  {campaign.name[len(campaign.name) - 1]}        {campaign.launch_date}    {campaign.complete_date}"
+            f"  {campaign.name[len(campaign.name) - 1]}        "
+            f"{campaign.launch_date}    {campaign.complete_date}"
         )
 
     print()
@@ -100,9 +101,9 @@ def main() -> None:
         )
     except ValueError:
         logging.critical(
-            '"{}"is not a valid logging level.  Possible values are debug, info, warning, and error.'.format(
-                log_level
-            )
+            '"%s" is not a valid logging level.  Possible values are '
+            "debug, info, warning, and error.",
+            log_level,
         )
         sys.exit(1)
 

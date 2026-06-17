@@ -65,8 +65,7 @@ def group_json(target_json):
 @pytest.fixture(scope="module")
 def target_json():
     """Return a Target JSON with 2 emails."""
-    return json.loads(
-        """[
+    return json.loads("""[
         {
             "first_name": "John",
             "last_name": "Doe",
@@ -79,8 +78,7 @@ def target_json():
             "email": "jane.smith@domain.test",
             "position": "HR"
         }
-    ]"""
-    )
+    ]""")
 
 
 @pytest.fixture
@@ -118,28 +116,24 @@ def campaign_json(template_json, smtp_json):
 @pytest.fixture
 def template_json():
     """Return a Template JSON."""
-    return json.loads(
-        """{
+    return json.loads("""{
         "name": "RVXXX1-T1-ID",
         "subject": "Campaign 1",
         "html": "<html>Body Test</html>",
         "text": "Body Test"
-    }"""
-    )
+    }""")
 
 
 @pytest.fixture
 def smtp_json():
     """Return an SMTP JSON."""
-    return json.loads(
-        """{
+    return json.loads("""{
         "name": "RVXXX1-SP",
         "from_address": "Camp1 Phish<camp1.phish@bad.domain>",
         "host": "postfix:587",
         "interface_type": "SMTP",
         "ignore_cert": true
-    }"""
-    )
+    }""")
 
 
 # Object Fixtures
@@ -236,7 +230,7 @@ def assessment_object(group_object, page_object, campaign_object):
 @pytest.fixture
 def multiple_campaign_object(template_object, smtp_object):
     """Return list of campaign objects."""
-    campaigns = list()
+    campaigns = []
 
     for x in range(1, 8):
         campaigns.append(
@@ -260,7 +254,7 @@ def multiple_campaign_object(template_object, smtp_object):
 @pytest.fixture
 def multiple_gophish_group_object():
     """Return list of Gophish group objects."""
-    groups = list()
+    groups = []
 
     for x in range(1, 3):
         groups.append(
@@ -290,7 +284,7 @@ def multiple_gophish_group_object():
 @pytest.fixture
 def email_target_json():
     """Return a email target JSON with 4 emails matching the Gophish group object."""
-    targets = list()
+    targets = []
     for email, position in [
         ("jane.smith1@domain.tld", "IT"),
         ("john.doe1@domain.tld", "HR"),
@@ -310,8 +304,8 @@ def email_target_json():
 @pytest.fixture
 def multiple_click_object():
     """Return a list of clicks to match the correct number of unique users."""
-    clicks = list()
-    for x in range(0, 2):
+    clicks = []
+    for _x in range(0, 2):
         clicks.append(
             Click(
                 message="Testing",

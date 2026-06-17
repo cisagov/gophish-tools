@@ -16,7 +16,7 @@ EMAIL_TEMPLATE = {
 
 
 def validate_assessment_id(assessment_id):
-    """Validate that the provided assessment_id is matching the valid assessment_id format. Example: RV1234.
+    """Validate provided assessment_id matches valid assessment_id format.
 
     Args:
         assessment_id (string): Assessment identifier to validate.
@@ -67,7 +67,7 @@ def email_import_validation(import_temp):
 
     for key in dif:
         if key in EMAIL_TEMPLATE.keys():
-            raise MissingKey(key, EMAIL_TEMPLATE[key])
+            raise MissingKeyError(key, EMAIL_TEMPLATE[key])
 
 
 class BlankInputValidator(Validator):
@@ -106,16 +106,20 @@ class FormatError(Exception):
 
     def __init__(self, email):
         """TBD."""
+        super().__init__(email)
+
         # Now for your custom code...
         self.email = email
         self.description = f"ERROR: {email} incorrect format"
 
 
-class MissingKey(Exception):
-    """The MissingKey class."""
+class MissingKeyError(Exception):
+    """The MissingKeyError class."""
 
     def __init__(self, key, description):
         """TBD."""
+        super().__init__(key, description)
+
         # Now for your custom code...
         self.key = key
         self.description = description

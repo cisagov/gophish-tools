@@ -9,7 +9,8 @@ Options:
   API_KEY                   Gophish API key.
   ASSESSMENT_FILE           Name of the JSON file containing assessment data.
   SERVER                    Full URL to Gophish server.
-  -r --reschedule           Adjust the current schedule of an assessment with the new schedule in the ASSESSMENT_FILE.
+  -r --reschedule           Adjust the current schedule of an assessment with
+                            the new schedule in the ASSESSMENT_FILE.
   -h --help                 Show this screen.
   --version                 Show version.
   -l --log-level=LEVEL      If specified, then the log level will be set to
@@ -46,7 +47,11 @@ from ._version import __version__
 # Disable "Insecure Request" warning: Gophish uses a self-signed certificate
 # as default for https connections, which can not be  verified by a third
 # party; thus, an SSL insecure request warning is produced.
-urllib3.disable_warnings()
+#
+# Without the noqa comment flake8 generates a DUO131 error because
+# disabling this warning allows for the possibility of insecure
+# connections.
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  # noqa: DUO131
 
 
 def load_landings(api, assessment):
@@ -283,7 +288,8 @@ def main() -> None:
         )
     except ValueError:
         logging.critical(
-            '"%s" is not a valid logging level.  Possible values are debug, info, warning, and error.',
+            '"%s" is not a valid logging level.  Possible values are '
+            "debug, info, warning, and error.",
             log_level,
         )
         sys.exit(1)
