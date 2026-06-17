@@ -106,6 +106,8 @@ class FormatError(Exception):
 
     def __init__(self, email):
         """TBD."""
+        super().__init__(email)
+
         # Now for your custom code...
         self.email = email
         self.description = f"ERROR: {email} incorrect format"
@@ -116,6 +118,8 @@ class MissingKeyError(Exception):
 
     def __init__(self, key, description):
         """TBD."""
+        super().__init__(key, description)
+
         # Now for your custom code...
         self.key = key
         self.description = description
