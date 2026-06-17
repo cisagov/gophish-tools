@@ -36,7 +36,7 @@ from util.set_date import set_date
 from util.validate import (
     BlankInputValidator,
     EmailValidator,
-    MissingKey,
+    MissingKeyError,
     email_import_validation,
     validate_domain,
     validate_email,
@@ -341,14 +341,14 @@ def import_email(assessment, campaign_number, template_smtp):
             with open(import_file_name + ".json") as importFile:
                 import_temp = json.load(importFile)
 
-            # Validates that all fields are present or raise MissingKey Error.
+            # Validates that all fields are present or raise MissingKeyError.
             email_import_validation(import_temp)
             break
         except OSError:
             logging.critical(f"Import File not found: {import_file_name}.json")
             print("Please try again...")
 
-        except MissingKey as e:
+        except MissingKeyError as e:
             # Logs and indicates the user should correct before clicking
             # ok which will re-run the import.
             logging.critical(f"Missing Field from import: {e.key}")

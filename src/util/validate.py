@@ -67,7 +67,7 @@ def email_import_validation(import_temp):
 
     for key in dif:
         if key in EMAIL_TEMPLATE.keys():
-            raise MissingKey(key, EMAIL_TEMPLATE[key])
+            raise MissingKeyError(key, EMAIL_TEMPLATE[key])
 
 
 class BlankInputValidator(Validator):
@@ -111,8 +111,8 @@ class FormatError(Exception):
         self.description = f"ERROR: {email} incorrect format"
 
 
-class MissingKey(Exception):
-    """The MissingKey class."""
+class MissingKeyError(Exception):
+    """The MissingKeyError class."""
 
     def __init__(self, key, description):
         """TBD."""
