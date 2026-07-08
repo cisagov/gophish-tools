@@ -278,6 +278,7 @@ class Click(Model):
         for key, val in json.items():
             if key in cls._valid_properties:
                 setattr(click, key, val)
+        return click
 
     def __getitem__(self, item):
         """Get item by attribute name."""
