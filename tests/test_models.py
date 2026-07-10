@@ -1,7 +1,16 @@
 """Test for Models."""
 
 # cisagov Libraries
-from models.models import SMTP, Assessment, Campaign, Group, Page, Target, Template
+from models.models import (
+    SMTP,
+    Assessment,
+    Campaign,
+    Click,
+    Group,
+    Page,
+    Target,
+    Template,
+)
 
 
 class TestParse:
@@ -36,3 +45,7 @@ class TestParse:
         assert (
             assessment_object.as_dict() == Assessment.parse(assessment_json).as_dict()
         )
+
+    def test_click_parse(self, click_object, click_json):
+        """Test parsing of click JSON."""
+        assert click_object.as_dict() == Click.parse(click_json).as_dict()

@@ -302,6 +302,30 @@ def email_target_json():
 
 
 @pytest.fixture
+def click_json():
+    """Return a Click JSON."""
+    return json.loads("""{
+        "message": "Clicked Link",
+        "user": "john.doe@domain.test",
+        "source_ip": "10.0.0.1",
+        "time": "01/01/2025 13:00",
+        "application": "NA"
+    }""")
+
+
+@pytest.fixture
+def click_object():
+    """Return a single Click object."""
+    return Click(
+        message="Clicked Link",
+        user="john.doe@domain.test",
+        source_ip="10.0.0.1",
+        time="01/01/2025 13:00",
+        application="NA",
+    )
+
+
+@pytest.fixture
 def multiple_click_object():
     """Return a list of clicks to match the correct number of unique users."""
     clicks = []
