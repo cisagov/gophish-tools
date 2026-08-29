@@ -50,7 +50,7 @@ dependencies = [
     "docopt >= 0.6.2",
     "gophish >= 0.2.5",
     "httpagentparser",
-    "prompt-toolkit == 3.0.43",
+    "prompt-toolkit == 3.0.53",
     "python-dateutil >= 2.9.0.post0",
     "pytz >= 2026.1.post1",
     "schema",
