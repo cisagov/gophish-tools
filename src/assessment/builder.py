@@ -54,23 +54,36 @@ AUTO_FORWARD = """
 CONFIRMATION_PROMPT = "\nDo you need to modify any of the values for this campaign?"
 
 
+# Sentinel for the option that opens the full time zone list.
+SELECT_MORE = "select-more"
+
+
 def set_time_zone():
-    """Select a timezone from a list of US-based time zones.
+    """Select a timezone, with an option to see every zone pytz lists.
 
     Returns: Time zone name based on pytz.
     """
-    # TODO Allow for a select more option to get access to full list of Time Zones
-    # See issue: https://github.com/cisagov/gophish-tools/issues/49
-
-    # Creates list of US Time Zones
+    # Creates list of US Time Zones, followed by a way to reach the rest.
     time_zone = []
     for zone in pytz.common_timezones:
         if zone.startswith("US/"):
             time_zone.append((zone, zone))
+    time_zone.append((SELECT_MORE, "Select More..."))
 
     # Ask user to select time zone from list.
-    return radiolist_dialog(
+    selection = radiolist_dialog(
         values=time_zone, title="Time Zone", text="Please select assessment time zone:"
+    ).run()
+
+    if selection != SELECT_MORE:
+        return selection
+
+    # Ask again, this time offering every time zone pytz lists.
+    all_time_zones = [(zone, zone) for zone in pytz.common_timezones]
+    return radiolist_dialog(
+        values=all_time_zones,
+        title="Time Zone",
+        text="Please select assessment time zone:",
     ).run()
 
 
